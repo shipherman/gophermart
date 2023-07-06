@@ -20,7 +20,7 @@ func HandleRoot(w http.ResponseWriter, r *http.Request) {
 // Generate random password; save tuple to DB. Return non-ecrypted password to user
 func HandleRegister(w http.ResponseWriter, r *http.Request) {
 	var u models.User
-	u.Name = "Ivan"
+	u.Login = "Ivan"
 	u.Password = "Pass"
 
 	data, err := json.Marshal(u)
