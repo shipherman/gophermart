@@ -1,14 +1,11 @@
+/*
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"net/http"
-
-	"github.com/shipherman/gophermart/lib/transport/routes"
-	//"github.com/go-chi/chi/v5"
-)
+import "github.com/shipherman/gophermart/cmd/gophermart/cmd"
 
 func main() {
-	router := routes.NewRouter()
-	http.ListenAndServe(":9090", router)
-
+	cmd.Execute()
 }
