@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 
+	_ "github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
 	"github.com/spf13/cobra"
