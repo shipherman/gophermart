@@ -1,10 +1,9 @@
 package handlers
 
 import (
-	"encoding/json"
 	"net/http"
 
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/lib/db"
 )
 
 // Create handler instance
@@ -19,17 +18,7 @@ func HandleRoot(w http.ResponseWriter, r *http.Request) {
 // User registration page
 // Generate random password; save tuple to DB. Return non-ecrypted password to user
 func HandleRegister(w http.ResponseWriter, r *http.Request) {
-	var u models.User
-	u.Login = "Ivan"
-	u.Password = "Pass"
-
-	data, err := json.Marshal(u)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	w.Write(data)
+	db.InsertUser()
 	w.WriteHeader(http.StatusOK)
 }
 

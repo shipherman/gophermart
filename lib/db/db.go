@@ -5,27 +5,34 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/shipherman/gophermart/ent"
-
 	_ "github.com/lib/pq"
+	"github.com/shipherman/gophermart/ent"
 )
 
-func Connect() {}
+var entClient *ent.Client
 
-var EntClient *ent.Client
-
-func init() {
+func NewClient() *ent.Client {
 	//Open a connection to the database
-	Client, err := ent.Open("postgres", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable")
+	entClient, err := ent.Open("postgres", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
+		return nil
 	}
 
 	fmt.Println("Connected to database successfully")
-	defer Client.Close()
+	// defer EntClient.Close()
 	// AutoMigration with ENT
-	if err := Client.Schema.Create(context.Background()); err != nil {
+	if err := entClient.Schema.Create(context.Background()); err != nil {
 		log.Fatalf("failed creating schema resources: %v", err)
+		return nil
 	}
-	EntClient = Client
+	return entClient
+}
+
+func GetClient() *ent.Client {
+	return entClient
+}
+
+func SetClient(newClient *ent.Client) {
+	entClient = newClient
 }

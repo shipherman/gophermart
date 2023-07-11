@@ -1,5 +1,9 @@
 package models
 
+import (
+	"time"
+)
+
 type User struct {
 	ID       int
 	Login    string
@@ -9,7 +13,8 @@ type User struct {
 }
 
 type Order struct {
-	ID     int
-	UserID int
-	Status string
+	ID        int
+	UserID    int
+	Status    string
+	TimeStamp time.Time
 }

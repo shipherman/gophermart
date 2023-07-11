@@ -4,14 +4,19 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
-	_ "github.com/shipherman/gophermart/lib/db"
+	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
 	"github.com/spf13/cobra"
 )
+
+type Options struct {
+	DSN string
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -36,6 +41,11 @@ func Execute() {
 		os.Exit(1)
 	}
 
+	client := db.NewClient()
+	defer client.Close()
+
+	db.SetClient(client)
+
 	router := routes.NewRouter()
 	http.ListenAndServe(":9090", router)
 }
@@ -45,9 +55,16 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
+	var cfg Options
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gophermart.yaml)")
+	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost, port=port", "Connection string")
+
+	fmt.Println(cfg.DSN)
+	cfg.DSN = "abcdef"
+	fmt.Println(cfg.DSN)
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
 }
