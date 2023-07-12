@@ -5,11 +5,8 @@ import (
 )
 
 type User struct {
-	ID       int
-	Login    string
-	Password string
-	Balance  int
-	Withdraw int
+	Login    string `json:"login"`
+	Password string `json:"password"`
 }
 
 type Order struct {

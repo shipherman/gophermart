@@ -2,6 +2,7 @@ package routes
 
 import (
 	"github.com/shipherman/gophermart/lib/transport/handlers"
+	mid "github.com/shipherman/gophermart/lib/transport/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -10,7 +11,7 @@ import (
 func NewRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
-	// router.Use(middleware.BasicAuth())	// Implement Auth middleware
+	router.Use(mid.Auth)
 	router.Get("/", handlers.HandleRoot)
 	router.Post("/api/user/register", handlers.HandleRegister)
 	router.Post("/api/user/login", handlers.HandleLogin)

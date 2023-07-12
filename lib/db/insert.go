@@ -3,21 +3,35 @@ package db
 import (
 	"context"
 	"fmt"
-	"math/rand"
-	"strconv"
+
+	"github.com/shipherman/gophermart/ent"
 )
 
-func InsertWithDraw() {}
-
-func InsertUser() {
-	suf := rand.New(rand.NewSource(9999))
+func InsertUser(newUser ent.User) error {
 	client := GetClient()
 	user, err := client.User.Create().
-		SetLogin("login" + strconv.Itoa(suf.Int())).
-		SetPassword("pass").
-		SetBalance(10).
+		SetLogin(newUser.Login).
+		SetPassword(newUser.Password).
+		SetBalance(0).
 		SetWithdraw(0).
 		Save(context.Background())
 
 	fmt.Println(user, err)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func InsertOrder(newOrder ent.Order) error {
+	// client := GetClient()
+	// put order to accrual app
+
+	// save data to db
+	// order, err := client.Order.Create().
+	// 	SetOrdernum(newOrder.Ordernum).
+	// 	SetStatus(newOrder.Status).
+	// 	SetUser()
+
+	return nil
 }
