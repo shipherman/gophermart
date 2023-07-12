@@ -10,6 +10,7 @@ import (
 func NewRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
+	// router.Use(middleware.BasicAuth())	// Implement Auth middleware
 	router.Get("/", handlers.HandleRoot)
 	router.Post("/api/user/register", handlers.HandleRegister)
 	router.Post("/api/user/login", handlers.HandleLogin)
