@@ -6,7 +6,10 @@ import (
 
 	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/lib/db"
+	"github.com/shipherman/gophermart/lib/models"
 	"github.com/shipherman/gophermart/lib/transport/middleware"
+
+	"github.com/go-chi/chi/v5"
 )
 
 // Create handler instance
@@ -62,6 +65,19 @@ func HandlePostOrders(w http.ResponseWriter, r *http.Request) {}
 
 // Get bonuses balance
 func HandleBalance(w http.ResponseWriter, r *http.Request) {
+	var balance models.Balance
+	var err error
+
+	// Execute user from context
+	user := chi.URLParam(r, "user")
+
+	balance, err = db.SelectBalance(user)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	json.NewEncoder(w).Encode(balance)
+
 	w.WriteHeader(http.StatusOK)
 }
 

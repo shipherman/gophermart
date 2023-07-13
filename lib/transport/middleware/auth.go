@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/shipherman/gophermart/lib/db"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -71,18 +73,25 @@ func CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		// Separate protocol from token
 		JWTarr := strings.Split(JWT, " ")
 
 		if JWTarr[0] != "Bearer" {
-			http.Error(w, "Auth method shoud be Bearer", http.StatusUnauthorized)
+			http.Error(w, "Auth protocol shoud be Bearer", http.StatusUnauthorized)
 			return
 		}
 
-		_, err := getUser(JWTarr[1])
+		// Get user
+		user, err := getUser(JWTarr[1])
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
 		}
+
+		// Add user as context parameter
+		ctx := chi.NewRouteContext()
+		ctx.URLParams.Add("user", user)
+		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
 
 		next.ServeHTTP(w, r)
 	})

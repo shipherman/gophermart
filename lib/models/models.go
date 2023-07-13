@@ -15,3 +15,8 @@ type Order struct {
 	Status    string
 	TimeStamp time.Time
 }
+
+type Balance struct {
+	Current   int `json:"current"`
+	Withdrawn int `json:"withdrawn"`
+}
