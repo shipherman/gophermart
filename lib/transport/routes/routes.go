@@ -11,15 +11,14 @@ import (
 func NewRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
-	router.Use(mid.Auth)
 	router.Get("/", handlers.HandleRoot)
 	router.Post("/api/user/register", handlers.HandleRegister)
 	router.Post("/api/user/login", handlers.HandleLogin)
-	router.Post("/api/user/orders", handlers.HandlePostOrders)
-	router.Get("/api/user/orders", handlers.HandleGetOrders)
-	router.Get("/api/user/balance", handlers.HandleBalance)
-	router.Post("/api/user/balance/withdraw", handlers.HandlePostWithdraw)
-	router.Get("/api/user/withdrawals", handlers.HandleGetWithdrawals)
+	router.Post("/api/user/orders", mid.CheckAuth(handlers.HandlePostOrders))
+	router.Get("/api/user/orders", mid.CheckAuth(handlers.HandleGetOrders))
+	router.Get("/api/user/balance", mid.CheckAuth(handlers.HandleBalance))
+	router.Post("/api/user/balance/withdraw", mid.CheckAuth(handlers.HandlePostWithdraw))
+	router.Get("/api/user/withdrawals", mid.CheckAuth(handlers.HandleGetWithdrawals))
 
 	return router
 }

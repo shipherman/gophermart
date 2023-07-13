@@ -6,6 +6,7 @@ import (
 
 	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/lib/db"
+	"github.com/shipherman/gophermart/lib/transport/middleware"
 )
 
 // Create handler instance
@@ -36,7 +37,22 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 // User login page
-func HandleLogin(w http.ResponseWriter, r *http.Request) {} // Use basic auth from chi?
+func HandleLogin(w http.ResponseWriter, r *http.Request) {
+	var u ent.User
+
+	err := json.NewDecoder(r.Body).Decode(&u)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	jwt, err := middleware.Auth(u.Login, u.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	w.Write([]byte(jwt))
+
+}
 
 // Get a list of user orders
 func HandleGetOrders(w http.ResponseWriter, r *http.Request) {}
@@ -45,7 +61,9 @@ func HandleGetOrders(w http.ResponseWriter, r *http.Request) {}
 func HandlePostOrders(w http.ResponseWriter, r *http.Request) {}
 
 // Get bonuses balance
-func HandleBalance(w http.ResponseWriter, r *http.Request) {}
+func HandleBalance(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
 
 // Pay with bonuses
 func HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {}
