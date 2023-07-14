@@ -3,8 +3,10 @@ package db
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/lib/acc"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -26,7 +28,9 @@ func InsertUser(newUser ent.User) error {
 
 func InsertOrder(newOrder models.Order) error {
 	client := GetClient()
+
 	// put order to accrual app
+	acc.ReqAccural()
 
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
@@ -37,6 +41,8 @@ func InsertOrder(newOrder models.Order) error {
 	order, err := client.Order.Create().
 		SetOrdernum(newOrder.OrderNum).
 		SetStatus(newOrder.Status).
+		SetAccural(33).
+		SetTimestamp(time.Now()).
 		SetUser(user).
 		Save(context.Background())
 

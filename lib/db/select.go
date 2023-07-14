@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/ent/user"
@@ -37,8 +38,12 @@ func SelectUserExistence(u, p string) (bool, error) {
 		return exist, err
 	}
 
+	if len(req) == 0 {
+		return exist, fmt.Errorf("user does not exist, please register")
+	}
+
 	if req[0].Password != p {
-		return exist, nil
+		return exist, fmt.Errorf("wrong password")
 	} else {
 		exist = true
 	}
@@ -54,6 +59,10 @@ func SelectUser(u string) (*ent.User, error) {
 		All(context.Background())
 	if err != nil {
 		return nil, err
+	}
+
+	if len(user) == 0 {
+		return nil, fmt.Errorf("user does not exitst, please register")
 	}
 
 	return user[0], nil
