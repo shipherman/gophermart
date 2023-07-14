@@ -11,6 +11,7 @@ import (
 func NewRouter() chi.Router {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
+	router.Use(middleware.Compress(1, "text/*", "application/*"))
 	router.Get("/", handlers.HandleRoot)
 	router.Post("/api/user/register", handlers.HandleRegister)
 	router.Post("/api/user/login", handlers.HandleLogin)
