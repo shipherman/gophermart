@@ -3,6 +3,8 @@
 package order
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shipherman/gophermart/ent/predicate"
@@ -58,9 +60,19 @@ func Ordernum(v int) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldOrdernum, v))
 }
 
+// Accural applies equality check predicate on the "accural" field. It's identical to AccuralEQ.
+func Accural(v int) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldAccural, v))
+}
+
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
 func Status(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldStatus, v))
+}
+
+// Timestamp applies equality check predicate on the "timestamp" field. It's identical to TimestampEQ.
+func Timestamp(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldTimestamp, v))
 }
 
 // OrdernumEQ applies the EQ predicate on the "ordernum" field.
@@ -101,6 +113,46 @@ func OrdernumLT(v int) predicate.Order {
 // OrdernumLTE applies the LTE predicate on the "ordernum" field.
 func OrdernumLTE(v int) predicate.Order {
 	return predicate.Order(sql.FieldLTE(FieldOrdernum, v))
+}
+
+// AccuralEQ applies the EQ predicate on the "accural" field.
+func AccuralEQ(v int) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldAccural, v))
+}
+
+// AccuralNEQ applies the NEQ predicate on the "accural" field.
+func AccuralNEQ(v int) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldAccural, v))
+}
+
+// AccuralIn applies the In predicate on the "accural" field.
+func AccuralIn(vs ...int) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldAccural, vs...))
+}
+
+// AccuralNotIn applies the NotIn predicate on the "accural" field.
+func AccuralNotIn(vs ...int) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldAccural, vs...))
+}
+
+// AccuralGT applies the GT predicate on the "accural" field.
+func AccuralGT(v int) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldAccural, v))
+}
+
+// AccuralGTE applies the GTE predicate on the "accural" field.
+func AccuralGTE(v int) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldAccural, v))
+}
+
+// AccuralLT applies the LT predicate on the "accural" field.
+func AccuralLT(v int) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldAccural, v))
+}
+
+// AccuralLTE applies the LTE predicate on the "accural" field.
+func AccuralLTE(v int) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldAccural, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
@@ -166,6 +218,46 @@ func StatusEqualFold(v string) predicate.Order {
 // StatusContainsFold applies the ContainsFold predicate on the "status" field.
 func StatusContainsFold(v string) predicate.Order {
 	return predicate.Order(sql.FieldContainsFold(FieldStatus, v))
+}
+
+// TimestampEQ applies the EQ predicate on the "timestamp" field.
+func TimestampEQ(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldTimestamp, v))
+}
+
+// TimestampNEQ applies the NEQ predicate on the "timestamp" field.
+func TimestampNEQ(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldTimestamp, v))
+}
+
+// TimestampIn applies the In predicate on the "timestamp" field.
+func TimestampIn(vs ...time.Time) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldTimestamp, vs...))
+}
+
+// TimestampNotIn applies the NotIn predicate on the "timestamp" field.
+func TimestampNotIn(vs ...time.Time) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldTimestamp, vs...))
+}
+
+// TimestampGT applies the GT predicate on the "timestamp" field.
+func TimestampGT(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldTimestamp, v))
+}
+
+// TimestampGTE applies the GTE predicate on the "timestamp" field.
+func TimestampGTE(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldTimestamp, v))
+}
+
+// TimestampLT applies the LT predicate on the "timestamp" field.
+func TimestampLT(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldTimestamp, v))
+}
+
+// TimestampLTE applies the LTE predicate on the "timestamp" field.
+func TimestampLTE(v time.Time) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldTimestamp, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

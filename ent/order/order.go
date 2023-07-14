@@ -14,8 +14,12 @@ const (
 	FieldID = "id"
 	// FieldOrdernum holds the string denoting the ordernum field in the database.
 	FieldOrdernum = "ordernum"
+	// FieldAccural holds the string denoting the accural field in the database.
+	FieldAccural = "accural"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldTimestamp holds the string denoting the timestamp field in the database.
+	FieldTimestamp = "timestamp"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the order in the database.
@@ -33,7 +37,9 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldOrdernum,
+	FieldAccural,
 	FieldStatus,
+	FieldTimestamp,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "orders"
@@ -70,9 +76,19 @@ func ByOrdernum(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrdernum, opts...).ToFunc()
 }
 
+// ByAccural orders the results by the accural field.
+func ByAccural(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccural, opts...).ToFunc()
+}
+
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByTimestamp orders the results by the timestamp field.
+func ByTimestamp(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimestamp, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

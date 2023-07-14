@@ -16,7 +16,9 @@ func (Order) Fields() []ent.Field {
 	return []ent.Field{
 		field.Int("ordernum").
 			Unique(),
+		field.Int("accural"),
 		field.String("status"),
+		field.Time("timestamp"),
 	}
 }
 

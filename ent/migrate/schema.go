@@ -12,7 +12,9 @@ var (
 	OrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "ordernum", Type: field.TypeInt, Unique: true},
+		{Name: "accural", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeString},
+		{Name: "timestamp", Type: field.TypeTime},
 		{Name: "user_orders", Type: field.TypeInt, Nullable: true},
 	}
 	// OrdersTable holds the schema information for the "orders" table.
@@ -23,7 +25,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "orders_users_orders",
-				Columns:    []*schema.Column{OrdersColumns[3]},
+				Columns:    []*schema.Column{OrdersColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -41,9 +42,28 @@ func (ou *OrderUpdate) AddOrdernum(i int) *OrderUpdate {
 	return ou
 }
 
+// SetAccural sets the "accural" field.
+func (ou *OrderUpdate) SetAccural(i int) *OrderUpdate {
+	ou.mutation.ResetAccural()
+	ou.mutation.SetAccural(i)
+	return ou
+}
+
+// AddAccural adds i to the "accural" field.
+func (ou *OrderUpdate) AddAccural(i int) *OrderUpdate {
+	ou.mutation.AddAccural(i)
+	return ou
+}
+
 // SetStatus sets the "status" field.
 func (ou *OrderUpdate) SetStatus(s string) *OrderUpdate {
 	ou.mutation.SetStatus(s)
+	return ou
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (ou *OrderUpdate) SetTimestamp(t time.Time) *OrderUpdate {
+	ou.mutation.SetTimestamp(t)
 	return ou
 }
 
@@ -119,8 +139,17 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ou.mutation.AddedOrdernum(); ok {
 		_spec.AddField(order.FieldOrdernum, field.TypeInt, value)
 	}
+	if value, ok := ou.mutation.Accural(); ok {
+		_spec.SetField(order.FieldAccural, field.TypeInt, value)
+	}
+	if value, ok := ou.mutation.AddedAccural(); ok {
+		_spec.AddField(order.FieldAccural, field.TypeInt, value)
+	}
 	if value, ok := ou.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := ou.mutation.Timestamp(); ok {
+		_spec.SetField(order.FieldTimestamp, field.TypeTime, value)
 	}
 	if ou.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -184,9 +213,28 @@ func (ouo *OrderUpdateOne) AddOrdernum(i int) *OrderUpdateOne {
 	return ouo
 }
 
+// SetAccural sets the "accural" field.
+func (ouo *OrderUpdateOne) SetAccural(i int) *OrderUpdateOne {
+	ouo.mutation.ResetAccural()
+	ouo.mutation.SetAccural(i)
+	return ouo
+}
+
+// AddAccural adds i to the "accural" field.
+func (ouo *OrderUpdateOne) AddAccural(i int) *OrderUpdateOne {
+	ouo.mutation.AddAccural(i)
+	return ouo
+}
+
 // SetStatus sets the "status" field.
 func (ouo *OrderUpdateOne) SetStatus(s string) *OrderUpdateOne {
 	ouo.mutation.SetStatus(s)
+	return ouo
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (ouo *OrderUpdateOne) SetTimestamp(t time.Time) *OrderUpdateOne {
+	ouo.mutation.SetTimestamp(t)
 	return ouo
 }
 
@@ -292,8 +340,17 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	if value, ok := ouo.mutation.AddedOrdernum(); ok {
 		_spec.AddField(order.FieldOrdernum, field.TypeInt, value)
 	}
+	if value, ok := ouo.mutation.Accural(); ok {
+		_spec.SetField(order.FieldAccural, field.TypeInt, value)
+	}
+	if value, ok := ouo.mutation.AddedAccural(); ok {
+		_spec.AddField(order.FieldAccural, field.TypeInt, value)
+	}
 	if value, ok := ouo.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)
+	}
+	if value, ok := ouo.mutation.Timestamp(); ok {
+		_spec.SetField(order.FieldTimestamp, field.TypeTime, value)
 	}
 	if ouo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

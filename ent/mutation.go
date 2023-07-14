@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"sync"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -36,7 +37,10 @@ type OrderMutation struct {
 	id            *int
 	ordernum      *int
 	addordernum   *int
+	accural       *int
+	addaccural    *int
 	status        *string
+	timestamp     *time.Time
 	clearedFields map[string]struct{}
 	user          *int
 	cleareduser   bool
@@ -199,6 +203,62 @@ func (m *OrderMutation) ResetOrdernum() {
 	m.addordernum = nil
 }
 
+// SetAccural sets the "accural" field.
+func (m *OrderMutation) SetAccural(i int) {
+	m.accural = &i
+	m.addaccural = nil
+}
+
+// Accural returns the value of the "accural" field in the mutation.
+func (m *OrderMutation) Accural() (r int, exists bool) {
+	v := m.accural
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAccural returns the old "accural" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldAccural(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAccural is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAccural requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAccural: %w", err)
+	}
+	return oldValue.Accural, nil
+}
+
+// AddAccural adds i to the "accural" field.
+func (m *OrderMutation) AddAccural(i int) {
+	if m.addaccural != nil {
+		*m.addaccural += i
+	} else {
+		m.addaccural = &i
+	}
+}
+
+// AddedAccural returns the value that was added to the "accural" field in this mutation.
+func (m *OrderMutation) AddedAccural() (r int, exists bool) {
+	v := m.addaccural
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAccural resets all changes to the "accural" field.
+func (m *OrderMutation) ResetAccural() {
+	m.accural = nil
+	m.addaccural = nil
+}
+
 // SetStatus sets the "status" field.
 func (m *OrderMutation) SetStatus(s string) {
 	m.status = &s
@@ -233,6 +293,42 @@ func (m *OrderMutation) OldStatus(ctx context.Context) (v string, err error) {
 // ResetStatus resets all changes to the "status" field.
 func (m *OrderMutation) ResetStatus() {
 	m.status = nil
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (m *OrderMutation) SetTimestamp(t time.Time) {
+	m.timestamp = &t
+}
+
+// Timestamp returns the value of the "timestamp" field in the mutation.
+func (m *OrderMutation) Timestamp() (r time.Time, exists bool) {
+	v := m.timestamp
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimestamp returns the old "timestamp" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldTimestamp(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimestamp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimestamp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimestamp: %w", err)
+	}
+	return oldValue.Timestamp, nil
+}
+
+// ResetTimestamp resets all changes to the "timestamp" field.
+func (m *OrderMutation) ResetTimestamp() {
+	m.timestamp = nil
 }
 
 // SetUserID sets the "user" edge to the User entity by id.
@@ -308,12 +404,18 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 4)
 	if m.ordernum != nil {
 		fields = append(fields, order.FieldOrdernum)
 	}
+	if m.accural != nil {
+		fields = append(fields, order.FieldAccural)
+	}
 	if m.status != nil {
 		fields = append(fields, order.FieldStatus)
+	}
+	if m.timestamp != nil {
+		fields = append(fields, order.FieldTimestamp)
 	}
 	return fields
 }
@@ -325,8 +427,12 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case order.FieldOrdernum:
 		return m.Ordernum()
+	case order.FieldAccural:
+		return m.Accural()
 	case order.FieldStatus:
 		return m.Status()
+	case order.FieldTimestamp:
+		return m.Timestamp()
 	}
 	return nil, false
 }
@@ -338,8 +444,12 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 	switch name {
 	case order.FieldOrdernum:
 		return m.OldOrdernum(ctx)
+	case order.FieldAccural:
+		return m.OldAccural(ctx)
 	case order.FieldStatus:
 		return m.OldStatus(ctx)
+	case order.FieldTimestamp:
+		return m.OldTimestamp(ctx)
 	}
 	return nil, fmt.Errorf("unknown Order field %s", name)
 }
@@ -356,12 +466,26 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrdernum(v)
 		return nil
+	case order.FieldAccural:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAccural(v)
+		return nil
 	case order.FieldStatus:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
+		return nil
+	case order.FieldTimestamp:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimestamp(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)
@@ -374,6 +498,9 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.addordernum != nil {
 		fields = append(fields, order.FieldOrdernum)
 	}
+	if m.addaccural != nil {
+		fields = append(fields, order.FieldAccural)
+	}
 	return fields
 }
 
@@ -384,6 +511,8 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case order.FieldOrdernum:
 		return m.AddedOrdernum()
+	case order.FieldAccural:
+		return m.AddedAccural()
 	}
 	return nil, false
 }
@@ -399,6 +528,13 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOrdernum(v)
+		return nil
+	case order.FieldAccural:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAccural(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
@@ -430,8 +566,14 @@ func (m *OrderMutation) ResetField(name string) error {
 	case order.FieldOrdernum:
 		m.ResetOrdernum()
 		return nil
+	case order.FieldAccural:
+		m.ResetAccural()
+		return nil
 	case order.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case order.FieldTimestamp:
+		m.ResetTimestamp()
 		return nil
 	}
 	return fmt.Errorf("unknown Order field %s", name)

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -26,9 +27,21 @@ func (oc *OrderCreate) SetOrdernum(i int) *OrderCreate {
 	return oc
 }
 
+// SetAccural sets the "accural" field.
+func (oc *OrderCreate) SetAccural(i int) *OrderCreate {
+	oc.mutation.SetAccural(i)
+	return oc
+}
+
 // SetStatus sets the "status" field.
 func (oc *OrderCreate) SetStatus(s string) *OrderCreate {
 	oc.mutation.SetStatus(s)
+	return oc
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (oc *OrderCreate) SetTimestamp(t time.Time) *OrderCreate {
+	oc.mutation.SetTimestamp(t)
 	return oc
 }
 
@@ -88,8 +101,14 @@ func (oc *OrderCreate) check() error {
 	if _, ok := oc.mutation.Ordernum(); !ok {
 		return &ValidationError{Name: "ordernum", err: errors.New(`ent: missing required field "Order.ordernum"`)}
 	}
+	if _, ok := oc.mutation.Accural(); !ok {
+		return &ValidationError{Name: "accural", err: errors.New(`ent: missing required field "Order.accural"`)}
+	}
 	if _, ok := oc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Order.status"`)}
+	}
+	if _, ok := oc.mutation.Timestamp(); !ok {
+		return &ValidationError{Name: "timestamp", err: errors.New(`ent: missing required field "Order.timestamp"`)}
 	}
 	return nil
 }
@@ -121,9 +140,17 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.SetField(order.FieldOrdernum, field.TypeInt, value)
 		_node.Ordernum = value
 	}
+	if value, ok := oc.mutation.Accural(); ok {
+		_spec.SetField(order.FieldAccural, field.TypeInt, value)
+		_node.Accural = value
+	}
 	if value, ok := oc.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)
 		_node.Status = value
+	}
+	if value, ok := oc.mutation.Timestamp(); ok {
+		_spec.SetField(order.FieldTimestamp, field.TypeTime, value)
+		_node.Timestamp = value
 	}
 	if nodes := oc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

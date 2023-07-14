@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -19,8 +20,12 @@ type Order struct {
 	ID int `json:"id,omitempty"`
 	// Ordernum holds the value of the "ordernum" field.
 	Ordernum int `json:"ordernum,omitempty"`
+	// Accural holds the value of the "accural" field.
+	Accural int `json:"accural,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
+	// Timestamp holds the value of the "timestamp" field.
+	Timestamp time.Time `json:"timestamp,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the OrderQuery when eager-loading is set.
 	Edges        OrderEdges `json:"edges"`
@@ -55,10 +60,12 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldOrdernum:
+		case order.FieldID, order.FieldOrdernum, order.FieldAccural:
 			values[i] = new(sql.NullInt64)
 		case order.FieldStatus:
 			values[i] = new(sql.NullString)
+		case order.FieldTimestamp:
+			values[i] = new(sql.NullTime)
 		case order.ForeignKeys[0]: // user_orders
 			values[i] = new(sql.NullInt64)
 		default:
@@ -88,11 +95,23 @@ func (o *Order) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				o.Ordernum = int(value.Int64)
 			}
+		case order.FieldAccural:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field accural", values[i])
+			} else if value.Valid {
+				o.Accural = int(value.Int64)
+			}
 		case order.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				o.Status = value.String
+			}
+		case order.FieldTimestamp:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field timestamp", values[i])
+			} else if value.Valid {
+				o.Timestamp = value.Time
 			}
 		case order.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -145,8 +164,14 @@ func (o *Order) String() string {
 	builder.WriteString("ordernum=")
 	builder.WriteString(fmt.Sprintf("%v", o.Ordernum))
 	builder.WriteString(", ")
+	builder.WriteString("accural=")
+	builder.WriteString(fmt.Sprintf("%v", o.Accural))
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(o.Status)
+	builder.WriteString(", ")
+	builder.WriteString("timestamp=")
+	builder.WriteString(o.Timestamp.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }
