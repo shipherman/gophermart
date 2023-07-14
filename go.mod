@@ -5,6 +5,7 @@ go 1.20
 require (
 	entgo.io/ent v0.12.3
 	github.com/go-chi/chi/v5 v5.0.8
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/lib/pq v1.10.9
 	github.com/spf13/cobra v1.7.0
@@ -25,5 +26,6 @@ require (
 	github.com/stretchr/testify v1.8.3 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/mod v0.10.0 // indirect
+	golang.org/x/net v0.0.0-20211029224645-99673261e6eb // indirect
 	golang.org/x/text v0.9.0 // indirect
 )
