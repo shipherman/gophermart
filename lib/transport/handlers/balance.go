@@ -11,7 +11,7 @@ import (
 
 // Get bonuses balance
 func HandleBalance(w http.ResponseWriter, r *http.Request) {
-	var balance models.Balance
+	var balance models.BalanceResponse
 	var err error
 
 	// Execute user from context

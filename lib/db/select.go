@@ -9,7 +9,7 @@ import (
 )
 
 // Get bonuses balance for provided user
-func SelectBalance(u string) (response models.Balance, err error) {
+func SelectBalance(u string) (response models.BalanceResponse, err error) {
 	client := GetClient()
 	req, err := client.User.
 		Query().

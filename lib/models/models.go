@@ -10,13 +10,18 @@ type User struct {
 }
 
 type Order struct {
+	User     string
+	OrderNum int
+	Status   string
+}
+type OrderResponse struct {
 	OrderNum  int       `json:"number"`
 	Status    string    `json:"status"`
 	Accural   int       `json:"accural"`
 	TimeStamp time.Time `json:"uploaded_at"`
 }
 
-type Balance struct {
+type BalanceResponse struct {
 	Current   int `json:"current"`
 	Withdrawn int `json:"withdrawn"`
 }
