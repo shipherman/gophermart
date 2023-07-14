@@ -14,7 +14,7 @@ var (
 		{Name: "ordernum", Type: field.TypeInt, Unique: true},
 		{Name: "accural", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeString},
-		{Name: "timestamp", Type: field.TypeTime},
+		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp with time zone"}},
 		{Name: "user_orders", Type: field.TypeInt, Nullable: true},
 	}
 	// OrdersTable holds the schema information for the "orders" table.

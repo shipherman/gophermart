@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -18,7 +19,9 @@ func (Order) Fields() []ent.Field {
 			Unique(),
 		field.Int("accural"),
 		field.String("status"),
-		field.Time("timestamp"),
+		field.Time("timestamp").SchemaType(map[string]string{
+			dialect.Postgres: "timestamp with time zone",
+		}),
 	}
 }
 
