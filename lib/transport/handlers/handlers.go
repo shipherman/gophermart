@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/lib/db"
@@ -58,10 +61,40 @@ func HandleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 // Get a list of user orders
-func HandleGetOrders(w http.ResponseWriter, r *http.Request) {}
+func HandleGetOrders(w http.ResponseWriter, r *http.Request) {
+
+}
 
 // Create a new order
-func HandlePostOrders(w http.ResponseWriter, r *http.Request) {}
+func HandlePostOrders(w http.ResponseWriter, r *http.Request) {
+	var buf bytes.Buffer
+	var newOrder models.Order
+
+	_, err := buf.ReadFrom(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	newOrder.User = chi.URLParam(r, "user")
+	newOrder.OrderNum, err = strconv.Atoi(buf.String())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Send order num to get bonus
+
+	// Save order to db
+	err = db.InsertOrder(newOrder)
+	if err != nil {
+		fmt.Println(err)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+}
 
 // Get bonuses balance
 func HandleBalance(w http.ResponseWriter, r *http.Request) {

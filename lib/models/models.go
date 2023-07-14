@@ -10,8 +10,8 @@ type User struct {
 }
 
 type Order struct {
-	ID        int
-	UserID    int
+	OrderNum  int
+	User      string
 	Status    string
 	TimeStamp time.Time
 }

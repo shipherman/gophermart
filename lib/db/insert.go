@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/lib/models"
 )
 
 func InsertUser(newUser ent.User) error {
@@ -23,15 +24,26 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder ent.Order) error {
-	// client := GetClient()
+func InsertOrder(newOrder models.Order) error {
+	client := GetClient()
 	// put order to accrual app
 
-	// save data to db
-	// order, err := client.Order.Create().
-	// 	SetOrdernum(newOrder.Ordernum).
-	// 	SetStatus(newOrder.Status).
-	// 	SetUser()
+	user, err := SelectUser(newOrder.User)
+	if err != nil {
+		return err
+	}
 
+	//save data to db
+	order, err := client.Order.Create().
+		SetOrdernum(newOrder.OrderNum).
+		SetStatus(newOrder.Status).
+		SetUser(user).
+		Save(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(order)
 	return nil
 }

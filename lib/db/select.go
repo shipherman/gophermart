@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 
+	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/ent/user"
 	"github.com/shipherman/gophermart/lib/models"
 )
@@ -43,4 +44,17 @@ func SelectUserExistence(u, p string) (bool, error) {
 	}
 
 	return exist, nil
+}
+
+func SelectUser(u string) (*ent.User, error) {
+	client := GetClient()
+	user, err := client.User.
+		Query().
+		Where(user.LoginEQ(u)).
+		All(context.Background())
+	if err != nil {
+		return nil, err
+	}
+
+	return user[0], nil
 }
