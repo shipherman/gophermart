@@ -30,7 +30,10 @@ func InsertOrder(newOrder models.Order) error {
 	client := GetClient()
 
 	// put order to accrual app
-	acc.ReqAccural()
+	err := acc.ReqAccural(newOrder.OrderNum)
+	if err != nil {
+		return err
+	}
 
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
