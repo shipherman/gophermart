@@ -9,13 +9,9 @@ type User struct {
 	Password string `json:"password"`
 }
 
-type Order struct {
-	User     string
-	OrderNum int
-	Status   string
-}
 type OrderResponse struct {
 	OrderNum  int       `json:"number"`
+	User      string    `json:"-"`
 	Status    string    `json:"status"`
 	Accural   int       `json:"accural"`
 	TimeStamp time.Time `json:"uploaded_at"`
