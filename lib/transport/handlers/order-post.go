@@ -14,7 +14,7 @@ import (
 // Create a new order
 func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	var buf bytes.Buffer
-	var newOrder models.Order
+	var newOrder models.OrderResponse
 
 	_, err := buf.ReadFrom(r.Body)
 	if err != nil {

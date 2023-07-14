@@ -26,26 +26,31 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder models.Order) error {
+func InsertOrder(newOrder models.OrderResponse) error {
 	client := GetClient()
 
-	// put order to accrual app
-	err := acc.ReqAccural(newOrder.OrderNum)
+	// put orderResp to accrual app
+	accResp, err := acc.ReqAccural(newOrder.OrderNum)
 	if err != nil {
 		return err
 	}
 
+	newOrder.Status = accResp.Status
+	newOrder.Accural = accResp.Accural
+	newOrder.TimeStamp = time.Now()
+
+	// Get ent User struct
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
 		return err
 	}
 
-	//save data to db
-	order, err := client.Order.Create().
+	// Save new Order to db
+	entOrder, err := client.Order.Create().
 		SetOrdernum(newOrder.OrderNum).
 		SetStatus(newOrder.Status).
-		SetAccural(33).
-		SetTimestamp(time.Now()).
+		SetAccural(newOrder.Accural).
+		SetTimestamp(newOrder.TimeStamp).
 		SetUser(user).
 		Save(context.Background())
 
@@ -53,6 +58,6 @@ func InsertOrder(newOrder models.Order) error {
 		return err
 	}
 
-	fmt.Println(order)
+	fmt.Println(entOrder)
 	return nil
 }

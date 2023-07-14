@@ -61,9 +61,5 @@ func SelectUser(u string) (*ent.User, error) {
 		return nil, err
 	}
 
-	if len(user) == 0 {
-		return nil, fmt.Errorf("user does not exitst, please register")
-	}
-
 	return user[0], nil
 }
