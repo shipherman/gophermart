@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
 	"github.com/shipherman/gophermart/lib/models"
 )
@@ -62,4 +63,46 @@ func SelectUser(u string) (*ent.User, error) {
 	}
 
 	return user[0], nil
+}
+
+func SelectOrderOwner(on int) (string, error) {
+	client := GetClient()
+	order, err := client.Order.
+		Query().
+		Where(order.OrdernumEQ(on)).
+		All(context.Background())
+	if err != nil || len(order) == 0 {
+		return "", err
+	}
+
+	u, err := order[0].QueryUser().All(context.Background())
+	if err != nil {
+		return "", err
+	}
+
+	return u[0].Login, nil
+}
+
+func SelectOrders(u string) ([]models.OrderResponse, error) {
+	var orderResp []models.OrderResponse
+
+	client := GetClient()
+	entOrder, err := client.Order.
+		Query().
+		Where(order.HasUserWith(user.Login(u))).
+		All(context.Background())
+	if err != nil {
+		return orderResp, err
+	}
+
+	for _, o := range entOrder {
+		var order models.OrderResponse
+		order.Accural = o.Accural
+		order.OrderNum = o.Ordernum
+		order.Status = o.Status
+		order.TimeStamp = o.Timestamp
+		orderResp = append(orderResp, order)
+	}
+
+	return orderResp, nil
 }
