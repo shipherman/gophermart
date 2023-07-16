@@ -4,19 +4,22 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
+	"github.com/caarlos0/env/v8"
 	"github.com/spf13/cobra"
 )
 
 type Options struct {
-	DSN     string
-	Accural string
-	Address string
+	DSN     string `env:"DATABASE_URI"`
+	Accural string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	Address string `env:"RUN_ADDRESS"`
 }
 
 var cfg Options
@@ -44,13 +47,14 @@ func Execute() {
 		os.Exit(1)
 	}
 
-	client := db.NewClient()
+	client := db.NewClient(cfg.DSN)
 	defer client.Close()
 
 	db.SetClient(client)
 
+	fmt.Println(cfg.Address)
 	router := routes.NewRouter()
-	http.ListenAndServe(":9090", router)
+	log.Fatal(http.ListenAndServe(cfg.Address, router))
 }
 
 func init() {
@@ -58,10 +62,16 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
+	// Read Environment variables
+	err := env.Parse(&cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gophermart.yaml)")
-	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost, port=port", "DataBase connection string")
-	rootCmd.PersistentFlags().StringVarP(&cfg.Accural, "accural", "r", "http://localhost:8080", "Accural service address")
-	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "http://localhost:9090", "Gophermart address string")
+	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable", "DataBase connection string")
+	rootCmd.PersistentFlags().StringVarP(&cfg.Accural, "accural", "r", "localhost:8080", "Accural service address")
+	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/shipherman/gophermart/ent"
-	"github.com/shipherman/gophermart/lib/acc"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -26,23 +26,24 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder models.OrderResponse) error {
+func InsertOrder(newOrder models.OrderResponse) (exist bool, err error) {
+
 	client := GetClient()
 
-	// put orderResp to accrual app
-	accResp, err := acc.ReqAccural(newOrder.OrderNum)
-	if err != nil {
-		return err
-	}
+	// // put orderResp to accrual app
+	// accResp, err := acc.ReqAccural(newOrder.OrderNum)
+	// if err != nil {
+	// 	return exist, err
+	// }
 
-	newOrder.Status = accResp.Status
-	newOrder.Accural = accResp.Accural
+	// newOrder.Status = accResp.Status
+	// newOrder.Accural = accResp.Accural
 	newOrder.TimeStamp = time.Now()
 
 	// Get ent User struct
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
-		return err
+		return exist, err
 	}
 
 	// Save new Order to db
@@ -55,9 +56,12 @@ func InsertOrder(newOrder models.OrderResponse) error {
 		Save(context.Background())
 
 	if err != nil {
-		return err
+		if strings.Contains(err.Error(), "exist") {
+			exist = true
+		}
+		return exist, err
 	}
 
 	fmt.Println(entOrder)
-	return nil
+	return exist, nil
 }

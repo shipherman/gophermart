@@ -11,15 +11,16 @@ import (
 
 var entClient *ent.Client
 
-func NewClient() *ent.Client {
+func NewClient(connString string) *ent.Client {
 	//Open a connection to the database
-	entClient, err := ent.Open("postgres", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable")
+	entClient, err := ent.Open("postgres", connString)
 	if err != nil {
 		log.Fatal(err)
 		return nil
 	}
 
 	fmt.Println("Connected to database successfully")
+
 	// defer EntClient.Close()
 	// AutoMigration with ENT
 	if err := entClient.Schema.Create(context.Background()); err != nil {

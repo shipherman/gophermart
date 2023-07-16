@@ -45,8 +45,12 @@ func ReqAccural(orderNum int) (order models.OrderResponse, err error) {
 		return order, nil
 	// заказ не зарегистрирован в системе расчёта
 	case 204:
+		order.Status = "IVALID"
+		return order, nil
 	// превышено количество запросов к сервису
 	case 429:
+		order.Status = "PROCESSING"
+		return order, nil
 	// внутренняя ошибка сервера
 	case 500:
 	case 404:
