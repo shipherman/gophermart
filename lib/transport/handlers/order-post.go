@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"bytes"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,15 +28,22 @@ func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Send order num to get bonus
-
-	// Save order to db
-	err = db.InsertOrder(newOrder)
+	u, err := db.SelectOrderOwner(newOrder.OrderNum)
 	if err != nil {
-		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
+	switch u {
+	case "":
+		w.WriteHeader(http.StatusAccepted)
+		go db.InsertOrder(newOrder)
+	case newOrder.User:
+		w.WriteHeader(http.StatusOK)
+		return
+	default:
+		w.WriteHeader(http.StatusConflict)
+		return
+	}
+
 }
