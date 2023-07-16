@@ -14,7 +14,9 @@ import (
 )
 
 type Options struct {
-	DSN string
+	DSN     string
+	Accural string
+	Address string
 }
 
 var cfg Options
@@ -57,7 +59,9 @@ func init() {
 	// will be global for your application.
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gophermart.yaml)")
-	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost, port=port", "Connection string")
+	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost, port=port", "DataBase connection string")
+	rootCmd.PersistentFlags().StringVarP(&cfg.Accural, "accural", "r", "http://localhost:8080", "Accural service address")
+	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "http://localhost:9090", "Gophermart address string")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
