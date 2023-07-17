@@ -70,10 +70,14 @@ func InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
 	if err != nil {
 		return err
 	}
+
+	newWithdraw.TimeStamp = time.Now()
+	fmt.Println(newWithdraw.TimeStamp.String())
+
 	_, err = client.Withdrawals.Create().
 		SetOrder(newWithdraw.OrderNum).
 		SetSum(newWithdraw.Sum).
-		SetTimestamp(time.Now()).
+		SetTimestamp(newWithdraw.TimeStamp).
 		SetUser(user).
 		Save(context.Background())
 

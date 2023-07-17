@@ -19,7 +19,7 @@ func (Withdrawals) Fields() []ent.Field {
 			Unique(),
 		field.Int("sum"),
 		field.Time("timestamp").SchemaType(map[string]string{
-			dialect.Postgres: "timestamp with time zone",
+			dialect.Postgres: "timestamptz",
 		}),
 	}
 }

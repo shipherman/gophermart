@@ -16,6 +16,12 @@ func HandleGetOrders(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
+
+	if len(orders) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
 	w.Header().Set("Content-Type", "applicaion/json")
 	json.NewEncoder(w).Encode(orders)
 }

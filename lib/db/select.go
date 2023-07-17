@@ -121,11 +121,12 @@ func SelectWithdrawals(u string) ([]models.WithdrawResponse, error) {
 	}
 
 	for _, w := range entWs {
+		fmt.Println()
 		var wdraw models.WithdrawResponse
 		wdraw.OrderNum = w.Order
 		wdraw.Sum = w.Sum
+		wdraw.TimeStamp = w.Timestamp
 		wsResp = append(wsResp, wdraw)
 	}
-
 	return wsResp, nil
 }
