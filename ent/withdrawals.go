@@ -5,6 +5,7 @@ package ent
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -21,6 +22,8 @@ type Withdrawals struct {
 	Order int `json:"order,omitempty"`
 	// Sum holds the value of the "sum" field.
 	Sum int `json:"sum,omitempty"`
+	// Timestamp holds the value of the "timestamp" field.
+	Timestamp time.Time `json:"timestamp,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the WithdrawalsQuery when eager-loading is set.
 	Edges            WithdrawalsEdges `json:"edges"`
@@ -57,6 +60,8 @@ func (*Withdrawals) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case withdrawals.FieldID, withdrawals.FieldOrder, withdrawals.FieldSum:
 			values[i] = new(sql.NullInt64)
+		case withdrawals.FieldTimestamp:
+			values[i] = new(sql.NullTime)
 		case withdrawals.ForeignKeys[0]: // user_withdrawals
 			values[i] = new(sql.NullInt64)
 		default:
@@ -91,6 +96,12 @@ func (w *Withdrawals) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field sum", values[i])
 			} else if value.Valid {
 				w.Sum = int(value.Int64)
+			}
+		case withdrawals.FieldTimestamp:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field timestamp", values[i])
+			} else if value.Valid {
+				w.Timestamp = value.Time
 			}
 		case withdrawals.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -145,6 +156,9 @@ func (w *Withdrawals) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("sum=")
 	builder.WriteString(fmt.Sprintf("%v", w.Sum))
+	builder.WriteString(", ")
+	builder.WriteString("timestamp=")
+	builder.WriteString(w.Timestamp.Format(time.ANSIC))
 	builder.WriteByte(')')
 	return builder.String()
 }

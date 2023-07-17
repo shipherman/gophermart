@@ -63,16 +63,17 @@ func InsertOrder(newOrder models.OrderResponse) error {
 
 }
 
-func InsertWithdraw(newWithdraw models.Withdraw) error {
+func InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
 	client := GetClient()
 
-	user, err := SelectUser(newWithdraw.User)
+	user, err := SelectUser(u)
 	if err != nil {
 		return err
 	}
 	_, err = client.Withdrawals.Create().
 		SetOrder(newWithdraw.OrderNum).
 		SetSum(newWithdraw.Sum).
+		SetTimestamp(time.Now()).
 		SetUser(user).
 		Save(context.Background())
 

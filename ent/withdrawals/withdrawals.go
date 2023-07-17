@@ -16,6 +16,8 @@ const (
 	FieldOrder = "order"
 	// FieldSum holds the string denoting the sum field in the database.
 	FieldSum = "sum"
+	// FieldTimestamp holds the string denoting the timestamp field in the database.
+	FieldTimestamp = "timestamp"
 	// EdgeUser holds the string denoting the user edge name in mutations.
 	EdgeUser = "user"
 	// Table holds the table name of the withdrawals in the database.
@@ -34,6 +36,7 @@ var Columns = []string{
 	FieldID,
 	FieldOrder,
 	FieldSum,
+	FieldTimestamp,
 }
 
 // ForeignKeys holds the SQL foreign-keys that are owned by the "withdrawals"
@@ -73,6 +76,11 @@ func ByOrder(opts ...sql.OrderTermOption) OrderOption {
 // BySum orders the results by the sum field.
 func BySum(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSum, opts...).ToFunc()
+}
+
+// ByTimestamp orders the results by the timestamp field.
+func ByTimestamp(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTimestamp, opts...).ToFunc()
 }
 
 // ByUserField orders the results by user field.

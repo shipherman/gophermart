@@ -7,6 +7,7 @@ import (
 	"github.com/shipherman/gophermart/ent"
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/ent/withdrawals"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -105,4 +106,26 @@ func SelectOrders(u string) ([]models.OrderResponse, error) {
 	}
 
 	return orderResp, nil
+}
+
+func SelectWithdrawals(u string) ([]models.WithdrawResponse, error) {
+	var wsResp []models.WithdrawResponse
+
+	client := GetClient()
+	entWs, err := client.Withdrawals.
+		Query().
+		Where(withdrawals.HasUserWith(user.Login(u))).
+		All(context.Background())
+	if err != nil {
+		return wsResp, err
+	}
+
+	for _, w := range entWs {
+		var wdraw models.WithdrawResponse
+		wdraw.OrderNum = w.Order
+		wdraw.Sum = w.Sum
+		wsResp = append(wsResp, wdraw)
+	}
+
+	return wsResp, nil
 }

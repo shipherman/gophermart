@@ -20,9 +20,13 @@ func HandleBalance(w http.ResponseWriter, r *http.Request) {
 	balance, err = db.SelectBalance(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	json.NewEncoder(w).Encode(balance)
-
+	err = json.NewEncoder(w).Encode(balance)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 }

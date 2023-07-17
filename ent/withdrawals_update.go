@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -51,6 +52,12 @@ func (wu *WithdrawalsUpdate) SetSum(i int) *WithdrawalsUpdate {
 // AddSum adds i to the "sum" field.
 func (wu *WithdrawalsUpdate) AddSum(i int) *WithdrawalsUpdate {
 	wu.mutation.AddSum(i)
+	return wu
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (wu *WithdrawalsUpdate) SetTimestamp(t time.Time) *WithdrawalsUpdate {
+	wu.mutation.SetTimestamp(t)
 	return wu
 }
 
@@ -132,6 +139,9 @@ func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := wu.mutation.AddedSum(); ok {
 		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
 	}
+	if value, ok := wu.mutation.Timestamp(); ok {
+		_spec.SetField(withdrawals.FieldTimestamp, field.TypeTime, value)
+	}
 	if wu.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -204,6 +214,12 @@ func (wuo *WithdrawalsUpdateOne) SetSum(i int) *WithdrawalsUpdateOne {
 // AddSum adds i to the "sum" field.
 func (wuo *WithdrawalsUpdateOne) AddSum(i int) *WithdrawalsUpdateOne {
 	wuo.mutation.AddSum(i)
+	return wuo
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (wuo *WithdrawalsUpdateOne) SetTimestamp(t time.Time) *WithdrawalsUpdateOne {
+	wuo.mutation.SetTimestamp(t)
 	return wuo
 }
 
@@ -314,6 +330,9 @@ func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawal
 	}
 	if value, ok := wuo.mutation.AddedSum(); ok {
 		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
+	}
+	if value, ok := wuo.mutation.Timestamp(); ok {
+		_spec.SetField(withdrawals.FieldTimestamp, field.TypeTime, value)
 	}
 	if wuo.mutation.UserCleared() {
 		edge := &sqlgraph.EdgeSpec{

@@ -1398,6 +1398,7 @@ type WithdrawalsMutation struct {
 	add_order     *int
 	sum           *int
 	addsum        *int
+	timestamp     *time.Time
 	clearedFields map[string]struct{}
 	user          *int
 	cleareduser   bool
@@ -1616,6 +1617,42 @@ func (m *WithdrawalsMutation) ResetSum() {
 	m.addsum = nil
 }
 
+// SetTimestamp sets the "timestamp" field.
+func (m *WithdrawalsMutation) SetTimestamp(t time.Time) {
+	m.timestamp = &t
+}
+
+// Timestamp returns the value of the "timestamp" field in the mutation.
+func (m *WithdrawalsMutation) Timestamp() (r time.Time, exists bool) {
+	v := m.timestamp
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTimestamp returns the old "timestamp" field's value of the Withdrawals entity.
+// If the Withdrawals object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WithdrawalsMutation) OldTimestamp(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTimestamp is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTimestamp requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTimestamp: %w", err)
+	}
+	return oldValue.Timestamp, nil
+}
+
+// ResetTimestamp resets all changes to the "timestamp" field.
+func (m *WithdrawalsMutation) ResetTimestamp() {
+	m.timestamp = nil
+}
+
 // SetUserID sets the "user" edge to the User entity by id.
 func (m *WithdrawalsMutation) SetUserID(id int) {
 	m.user = &id
@@ -1689,12 +1726,15 @@ func (m *WithdrawalsMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WithdrawalsMutation) Fields() []string {
-	fields := make([]string, 0, 2)
+	fields := make([]string, 0, 3)
 	if m._order != nil {
 		fields = append(fields, withdrawals.FieldOrder)
 	}
 	if m.sum != nil {
 		fields = append(fields, withdrawals.FieldSum)
+	}
+	if m.timestamp != nil {
+		fields = append(fields, withdrawals.FieldTimestamp)
 	}
 	return fields
 }
@@ -1708,6 +1748,8 @@ func (m *WithdrawalsMutation) Field(name string) (ent.Value, bool) {
 		return m.Order()
 	case withdrawals.FieldSum:
 		return m.Sum()
+	case withdrawals.FieldTimestamp:
+		return m.Timestamp()
 	}
 	return nil, false
 }
@@ -1721,6 +1763,8 @@ func (m *WithdrawalsMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldOrder(ctx)
 	case withdrawals.FieldSum:
 		return m.OldSum(ctx)
+	case withdrawals.FieldTimestamp:
+		return m.OldTimestamp(ctx)
 	}
 	return nil, fmt.Errorf("unknown Withdrawals field %s", name)
 }
@@ -1743,6 +1787,13 @@ func (m *WithdrawalsMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSum(v)
+		return nil
+	case withdrawals.FieldTimestamp:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTimestamp(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Withdrawals field %s", name)
@@ -1825,6 +1876,9 @@ func (m *WithdrawalsMutation) ResetField(name string) error {
 		return nil
 	case withdrawals.FieldSum:
 		m.ResetSum()
+		return nil
+	case withdrawals.FieldTimestamp:
+		m.ResetTimestamp()
 		return nil
 	}
 	return fmt.Errorf("unknown Withdrawals field %s", name)

@@ -2,6 +2,7 @@ package schema
 
 import (
 	"entgo.io/ent"
+	"entgo.io/ent/dialect"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -17,6 +18,9 @@ func (Withdrawals) Fields() []ent.Field {
 		field.Int("order").
 			Unique(),
 		field.Int("sum"),
+		field.Time("timestamp").SchemaType(map[string]string{
+			dialect.Postgres: "timestamp with time zone",
+		}),
 	}
 }
 

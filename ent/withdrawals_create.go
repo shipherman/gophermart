@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -29,6 +30,12 @@ func (wc *WithdrawalsCreate) SetOrder(i int) *WithdrawalsCreate {
 // SetSum sets the "sum" field.
 func (wc *WithdrawalsCreate) SetSum(i int) *WithdrawalsCreate {
 	wc.mutation.SetSum(i)
+	return wc
+}
+
+// SetTimestamp sets the "timestamp" field.
+func (wc *WithdrawalsCreate) SetTimestamp(t time.Time) *WithdrawalsCreate {
+	wc.mutation.SetTimestamp(t)
 	return wc
 }
 
@@ -91,6 +98,9 @@ func (wc *WithdrawalsCreate) check() error {
 	if _, ok := wc.mutation.Sum(); !ok {
 		return &ValidationError{Name: "sum", err: errors.New(`ent: missing required field "Withdrawals.sum"`)}
 	}
+	if _, ok := wc.mutation.Timestamp(); !ok {
+		return &ValidationError{Name: "timestamp", err: errors.New(`ent: missing required field "Withdrawals.timestamp"`)}
+	}
 	return nil
 }
 
@@ -124,6 +134,10 @@ func (wc *WithdrawalsCreate) createSpec() (*Withdrawals, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.Sum(); ok {
 		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
 		_node.Sum = value
+	}
+	if value, ok := wc.mutation.Timestamp(); ok {
+		_spec.SetField(withdrawals.FieldTimestamp, field.TypeTime, value)
+		_node.Timestamp = value
 	}
 	if nodes := wc.mutation.UserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

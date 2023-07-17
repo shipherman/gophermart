@@ -3,6 +3,8 @@
 package withdrawals
 
 import (
+	"time"
+
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shipherman/gophermart/ent/predicate"
@@ -61,6 +63,11 @@ func Order(v int) predicate.Withdrawals {
 // Sum applies equality check predicate on the "sum" field. It's identical to SumEQ.
 func Sum(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldSum, v))
+}
+
+// Timestamp applies equality check predicate on the "timestamp" field. It's identical to TimestampEQ.
+func Timestamp(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldEQ(FieldTimestamp, v))
 }
 
 // OrderEQ applies the EQ predicate on the "order" field.
@@ -141,6 +148,46 @@ func SumLT(v int) predicate.Withdrawals {
 // SumLTE applies the LTE predicate on the "sum" field.
 func SumLTE(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLTE(FieldSum, v))
+}
+
+// TimestampEQ applies the EQ predicate on the "timestamp" field.
+func TimestampEQ(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldEQ(FieldTimestamp, v))
+}
+
+// TimestampNEQ applies the NEQ predicate on the "timestamp" field.
+func TimestampNEQ(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldNEQ(FieldTimestamp, v))
+}
+
+// TimestampIn applies the In predicate on the "timestamp" field.
+func TimestampIn(vs ...time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldIn(FieldTimestamp, vs...))
+}
+
+// TimestampNotIn applies the NotIn predicate on the "timestamp" field.
+func TimestampNotIn(vs ...time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldNotIn(FieldTimestamp, vs...))
+}
+
+// TimestampGT applies the GT predicate on the "timestamp" field.
+func TimestampGT(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldGT(FieldTimestamp, v))
+}
+
+// TimestampGTE applies the GTE predicate on the "timestamp" field.
+func TimestampGTE(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldGTE(FieldTimestamp, v))
+}
+
+// TimestampLT applies the LT predicate on the "timestamp" field.
+func TimestampLT(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldLT(FieldTimestamp, v))
+}
+
+// TimestampLTE applies the LTE predicate on the "timestamp" field.
+func TimestampLTE(v time.Time) predicate.Withdrawals {
+	return predicate.Withdrawals(sql.FieldLTE(FieldTimestamp, v))
 }
 
 // HasUser applies the HasEdge predicate on the "user" edge.

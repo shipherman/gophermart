@@ -50,6 +50,7 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "order", Type: field.TypeInt, Unique: true},
 		{Name: "sum", Type: field.TypeInt},
+		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamp with time zone"}},
 		{Name: "user_withdrawals", Type: field.TypeInt, Nullable: true},
 	}
 	// WithdrawalsTable holds the schema information for the "withdrawals" table.
@@ -60,7 +61,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "withdrawals_users_withdrawals",
-				Columns:    []*schema.Column{WithdrawalsColumns[3]},
+				Columns:    []*schema.Column{WithdrawalsColumns[4]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
