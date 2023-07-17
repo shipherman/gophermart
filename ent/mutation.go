@@ -658,22 +658,25 @@ func (m *OrderMutation) ResetEdge(name string) error {
 // UserMutation represents an operation that mutates the User nodes in the graph.
 type UserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *int
-	login         *string
-	password      *string
-	balance       *int
-	addbalance    *int
-	withdraw      *int
-	addwithdraw   *int
-	clearedFields map[string]struct{}
-	orders        map[int]struct{}
-	removedorders map[int]struct{}
-	clearedorders bool
-	done          bool
-	oldValue      func(context.Context) (*User, error)
-	predicates    []predicate.User
+	op                 Op
+	typ                string
+	id                 *int
+	login              *string
+	password           *string
+	balance            *int
+	addbalance         *int
+	withdraw           *int
+	addwithdraw        *int
+	clearedFields      map[string]struct{}
+	orders             map[int]struct{}
+	removedorders      map[int]struct{}
+	clearedorders      bool
+	withdrawals        map[int]struct{}
+	removedwithdrawals map[int]struct{}
+	clearedwithdrawals bool
+	done               bool
+	oldValue           func(context.Context) (*User, error)
+	predicates         []predicate.User
 }
 
 var _ ent.Mutation = (*UserMutation)(nil)
@@ -1012,6 +1015,60 @@ func (m *UserMutation) ResetOrders() {
 	m.removedorders = nil
 }
 
+// AddWithdrawalIDs adds the "withdrawals" edge to the Withdrawals entity by ids.
+func (m *UserMutation) AddWithdrawalIDs(ids ...int) {
+	if m.withdrawals == nil {
+		m.withdrawals = make(map[int]struct{})
+	}
+	for i := range ids {
+		m.withdrawals[ids[i]] = struct{}{}
+	}
+}
+
+// ClearWithdrawals clears the "withdrawals" edge to the Withdrawals entity.
+func (m *UserMutation) ClearWithdrawals() {
+	m.clearedwithdrawals = true
+}
+
+// WithdrawalsCleared reports if the "withdrawals" edge to the Withdrawals entity was cleared.
+func (m *UserMutation) WithdrawalsCleared() bool {
+	return m.clearedwithdrawals
+}
+
+// RemoveWithdrawalIDs removes the "withdrawals" edge to the Withdrawals entity by IDs.
+func (m *UserMutation) RemoveWithdrawalIDs(ids ...int) {
+	if m.removedwithdrawals == nil {
+		m.removedwithdrawals = make(map[int]struct{})
+	}
+	for i := range ids {
+		delete(m.withdrawals, ids[i])
+		m.removedwithdrawals[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedWithdrawals returns the removed IDs of the "withdrawals" edge to the Withdrawals entity.
+func (m *UserMutation) RemovedWithdrawalsIDs() (ids []int) {
+	for id := range m.removedwithdrawals {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// WithdrawalsIDs returns the "withdrawals" edge IDs in the mutation.
+func (m *UserMutation) WithdrawalsIDs() (ids []int) {
+	for id := range m.withdrawals {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetWithdrawals resets all changes to the "withdrawals" edge.
+func (m *UserMutation) ResetWithdrawals() {
+	m.withdrawals = nil
+	m.clearedwithdrawals = false
+	m.removedwithdrawals = nil
+}
+
 // Where appends a list predicates to the UserMutation builder.
 func (m *UserMutation) Where(ps ...predicate.User) {
 	m.predicates = append(m.predicates, ps...)
@@ -1223,9 +1280,12 @@ func (m *UserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *UserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.orders != nil {
 		edges = append(edges, user.EdgeOrders)
+	}
+	if m.withdrawals != nil {
+		edges = append(edges, user.EdgeWithdrawals)
 	}
 	return edges
 }
@@ -1240,15 +1300,24 @@ func (m *UserMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWithdrawals:
+		ids := make([]ent.Value, 0, len(m.withdrawals))
+		for id := range m.withdrawals {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *UserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.removedorders != nil {
 		edges = append(edges, user.EdgeOrders)
+	}
+	if m.removedwithdrawals != nil {
+		edges = append(edges, user.EdgeWithdrawals)
 	}
 	return edges
 }
@@ -1263,15 +1332,24 @@ func (m *UserMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case user.EdgeWithdrawals:
+		ids := make([]ent.Value, 0, len(m.removedwithdrawals))
+		for id := range m.removedwithdrawals {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *UserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 2)
 	if m.clearedorders {
 		edges = append(edges, user.EdgeOrders)
+	}
+	if m.clearedwithdrawals {
+		edges = append(edges, user.EdgeWithdrawals)
 	}
 	return edges
 }
@@ -1282,6 +1360,8 @@ func (m *UserMutation) EdgeCleared(name string) bool {
 	switch name {
 	case user.EdgeOrders:
 		return m.clearedorders
+	case user.EdgeWithdrawals:
+		return m.clearedwithdrawals
 	}
 	return false
 }
@@ -1301,6 +1381,9 @@ func (m *UserMutation) ResetEdge(name string) error {
 	case user.EdgeOrders:
 		m.ResetOrders()
 		return nil
+	case user.EdgeWithdrawals:
+		m.ResetWithdrawals()
+		return nil
 	}
 	return fmt.Errorf("unknown User edge %s", name)
 }
@@ -1316,6 +1399,8 @@ type WithdrawalsMutation struct {
 	sum           *int
 	addsum        *int
 	clearedFields map[string]struct{}
+	user          *int
+	cleareduser   bool
 	done          bool
 	oldValue      func(context.Context) (*Withdrawals, error)
 	predicates    []predicate.Withdrawals
@@ -1531,6 +1616,45 @@ func (m *WithdrawalsMutation) ResetSum() {
 	m.addsum = nil
 }
 
+// SetUserID sets the "user" edge to the User entity by id.
+func (m *WithdrawalsMutation) SetUserID(id int) {
+	m.user = &id
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (m *WithdrawalsMutation) ClearUser() {
+	m.cleareduser = true
+}
+
+// UserCleared reports if the "user" edge to the User entity was cleared.
+func (m *WithdrawalsMutation) UserCleared() bool {
+	return m.cleareduser
+}
+
+// UserID returns the "user" edge ID in the mutation.
+func (m *WithdrawalsMutation) UserID() (id int, exists bool) {
+	if m.user != nil {
+		return *m.user, true
+	}
+	return
+}
+
+// UserIDs returns the "user" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// UserID instead. It exists only for internal usage by the builders.
+func (m *WithdrawalsMutation) UserIDs() (ids []int) {
+	if id := m.user; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetUser resets all changes to the "user" edge.
+func (m *WithdrawalsMutation) ResetUser() {
+	m.user = nil
+	m.cleareduser = false
+}
+
 // Where appends a list predicates to the WithdrawalsMutation builder.
 func (m *WithdrawalsMutation) Where(ps ...predicate.Withdrawals) {
 	m.predicates = append(m.predicates, ps...)
@@ -1708,19 +1832,28 @@ func (m *WithdrawalsMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *WithdrawalsMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.user != nil {
+		edges = append(edges, withdrawals.EdgeUser)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *WithdrawalsMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case withdrawals.EdgeUser:
+		if id := m.user; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *WithdrawalsMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -1732,24 +1865,41 @@ func (m *WithdrawalsMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *WithdrawalsMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.cleareduser {
+		edges = append(edges, withdrawals.EdgeUser)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *WithdrawalsMutation) EdgeCleared(name string) bool {
+	switch name {
+	case withdrawals.EdgeUser:
+		return m.cleareduser
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *WithdrawalsMutation) ClearEdge(name string) error {
+	switch name {
+	case withdrawals.EdgeUser:
+		m.ClearUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Withdrawals unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *WithdrawalsMutation) ResetEdge(name string) error {
+	switch name {
+	case withdrawals.EdgeUser:
+		m.ResetUser()
+		return nil
+	}
 	return fmt.Errorf("unknown Withdrawals edge %s", name)
 }

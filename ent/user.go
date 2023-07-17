@@ -34,9 +34,11 @@ type User struct {
 type UserEdges struct {
 	// Orders holds the value of the orders edge.
 	Orders []*Order `json:"orders,omitempty"`
+	// Withdrawals holds the value of the withdrawals edge.
+	Withdrawals []*Withdrawals `json:"withdrawals,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [2]bool
 }
 
 // OrdersOrErr returns the Orders value or an error if the edge
@@ -46,6 +48,15 @@ func (e UserEdges) OrdersOrErr() ([]*Order, error) {
 		return e.Orders, nil
 	}
 	return nil, &NotLoadedError{edge: "orders"}
+}
+
+// WithdrawalsOrErr returns the Withdrawals value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WithdrawalsOrErr() ([]*Withdrawals, error) {
+	if e.loadedTypes[1] {
+		return e.Withdrawals, nil
+	}
+	return nil, &NotLoadedError{edge: "withdrawals"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -118,6 +129,11 @@ func (u *User) Value(name string) (ent.Value, error) {
 // QueryOrders queries the "orders" edge of the User entity.
 func (u *User) QueryOrders() *OrderQuery {
 	return NewUserClient(u.config).QueryOrders(u)
+}
+
+// QueryWithdrawals queries the "withdrawals" edge of the User entity.
+func (u *User) QueryWithdrawals() *WithdrawalsQuery {
+	return NewUserClient(u.config).QueryWithdrawals(u)
 }
 
 // Update returns a builder for updating this User.

@@ -14,16 +14,18 @@ import (
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/predicate"
 	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx        *QueryContext
-	order      []user.OrderOption
-	inters     []Interceptor
-	predicates []predicate.User
-	withOrders *OrderQuery
+	ctx             *QueryContext
+	order           []user.OrderOption
+	inters          []Interceptor
+	predicates      []predicate.User
+	withOrders      *OrderQuery
+	withWithdrawals *WithdrawalsQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -75,6 +77,28 @@ func (uq *UserQuery) QueryOrders() *OrderQuery {
 			sqlgraph.From(user.Table, user.FieldID, selector),
 			sqlgraph.To(order.Table, order.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, user.OrdersTable, user.OrdersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWithdrawals chains the current query on the "withdrawals" edge.
+func (uq *UserQuery) QueryWithdrawals() *WithdrawalsQuery {
+	query := (&WithdrawalsClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(withdrawals.Table, withdrawals.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawalsTable, user.WithdrawalsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
 		return fromU, nil
@@ -269,12 +293,13 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		ctx:        uq.ctx.Clone(),
-		order:      append([]user.OrderOption{}, uq.order...),
-		inters:     append([]Interceptor{}, uq.inters...),
-		predicates: append([]predicate.User{}, uq.predicates...),
-		withOrders: uq.withOrders.Clone(),
+		config:          uq.config,
+		ctx:             uq.ctx.Clone(),
+		order:           append([]user.OrderOption{}, uq.order...),
+		inters:          append([]Interceptor{}, uq.inters...),
+		predicates:      append([]predicate.User{}, uq.predicates...),
+		withOrders:      uq.withOrders.Clone(),
+		withWithdrawals: uq.withWithdrawals.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
@@ -289,6 +314,17 @@ func (uq *UserQuery) WithOrders(opts ...func(*OrderQuery)) *UserQuery {
 		opt(query)
 	}
 	uq.withOrders = query
+	return uq
+}
+
+// WithWithdrawals tells the query-builder to eager-load the nodes that are connected to
+// the "withdrawals" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithWithdrawals(opts ...func(*WithdrawalsQuery)) *UserQuery {
+	query := (&WithdrawalsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withWithdrawals = query
 	return uq
 }
 
@@ -370,8 +406,9 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	var (
 		nodes       = []*User{}
 		_spec       = uq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [2]bool{
 			uq.withOrders != nil,
+			uq.withWithdrawals != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -396,6 +433,13 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 		if err := uq.loadOrders(ctx, query, nodes,
 			func(n *User) { n.Edges.Orders = []*Order{} },
 			func(n *User, e *Order) { n.Edges.Orders = append(n.Edges.Orders, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withWithdrawals; query != nil {
+		if err := uq.loadWithdrawals(ctx, query, nodes,
+			func(n *User) { n.Edges.Withdrawals = []*Withdrawals{} },
+			func(n *User, e *Withdrawals) { n.Edges.Withdrawals = append(n.Edges.Withdrawals, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -428,6 +472,37 @@ func (uq *UserQuery) loadOrders(ctx context.Context, query *OrderQuery, nodes []
 		node, ok := nodeids[*fk]
 		if !ok {
 			return fmt.Errorf(`unexpected referenced foreign-key "user_orders" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadWithdrawals(ctx context.Context, query *WithdrawalsQuery, nodes []*User, init func(*User), assign func(*User, *Withdrawals)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Withdrawals(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.WithdrawalsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_withdrawals
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_withdrawals" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_withdrawals" returned %v for node %v`, *fk, n.ID)
 		}
 		assign(node, n)
 	}

@@ -306,6 +306,29 @@ func HasOrdersWith(preds ...predicate.Order) predicate.User {
 	})
 }
 
+// HasWithdrawals applies the HasEdge predicate on the "withdrawals" edge.
+func HasWithdrawals() predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, WithdrawalsTable, WithdrawalsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWithdrawalsWith applies the HasEdge predicate on the "withdrawals" edge with a given conditions (other predicates).
+func HasWithdrawalsWith(preds ...predicate.Withdrawals) predicate.User {
+	return predicate.User(func(s *sql.Selector) {
+		step := newWithdrawalsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.User) predicate.User {
 	return predicate.User(func(s *sql.Selector) {

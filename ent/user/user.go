@@ -22,6 +22,8 @@ const (
 	FieldWithdraw = "withdraw"
 	// EdgeOrders holds the string denoting the orders edge name in mutations.
 	EdgeOrders = "orders"
+	// EdgeWithdrawals holds the string denoting the withdrawals edge name in mutations.
+	EdgeWithdrawals = "withdrawals"
 	// Table holds the table name of the user in the database.
 	Table = "users"
 	// OrdersTable is the table that holds the orders relation/edge.
@@ -31,6 +33,13 @@ const (
 	OrdersInverseTable = "orders"
 	// OrdersColumn is the table column denoting the orders relation/edge.
 	OrdersColumn = "user_orders"
+	// WithdrawalsTable is the table that holds the withdrawals relation/edge.
+	WithdrawalsTable = "withdrawals"
+	// WithdrawalsInverseTable is the table name for the Withdrawals entity.
+	// It exists in this package in order to avoid circular dependency with the "withdrawals" package.
+	WithdrawalsInverseTable = "withdrawals"
+	// WithdrawalsColumn is the table column denoting the withdrawals relation/edge.
+	WithdrawalsColumn = "user_withdrawals"
 )
 
 // Columns holds all SQL columns for user fields.
@@ -100,10 +109,31 @@ func ByOrders(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newOrdersStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByWithdrawalsCount orders the results by withdrawals count.
+func ByWithdrawalsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newWithdrawalsStep(), opts...)
+	}
+}
+
+// ByWithdrawals orders the results by withdrawals terms.
+func ByWithdrawals(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWithdrawalsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newOrdersStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(OrdersInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, OrdersTable, OrdersColumn),
+	)
+}
+func newWithdrawalsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WithdrawalsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, WithdrawalsTable, WithdrawalsColumn),
 	)
 }

@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/schema/field"
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -57,6 +58,21 @@ func (uc *UserCreate) AddOrders(o ...*Order) *UserCreate {
 		ids[i] = o[i].ID
 	}
 	return uc.AddOrderIDs(ids...)
+}
+
+// AddWithdrawalIDs adds the "withdrawals" edge to the Withdrawals entity by IDs.
+func (uc *UserCreate) AddWithdrawalIDs(ids ...int) *UserCreate {
+	uc.mutation.AddWithdrawalIDs(ids...)
+	return uc
+}
+
+// AddWithdrawals adds the "withdrawals" edges to the Withdrawals entity.
+func (uc *UserCreate) AddWithdrawals(w ...*Withdrawals) *UserCreate {
+	ids := make([]int, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddWithdrawalIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -166,6 +182,22 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WithdrawalsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

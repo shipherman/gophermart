@@ -9,6 +9,7 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
+	"github.com/shipherman/gophermart/ent/user"
 	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
@@ -29,6 +30,25 @@ func (wc *WithdrawalsCreate) SetOrder(i int) *WithdrawalsCreate {
 func (wc *WithdrawalsCreate) SetSum(i int) *WithdrawalsCreate {
 	wc.mutation.SetSum(i)
 	return wc
+}
+
+// SetUserID sets the "user" edge to the User entity by ID.
+func (wc *WithdrawalsCreate) SetUserID(id int) *WithdrawalsCreate {
+	wc.mutation.SetUserID(id)
+	return wc
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (wc *WithdrawalsCreate) SetNillableUserID(id *int) *WithdrawalsCreate {
+	if id != nil {
+		wc = wc.SetUserID(*id)
+	}
+	return wc
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (wc *WithdrawalsCreate) SetUser(u *User) *WithdrawalsCreate {
+	return wc.SetUserID(u.ID)
 }
 
 // Mutation returns the WithdrawalsMutation object of the builder.
@@ -104,6 +124,23 @@ func (wc *WithdrawalsCreate) createSpec() (*Withdrawals, *sqlgraph.CreateSpec) {
 	if value, ok := wc.mutation.Sum(); ok {
 		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
 		_node.Sum = value
+	}
+	if nodes := wc.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawals.UserTable,
+			Columns: []string{withdrawals.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.user_withdrawals = &nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

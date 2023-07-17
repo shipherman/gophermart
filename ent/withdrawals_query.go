@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/shipherman/gophermart/ent/predicate"
+	"github.com/shipherman/gophermart/ent/user"
 	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
@@ -21,6 +22,8 @@ type WithdrawalsQuery struct {
 	order      []withdrawals.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Withdrawals
+	withUser   *UserQuery
+	withFKs    bool
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +58,28 @@ func (wq *WithdrawalsQuery) Unique(unique bool) *WithdrawalsQuery {
 func (wq *WithdrawalsQuery) Order(o ...withdrawals.OrderOption) *WithdrawalsQuery {
 	wq.order = append(wq.order, o...)
 	return wq
+}
+
+// QueryUser chains the current query on the "user" edge.
+func (wq *WithdrawalsQuery) QueryUser() *UserQuery {
+	query := (&UserClient{config: wq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := wq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := wq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawals.Table, withdrawals.FieldID, selector),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawals.UserTable, withdrawals.UserColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(wq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Withdrawals entity from the query.
@@ -249,10 +274,22 @@ func (wq *WithdrawalsQuery) Clone() *WithdrawalsQuery {
 		order:      append([]withdrawals.OrderOption{}, wq.order...),
 		inters:     append([]Interceptor{}, wq.inters...),
 		predicates: append([]predicate.Withdrawals{}, wq.predicates...),
+		withUser:   wq.withUser.Clone(),
 		// clone intermediate query.
 		sql:  wq.sql.Clone(),
 		path: wq.path,
 	}
+}
+
+// WithUser tells the query-builder to eager-load the nodes that are connected to
+// the "user" edge. The optional arguments are used to configure the query builder of the edge.
+func (wq *WithdrawalsQuery) WithUser(opts ...func(*UserQuery)) *WithdrawalsQuery {
+	query := (&UserClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	wq.withUser = query
+	return wq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -331,15 +368,26 @@ func (wq *WithdrawalsQuery) prepareQuery(ctx context.Context) error {
 
 func (wq *WithdrawalsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Withdrawals, error) {
 	var (
-		nodes = []*Withdrawals{}
-		_spec = wq.querySpec()
+		nodes       = []*Withdrawals{}
+		withFKs     = wq.withFKs
+		_spec       = wq.querySpec()
+		loadedTypes = [1]bool{
+			wq.withUser != nil,
+		}
 	)
+	if wq.withUser != nil {
+		withFKs = true
+	}
+	if withFKs {
+		_spec.Node.Columns = append(_spec.Node.Columns, withdrawals.ForeignKeys...)
+	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Withdrawals).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Withdrawals{config: wq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +399,46 @@ func (wq *WithdrawalsQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := wq.withUser; query != nil {
+		if err := wq.loadUser(ctx, query, nodes, nil,
+			func(n *Withdrawals, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (wq *WithdrawalsQuery) loadUser(ctx context.Context, query *UserQuery, nodes []*Withdrawals, init func(*Withdrawals), assign func(*Withdrawals, *User)) error {
+	ids := make([]int, 0, len(nodes))
+	nodeids := make(map[int][]*Withdrawals)
+	for i := range nodes {
+		if nodes[i].user_withdrawals == nil {
+			continue
+		}
+		fk := *nodes[i].user_withdrawals
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(user.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "user_withdrawals" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (wq *WithdrawalsQuery) sqlCount(ctx context.Context) (int, error) {

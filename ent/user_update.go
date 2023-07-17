@@ -13,6 +13,7 @@ import (
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/predicate"
 	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -81,6 +82,21 @@ func (uu *UserUpdate) AddOrders(o ...*Order) *UserUpdate {
 	return uu.AddOrderIDs(ids...)
 }
 
+// AddWithdrawalIDs adds the "withdrawals" edge to the Withdrawals entity by IDs.
+func (uu *UserUpdate) AddWithdrawalIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddWithdrawalIDs(ids...)
+	return uu
+}
+
+// AddWithdrawals adds the "withdrawals" edges to the Withdrawals entity.
+func (uu *UserUpdate) AddWithdrawals(w ...*Withdrawals) *UserUpdate {
+	ids := make([]int, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.AddWithdrawalIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
@@ -105,6 +121,27 @@ func (uu *UserUpdate) RemoveOrders(o ...*Order) *UserUpdate {
 		ids[i] = o[i].ID
 	}
 	return uu.RemoveOrderIDs(ids...)
+}
+
+// ClearWithdrawals clears all "withdrawals" edges to the Withdrawals entity.
+func (uu *UserUpdate) ClearWithdrawals() *UserUpdate {
+	uu.mutation.ClearWithdrawals()
+	return uu
+}
+
+// RemoveWithdrawalIDs removes the "withdrawals" edge to Withdrawals entities by IDs.
+func (uu *UserUpdate) RemoveWithdrawalIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveWithdrawalIDs(ids...)
+	return uu
+}
+
+// RemoveWithdrawals removes "withdrawals" edges to Withdrawals entities.
+func (uu *UserUpdate) RemoveWithdrawals(w ...*Withdrawals) *UserUpdate {
+	ids := make([]int, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uu.RemoveWithdrawalIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -224,6 +261,51 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if uu.mutation.WithdrawalsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedWithdrawalsIDs(); len(nodes) > 0 && !uu.mutation.WithdrawalsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.WithdrawalsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{user.Label}
@@ -297,6 +379,21 @@ func (uuo *UserUpdateOne) AddOrders(o ...*Order) *UserUpdateOne {
 	return uuo.AddOrderIDs(ids...)
 }
 
+// AddWithdrawalIDs adds the "withdrawals" edge to the Withdrawals entity by IDs.
+func (uuo *UserUpdateOne) AddWithdrawalIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddWithdrawalIDs(ids...)
+	return uuo
+}
+
+// AddWithdrawals adds the "withdrawals" edges to the Withdrawals entity.
+func (uuo *UserUpdateOne) AddWithdrawals(w ...*Withdrawals) *UserUpdateOne {
+	ids := make([]int, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.AddWithdrawalIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
@@ -321,6 +418,27 @@ func (uuo *UserUpdateOne) RemoveOrders(o ...*Order) *UserUpdateOne {
 		ids[i] = o[i].ID
 	}
 	return uuo.RemoveOrderIDs(ids...)
+}
+
+// ClearWithdrawals clears all "withdrawals" edges to the Withdrawals entity.
+func (uuo *UserUpdateOne) ClearWithdrawals() *UserUpdateOne {
+	uuo.mutation.ClearWithdrawals()
+	return uuo
+}
+
+// RemoveWithdrawalIDs removes the "withdrawals" edge to Withdrawals entities by IDs.
+func (uuo *UserUpdateOne) RemoveWithdrawalIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveWithdrawalIDs(ids...)
+	return uuo
+}
+
+// RemoveWithdrawals removes "withdrawals" edges to Withdrawals entities.
+func (uuo *UserUpdateOne) RemoveWithdrawals(w ...*Withdrawals) *UserUpdateOne {
+	ids := make([]int, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uuo.RemoveWithdrawalIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -463,6 +581,51 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.WithdrawalsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedWithdrawalsIDs(); len(nodes) > 0 && !uuo.mutation.WithdrawalsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.WithdrawalsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.WithdrawalsTable,
+			Columns: []string{user.WithdrawalsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt),
 			},
 		}
 		for _, k := range nodes {

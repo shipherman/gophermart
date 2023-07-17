@@ -50,12 +50,21 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "order", Type: field.TypeInt, Unique: true},
 		{Name: "sum", Type: field.TypeInt},
+		{Name: "user_withdrawals", Type: field.TypeInt, Nullable: true},
 	}
 	// WithdrawalsTable holds the schema information for the "withdrawals" table.
 	WithdrawalsTable = &schema.Table{
 		Name:       "withdrawals",
 		Columns:    WithdrawalsColumns,
 		PrimaryKey: []*schema.Column{WithdrawalsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "withdrawals_users_withdrawals",
+				Columns:    []*schema.Column{WithdrawalsColumns[3]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
@@ -67,4 +76,5 @@ var (
 
 func init() {
 	OrdersTable.ForeignKeys[0].RefTable = UsersTable
+	WithdrawalsTable.ForeignKeys[0].RefTable = UsersTable
 }

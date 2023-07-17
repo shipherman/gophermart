@@ -11,6 +11,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
 	"github.com/shipherman/gophermart/ent/predicate"
+	"github.com/shipherman/gophermart/ent/user"
 	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
@@ -53,9 +54,34 @@ func (wu *WithdrawalsUpdate) AddSum(i int) *WithdrawalsUpdate {
 	return wu
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (wu *WithdrawalsUpdate) SetUserID(id int) *WithdrawalsUpdate {
+	wu.mutation.SetUserID(id)
+	return wu
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (wu *WithdrawalsUpdate) SetNillableUserID(id *int) *WithdrawalsUpdate {
+	if id != nil {
+		wu = wu.SetUserID(*id)
+	}
+	return wu
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (wu *WithdrawalsUpdate) SetUser(u *User) *WithdrawalsUpdate {
+	return wu.SetUserID(u.ID)
+}
+
 // Mutation returns the WithdrawalsMutation object of the builder.
 func (wu *WithdrawalsUpdate) Mutation() *WithdrawalsMutation {
 	return wu.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (wu *WithdrawalsUpdate) ClearUser() *WithdrawalsUpdate {
+	wu.mutation.ClearUser()
+	return wu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -106,6 +132,35 @@ func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := wu.mutation.AddedSum(); ok {
 		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
 	}
+	if wu.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawals.UserTable,
+			Columns: []string{withdrawals.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wu.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawals.UserTable,
+			Columns: []string{withdrawals.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{withdrawals.Label}
@@ -152,9 +207,34 @@ func (wuo *WithdrawalsUpdateOne) AddSum(i int) *WithdrawalsUpdateOne {
 	return wuo
 }
 
+// SetUserID sets the "user" edge to the User entity by ID.
+func (wuo *WithdrawalsUpdateOne) SetUserID(id int) *WithdrawalsUpdateOne {
+	wuo.mutation.SetUserID(id)
+	return wuo
+}
+
+// SetNillableUserID sets the "user" edge to the User entity by ID if the given value is not nil.
+func (wuo *WithdrawalsUpdateOne) SetNillableUserID(id *int) *WithdrawalsUpdateOne {
+	if id != nil {
+		wuo = wuo.SetUserID(*id)
+	}
+	return wuo
+}
+
+// SetUser sets the "user" edge to the User entity.
+func (wuo *WithdrawalsUpdateOne) SetUser(u *User) *WithdrawalsUpdateOne {
+	return wuo.SetUserID(u.ID)
+}
+
 // Mutation returns the WithdrawalsMutation object of the builder.
 func (wuo *WithdrawalsUpdateOne) Mutation() *WithdrawalsMutation {
 	return wuo.mutation
+}
+
+// ClearUser clears the "user" edge to the User entity.
+func (wuo *WithdrawalsUpdateOne) ClearUser() *WithdrawalsUpdateOne {
+	wuo.mutation.ClearUser()
+	return wuo
 }
 
 // Where appends a list predicates to the WithdrawalsUpdate builder.
@@ -234,6 +314,35 @@ func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawal
 	}
 	if value, ok := wuo.mutation.AddedSum(); ok {
 		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
+	}
+	if wuo.mutation.UserCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawals.UserTable,
+			Columns: []string{withdrawals.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := wuo.mutation.UserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   withdrawals.UserTable,
+			Columns: []string{withdrawals.UserColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &Withdrawals{config: wuo.config}
 	_spec.Assign = _node.assignValues

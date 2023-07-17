@@ -451,6 +451,22 @@ func (c *UserClient) QueryOrders(u *User) *OrderQuery {
 	return query
 }
 
+// QueryWithdrawals queries the withdrawals edge of a User.
+func (c *UserClient) QueryWithdrawals(u *User) *WithdrawalsQuery {
+	query := (&WithdrawalsClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := u.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, id),
+			sqlgraph.To(withdrawals.Table, withdrawals.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.WithdrawalsTable, user.WithdrawalsColumn),
+		)
+		fromV = sqlgraph.Neighbors(u.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *UserClient) Hooks() []Hook {
 	return c.hooks.User
@@ -567,6 +583,22 @@ func (c *WithdrawalsClient) GetX(ctx context.Context, id int) *Withdrawals {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryUser queries the user edge of a Withdrawals.
+func (c *WithdrawalsClient) QueryUser(w *Withdrawals) *UserQuery {
+	query := (&UserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := w.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(withdrawals.Table, withdrawals.FieldID, id),
+			sqlgraph.To(user.Table, user.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, withdrawals.UserTable, withdrawals.UserColumn),
+		)
+		fromV = sqlgraph.Neighbors(w.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
