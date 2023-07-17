@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/shipherman/gophermart/ent"
@@ -23,5 +24,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	w.WriteHeader(http.StatusOK)
+	fmt.Println(r.RequestURI)
+
+	http.Redirect(w, r, "/api/user/login", http.StatusTemporaryRedirect)
 }
