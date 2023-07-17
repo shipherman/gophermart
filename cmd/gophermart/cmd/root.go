@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -56,6 +57,7 @@ func Execute() {
 	// Set accural address
 	acc.SetAccuralAddress(cfg.Accural)
 
+	fmt.Println(cfg)
 	// Run server
 	router := routes.NewRouter()
 	log.Fatal(http.ListenAndServe(cfg.Address, router))
@@ -76,9 +78,5 @@ func init() {
 	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable", "DataBase connection string")
 	rootCmd.PersistentFlags().StringVarP(&cfg.Accural, "accural", "r", "localhost:8080", "Accural service address")
 	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 }
