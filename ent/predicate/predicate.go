@@ -11,3 +11,6 @@ type Order func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// Withdrawals is the predicate function for withdrawals builders.
+type Withdrawals func(*sql.Selector)

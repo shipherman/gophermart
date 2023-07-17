@@ -16,6 +16,7 @@ import (
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/ent/withdrawals"
 )
 
 // Client is the client that holds all ent builders.
@@ -27,6 +28,8 @@ type Client struct {
 	Order *OrderClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// Withdrawals is the client for interacting with the Withdrawals builders.
+	Withdrawals *WithdrawalsClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -42,6 +45,7 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Order = NewOrderClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.Withdrawals = NewWithdrawalsClient(c.config)
 }
 
 type (
@@ -122,10 +126,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	cfg := c.config
 	cfg.driver = tx
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Order:  NewOrderClient(cfg),
-		User:   NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Order:       NewOrderClient(cfg),
+		User:        NewUserClient(cfg),
+		Withdrawals: NewWithdrawalsClient(cfg),
 	}, nil
 }
 
@@ -143,10 +148,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	cfg := c.config
 	cfg.driver = &txDriver{tx: tx, drv: c.driver}
 	return &Tx{
-		ctx:    ctx,
-		config: cfg,
-		Order:  NewOrderClient(cfg),
-		User:   NewUserClient(cfg),
+		ctx:         ctx,
+		config:      cfg,
+		Order:       NewOrderClient(cfg),
+		User:        NewUserClient(cfg),
+		Withdrawals: NewWithdrawalsClient(cfg),
 	}, nil
 }
 
@@ -177,6 +183,7 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	c.Order.Use(hooks...)
 	c.User.Use(hooks...)
+	c.Withdrawals.Use(hooks...)
 }
 
 // Intercept adds the query interceptors to all the entity clients.
@@ -184,6 +191,7 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	c.Order.Intercept(interceptors...)
 	c.User.Intercept(interceptors...)
+	c.Withdrawals.Intercept(interceptors...)
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -193,6 +201,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Order.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *WithdrawalsMutation:
+		return c.Withdrawals.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -466,12 +476,130 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// WithdrawalsClient is a client for the Withdrawals schema.
+type WithdrawalsClient struct {
+	config
+}
+
+// NewWithdrawalsClient returns a client for the Withdrawals from the given config.
+func NewWithdrawalsClient(c config) *WithdrawalsClient {
+	return &WithdrawalsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `withdrawals.Hooks(f(g(h())))`.
+func (c *WithdrawalsClient) Use(hooks ...Hook) {
+	c.hooks.Withdrawals = append(c.hooks.Withdrawals, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `withdrawals.Intercept(f(g(h())))`.
+func (c *WithdrawalsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Withdrawals = append(c.inters.Withdrawals, interceptors...)
+}
+
+// Create returns a builder for creating a Withdrawals entity.
+func (c *WithdrawalsClient) Create() *WithdrawalsCreate {
+	mutation := newWithdrawalsMutation(c.config, OpCreate)
+	return &WithdrawalsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Withdrawals entities.
+func (c *WithdrawalsClient) CreateBulk(builders ...*WithdrawalsCreate) *WithdrawalsCreateBulk {
+	return &WithdrawalsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Withdrawals.
+func (c *WithdrawalsClient) Update() *WithdrawalsUpdate {
+	mutation := newWithdrawalsMutation(c.config, OpUpdate)
+	return &WithdrawalsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WithdrawalsClient) UpdateOne(w *Withdrawals) *WithdrawalsUpdateOne {
+	mutation := newWithdrawalsMutation(c.config, OpUpdateOne, withWithdrawals(w))
+	return &WithdrawalsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WithdrawalsClient) UpdateOneID(id int) *WithdrawalsUpdateOne {
+	mutation := newWithdrawalsMutation(c.config, OpUpdateOne, withWithdrawalsID(id))
+	return &WithdrawalsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Withdrawals.
+func (c *WithdrawalsClient) Delete() *WithdrawalsDelete {
+	mutation := newWithdrawalsMutation(c.config, OpDelete)
+	return &WithdrawalsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WithdrawalsClient) DeleteOne(w *Withdrawals) *WithdrawalsDeleteOne {
+	return c.DeleteOneID(w.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WithdrawalsClient) DeleteOneID(id int) *WithdrawalsDeleteOne {
+	builder := c.Delete().Where(withdrawals.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WithdrawalsDeleteOne{builder}
+}
+
+// Query returns a query builder for Withdrawals.
+func (c *WithdrawalsClient) Query() *WithdrawalsQuery {
+	return &WithdrawalsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWithdrawals},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Withdrawals entity by its id.
+func (c *WithdrawalsClient) Get(ctx context.Context, id int) (*Withdrawals, error) {
+	return c.Query().Where(withdrawals.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WithdrawalsClient) GetX(ctx context.Context, id int) *Withdrawals {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WithdrawalsClient) Hooks() []Hook {
+	return c.hooks.Withdrawals
+}
+
+// Interceptors returns the client interceptors.
+func (c *WithdrawalsClient) Interceptors() []Interceptor {
+	return c.inters.Withdrawals
+}
+
+func (c *WithdrawalsClient) mutate(ctx context.Context, m *WithdrawalsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WithdrawalsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WithdrawalsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WithdrawalsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WithdrawalsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Withdrawals mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Order, User []ent.Hook
+		Order, User, Withdrawals []ent.Hook
 	}
 	inters struct {
-		Order, User []ent.Interceptor
+		Order, User, Withdrawals []ent.Interceptor
 	}
 )

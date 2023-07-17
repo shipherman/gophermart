@@ -16,6 +16,8 @@ type Tx struct {
 	Order *OrderClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// Withdrawals is the client for interacting with the Withdrawals builders.
+	Withdrawals *WithdrawalsClient
 
 	// lazily loaded.
 	client     *Client
@@ -149,6 +151,7 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Order = NewOrderClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.Withdrawals = NewWithdrawalsClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

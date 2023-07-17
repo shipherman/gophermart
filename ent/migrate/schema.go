@@ -45,10 +45,23 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// WithdrawalsColumns holds the columns for the "withdrawals" table.
+	WithdrawalsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "order", Type: field.TypeString, Unique: true},
+		{Name: "sum", Type: field.TypeString},
+	}
+	// WithdrawalsTable holds the schema information for the "withdrawals" table.
+	WithdrawalsTable = &schema.Table{
+		Name:       "withdrawals",
+		Columns:    WithdrawalsColumns,
+		PrimaryKey: []*schema.Column{WithdrawalsColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		OrdersTable,
 		UsersTable,
+		WithdrawalsTable,
 	}
 )
 
