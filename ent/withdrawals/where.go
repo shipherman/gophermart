@@ -53,143 +53,93 @@ func IDLTE(id int) predicate.Withdrawals {
 }
 
 // Order applies equality check predicate on the "order" field. It's identical to OrderEQ.
-func Order(v string) predicate.Withdrawals {
+func Order(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldOrder, v))
 }
 
 // Sum applies equality check predicate on the "sum" field. It's identical to SumEQ.
-func Sum(v string) predicate.Withdrawals {
+func Sum(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldSum, v))
 }
 
 // OrderEQ applies the EQ predicate on the "order" field.
-func OrderEQ(v string) predicate.Withdrawals {
+func OrderEQ(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldOrder, v))
 }
 
 // OrderNEQ applies the NEQ predicate on the "order" field.
-func OrderNEQ(v string) predicate.Withdrawals {
+func OrderNEQ(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNEQ(FieldOrder, v))
 }
 
 // OrderIn applies the In predicate on the "order" field.
-func OrderIn(vs ...string) predicate.Withdrawals {
+func OrderIn(vs ...int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldIn(FieldOrder, vs...))
 }
 
 // OrderNotIn applies the NotIn predicate on the "order" field.
-func OrderNotIn(vs ...string) predicate.Withdrawals {
+func OrderNotIn(vs ...int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNotIn(FieldOrder, vs...))
 }
 
 // OrderGT applies the GT predicate on the "order" field.
-func OrderGT(v string) predicate.Withdrawals {
+func OrderGT(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGT(FieldOrder, v))
 }
 
 // OrderGTE applies the GTE predicate on the "order" field.
-func OrderGTE(v string) predicate.Withdrawals {
+func OrderGTE(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGTE(FieldOrder, v))
 }
 
 // OrderLT applies the LT predicate on the "order" field.
-func OrderLT(v string) predicate.Withdrawals {
+func OrderLT(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLT(FieldOrder, v))
 }
 
 // OrderLTE applies the LTE predicate on the "order" field.
-func OrderLTE(v string) predicate.Withdrawals {
+func OrderLTE(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLTE(FieldOrder, v))
 }
 
-// OrderContains applies the Contains predicate on the "order" field.
-func OrderContains(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldContains(FieldOrder, v))
-}
-
-// OrderHasPrefix applies the HasPrefix predicate on the "order" field.
-func OrderHasPrefix(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldHasPrefix(FieldOrder, v))
-}
-
-// OrderHasSuffix applies the HasSuffix predicate on the "order" field.
-func OrderHasSuffix(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldHasSuffix(FieldOrder, v))
-}
-
-// OrderEqualFold applies the EqualFold predicate on the "order" field.
-func OrderEqualFold(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldEqualFold(FieldOrder, v))
-}
-
-// OrderContainsFold applies the ContainsFold predicate on the "order" field.
-func OrderContainsFold(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldContainsFold(FieldOrder, v))
-}
-
 // SumEQ applies the EQ predicate on the "sum" field.
-func SumEQ(v string) predicate.Withdrawals {
+func SumEQ(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldSum, v))
 }
 
 // SumNEQ applies the NEQ predicate on the "sum" field.
-func SumNEQ(v string) predicate.Withdrawals {
+func SumNEQ(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNEQ(FieldSum, v))
 }
 
 // SumIn applies the In predicate on the "sum" field.
-func SumIn(vs ...string) predicate.Withdrawals {
+func SumIn(vs ...int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldIn(FieldSum, vs...))
 }
 
 // SumNotIn applies the NotIn predicate on the "sum" field.
-func SumNotIn(vs ...string) predicate.Withdrawals {
+func SumNotIn(vs ...int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNotIn(FieldSum, vs...))
 }
 
 // SumGT applies the GT predicate on the "sum" field.
-func SumGT(v string) predicate.Withdrawals {
+func SumGT(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGT(FieldSum, v))
 }
 
 // SumGTE applies the GTE predicate on the "sum" field.
-func SumGTE(v string) predicate.Withdrawals {
+func SumGTE(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGTE(FieldSum, v))
 }
 
 // SumLT applies the LT predicate on the "sum" field.
-func SumLT(v string) predicate.Withdrawals {
+func SumLT(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLT(FieldSum, v))
 }
 
 // SumLTE applies the LTE predicate on the "sum" field.
-func SumLTE(v string) predicate.Withdrawals {
+func SumLTE(v int) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLTE(FieldSum, v))
-}
-
-// SumContains applies the Contains predicate on the "sum" field.
-func SumContains(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldContains(FieldSum, v))
-}
-
-// SumHasPrefix applies the HasPrefix predicate on the "sum" field.
-func SumHasPrefix(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldHasPrefix(FieldSum, v))
-}
-
-// SumHasSuffix applies the HasSuffix predicate on the "sum" field.
-func SumHasSuffix(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldHasSuffix(FieldSum, v))
-}
-
-// SumEqualFold applies the EqualFold predicate on the "sum" field.
-func SumEqualFold(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldEqualFold(FieldSum, v))
-}
-
-// SumContainsFold applies the ContainsFold predicate on the "sum" field.
-func SumContainsFold(v string) predicate.Withdrawals {
-	return predicate.Withdrawals(sql.FieldContainsFold(FieldSum, v))
 }
 
 // And groups predicates with the AND operator between them.

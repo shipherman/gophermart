@@ -261,7 +261,7 @@ func (wq *WithdrawalsQuery) Clone() *WithdrawalsQuery {
 // Example:
 //
 //	var v []struct {
-//		Order string `json:"order,omitempty"`
+//		Order int `json:"order,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -284,7 +284,7 @@ func (wq *WithdrawalsQuery) GroupBy(field string, fields ...string) *Withdrawals
 // Example:
 //
 //	var v []struct {
-//		Order string `json:"order,omitempty"`
+//		Order int `json:"order,omitempty"`
 //	}
 //
 //	client.Withdrawals.Query().

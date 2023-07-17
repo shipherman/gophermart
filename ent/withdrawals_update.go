@@ -28,14 +28,28 @@ func (wu *WithdrawalsUpdate) Where(ps ...predicate.Withdrawals) *WithdrawalsUpda
 }
 
 // SetOrder sets the "order" field.
-func (wu *WithdrawalsUpdate) SetOrder(s string) *WithdrawalsUpdate {
-	wu.mutation.SetOrder(s)
+func (wu *WithdrawalsUpdate) SetOrder(i int) *WithdrawalsUpdate {
+	wu.mutation.ResetOrder()
+	wu.mutation.SetOrder(i)
+	return wu
+}
+
+// AddOrder adds i to the "order" field.
+func (wu *WithdrawalsUpdate) AddOrder(i int) *WithdrawalsUpdate {
+	wu.mutation.AddOrder(i)
 	return wu
 }
 
 // SetSum sets the "sum" field.
-func (wu *WithdrawalsUpdate) SetSum(s string) *WithdrawalsUpdate {
-	wu.mutation.SetSum(s)
+func (wu *WithdrawalsUpdate) SetSum(i int) *WithdrawalsUpdate {
+	wu.mutation.ResetSum()
+	wu.mutation.SetSum(i)
+	return wu
+}
+
+// AddSum adds i to the "sum" field.
+func (wu *WithdrawalsUpdate) AddSum(i int) *WithdrawalsUpdate {
+	wu.mutation.AddSum(i)
 	return wu
 }
 
@@ -71,25 +85,7 @@ func (wu *WithdrawalsUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (wu *WithdrawalsUpdate) check() error {
-	if v, ok := wu.mutation.Order(); ok {
-		if err := withdrawals.OrderValidator(v); err != nil {
-			return &ValidationError{Name: "order", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.order": %w`, err)}
-		}
-	}
-	if v, ok := wu.mutation.Sum(); ok {
-		if err := withdrawals.SumValidator(v); err != nil {
-			return &ValidationError{Name: "sum", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.sum": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
-	if err := wu.check(); err != nil {
-		return n, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(withdrawals.Table, withdrawals.Columns, sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt))
 	if ps := wu.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
@@ -99,10 +95,16 @@ func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := wu.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := wu.mutation.AddedOrder(); ok {
+		_spec.AddField(withdrawals.FieldOrder, field.TypeInt, value)
 	}
 	if value, ok := wu.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
+	}
+	if value, ok := wu.mutation.AddedSum(); ok {
+		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, wu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -125,14 +127,28 @@ type WithdrawalsUpdateOne struct {
 }
 
 // SetOrder sets the "order" field.
-func (wuo *WithdrawalsUpdateOne) SetOrder(s string) *WithdrawalsUpdateOne {
-	wuo.mutation.SetOrder(s)
+func (wuo *WithdrawalsUpdateOne) SetOrder(i int) *WithdrawalsUpdateOne {
+	wuo.mutation.ResetOrder()
+	wuo.mutation.SetOrder(i)
+	return wuo
+}
+
+// AddOrder adds i to the "order" field.
+func (wuo *WithdrawalsUpdateOne) AddOrder(i int) *WithdrawalsUpdateOne {
+	wuo.mutation.AddOrder(i)
 	return wuo
 }
 
 // SetSum sets the "sum" field.
-func (wuo *WithdrawalsUpdateOne) SetSum(s string) *WithdrawalsUpdateOne {
-	wuo.mutation.SetSum(s)
+func (wuo *WithdrawalsUpdateOne) SetSum(i int) *WithdrawalsUpdateOne {
+	wuo.mutation.ResetSum()
+	wuo.mutation.SetSum(i)
+	return wuo
+}
+
+// AddSum adds i to the "sum" field.
+func (wuo *WithdrawalsUpdateOne) AddSum(i int) *WithdrawalsUpdateOne {
+	wuo.mutation.AddSum(i)
 	return wuo
 }
 
@@ -181,25 +197,7 @@ func (wuo *WithdrawalsUpdateOne) ExecX(ctx context.Context) {
 	}
 }
 
-// check runs all checks and user-defined validators on the builder.
-func (wuo *WithdrawalsUpdateOne) check() error {
-	if v, ok := wuo.mutation.Order(); ok {
-		if err := withdrawals.OrderValidator(v); err != nil {
-			return &ValidationError{Name: "order", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.order": %w`, err)}
-		}
-	}
-	if v, ok := wuo.mutation.Sum(); ok {
-		if err := withdrawals.SumValidator(v); err != nil {
-			return &ValidationError{Name: "sum", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.sum": %w`, err)}
-		}
-	}
-	return nil
-}
-
 func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawals, err error) {
-	if err := wuo.check(); err != nil {
-		return _node, err
-	}
 	_spec := sqlgraph.NewUpdateSpec(withdrawals.Table, withdrawals.Columns, sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt))
 	id, ok := wuo.mutation.ID()
 	if !ok {
@@ -226,10 +224,16 @@ func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawal
 		}
 	}
 	if value, ok := wuo.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
+	}
+	if value, ok := wuo.mutation.AddedOrder(); ok {
+		_spec.AddField(withdrawals.FieldOrder, field.TypeInt, value)
 	}
 	if value, ok := wuo.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
+	}
+	if value, ok := wuo.mutation.AddedSum(); ok {
+		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
 	}
 	_node = &Withdrawals{config: wuo.config}
 	_spec.Assign = _node.assignValues

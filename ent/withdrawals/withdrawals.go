@@ -36,13 +36,6 @@ func ValidColumn(column string) bool {
 	return false
 }
 
-var (
-	// OrderValidator is a validator for the "order" field. It is called by the builders before save.
-	OrderValidator func(string) error
-	// SumValidator is a validator for the "sum" field. It is called by the builders before save.
-	SumValidator func(string) error
-)
-
 // OrderOption defines the ordering options for the Withdrawals queries.
 type OrderOption func(*sql.Selector)
 

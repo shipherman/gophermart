@@ -17,9 +17,9 @@ type Withdrawals struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Order holds the value of the "order" field.
-	Order string `json:"order,omitempty"`
+	Order int `json:"order,omitempty"`
 	// Sum holds the value of the "sum" field.
-	Sum          string `json:"sum,omitempty"`
+	Sum          int `json:"sum,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -28,10 +28,8 @@ func (*Withdrawals) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case withdrawals.FieldID:
+		case withdrawals.FieldID, withdrawals.FieldOrder, withdrawals.FieldSum:
 			values[i] = new(sql.NullInt64)
-		case withdrawals.FieldOrder, withdrawals.FieldSum:
-			values[i] = new(sql.NullString)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -54,16 +52,16 @@ func (w *Withdrawals) assignValues(columns []string, values []any) error {
 			}
 			w.ID = int(value.Int64)
 		case withdrawals.FieldOrder:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field order", values[i])
 			} else if value.Valid {
-				w.Order = value.String
+				w.Order = int(value.Int64)
 			}
 		case withdrawals.FieldSum:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field sum", values[i])
 			} else if value.Valid {
-				w.Sum = value.String
+				w.Sum = int(value.Int64)
 			}
 		default:
 			w.selectValues.Set(columns[i], values[i])
@@ -102,10 +100,10 @@ func (w *Withdrawals) String() string {
 	builder.WriteString("Withdrawals(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", w.ID))
 	builder.WriteString("order=")
-	builder.WriteString(w.Order)
+	builder.WriteString(fmt.Sprintf("%v", w.Order))
 	builder.WriteString(", ")
 	builder.WriteString("sum=")
-	builder.WriteString(w.Sum)
+	builder.WriteString(fmt.Sprintf("%v", w.Sum))
 	builder.WriteByte(')')
 	return builder.String()
 }

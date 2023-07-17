@@ -48,8 +48,8 @@ var (
 	// WithdrawalsColumns holds the columns for the "withdrawals" table.
 	WithdrawalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "order", Type: field.TypeString, Unique: true},
-		{Name: "sum", Type: field.TypeString},
+		{Name: "order", Type: field.TypeInt, Unique: true},
+		{Name: "sum", Type: field.TypeInt},
 	}
 	// WithdrawalsTable holds the schema information for the "withdrawals" table.
 	WithdrawalsTable = &schema.Table{

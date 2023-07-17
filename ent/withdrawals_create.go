@@ -20,14 +20,14 @@ type WithdrawalsCreate struct {
 }
 
 // SetOrder sets the "order" field.
-func (wc *WithdrawalsCreate) SetOrder(s string) *WithdrawalsCreate {
-	wc.mutation.SetOrder(s)
+func (wc *WithdrawalsCreate) SetOrder(i int) *WithdrawalsCreate {
+	wc.mutation.SetOrder(i)
 	return wc
 }
 
 // SetSum sets the "sum" field.
-func (wc *WithdrawalsCreate) SetSum(s string) *WithdrawalsCreate {
-	wc.mutation.SetSum(s)
+func (wc *WithdrawalsCreate) SetSum(i int) *WithdrawalsCreate {
+	wc.mutation.SetSum(i)
 	return wc
 }
 
@@ -68,18 +68,8 @@ func (wc *WithdrawalsCreate) check() error {
 	if _, ok := wc.mutation.Order(); !ok {
 		return &ValidationError{Name: "order", err: errors.New(`ent: missing required field "Withdrawals.order"`)}
 	}
-	if v, ok := wc.mutation.Order(); ok {
-		if err := withdrawals.OrderValidator(v); err != nil {
-			return &ValidationError{Name: "order", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.order": %w`, err)}
-		}
-	}
 	if _, ok := wc.mutation.Sum(); !ok {
 		return &ValidationError{Name: "sum", err: errors.New(`ent: missing required field "Withdrawals.sum"`)}
-	}
-	if v, ok := wc.mutation.Sum(); ok {
-		if err := withdrawals.SumValidator(v); err != nil {
-			return &ValidationError{Name: "sum", err: fmt.Errorf(`ent: validator failed for field "Withdrawals.sum": %w`, err)}
-		}
 	}
 	return nil
 }
@@ -108,11 +98,11 @@ func (wc *WithdrawalsCreate) createSpec() (*Withdrawals, *sqlgraph.CreateSpec) {
 		_spec = sqlgraph.NewCreateSpec(withdrawals.Table, sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt))
 	)
 	if value, ok := wc.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
 		_node.Order = value
 	}
 	if value, ok := wc.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeString, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
 		_node.Sum = value
 	}
 	return _node, _spec

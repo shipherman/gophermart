@@ -13,9 +13,8 @@ type Withdrawals struct {
 // Fields of the Withdrawals.
 func (Withdrawals) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("order").
-			NotEmpty().Unique(),
-		field.String("sum").
-			NotEmpty(),
+		field.Int("order").
+			Unique(),
+		field.Int("sum"),
 	}
 }
