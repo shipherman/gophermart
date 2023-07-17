@@ -26,14 +26,14 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder models.OrderResponse, errCh chan error) {
+func InsertOrder(newOrder models.OrderResponse) error {
 
 	client := GetClient()
 
 	// // put orderResp to accrual app
 	accResp, err := acc.ReqAccural(newOrder.OrderNum)
 	if err != nil {
-		errCh <- err
+		return err
 	}
 
 	newOrder.Status = accResp.Status
@@ -43,7 +43,7 @@ func InsertOrder(newOrder models.OrderResponse, errCh chan error) {
 	// Get ent User struct
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
-		errCh <- err
+		return err
 	}
 
 	// Save new Order to db
@@ -56,9 +56,29 @@ func InsertOrder(newOrder models.OrderResponse, errCh chan error) {
 		Save(context.Background())
 
 	if err != nil {
-		errCh <- err
+		return err
 	}
 
-	errCh <- nil
+	return nil
 
+}
+
+func InsertWithdraw(newWithdraw models.Withdraw) error {
+	client := GetClient()
+
+	user, err := SelectUser(newWithdraw.User)
+	if err != nil {
+		return err
+	}
+	_, err = client.Withdrawals.Create().
+		SetOrder(newWithdraw.OrderNum).
+		SetSum(newWithdraw.Sum).
+		SetUser(user).
+		Save(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

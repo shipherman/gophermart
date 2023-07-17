@@ -10,8 +10,9 @@ type User struct {
 }
 
 type Withdraw struct {
-	OrderNum int `json:"order"`
-	Sum      int `json:"sum"`
+	User     string `json:"user"`
+	OrderNum int    `json:"order"`
+	Sum      int    `json:"sum"`
 }
 
 type OrderResponse struct {

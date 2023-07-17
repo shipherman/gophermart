@@ -14,7 +14,7 @@ func HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {
 	var newWithdraw models.Withdraw
 
 	// Execute user from context
-	user := chi.URLParam(r, "user")
+	newWithdraw.User = chi.URLParam(r, "user")
 
 	err := json.NewDecoder(r.Body).Decode(&newWithdraw)
 	if err != nil {
@@ -22,7 +22,7 @@ func HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.UpdateWithdraw(user, newWithdraw.Sum)
+	err = db.UpdateWithdraw(newWithdraw.User, newWithdraw.Sum)
 	if err != nil {
 		switch err.Error() {
 		case "not anough bonuses to withdraw":
@@ -32,6 +32,12 @@ func HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
+	}
+
+	err = db.InsertWithdraw(newWithdraw)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
