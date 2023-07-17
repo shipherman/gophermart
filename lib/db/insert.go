@@ -3,10 +3,10 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/lib/acc"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -26,28 +26,28 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder models.OrderResponse) (exist bool, err error) {
+func InsertOrder(newOrder models.OrderResponse, errCh chan error) {
 
 	client := GetClient()
 
 	// // put orderResp to accrual app
-	// accResp, err := acc.ReqAccural(newOrder.OrderNum)
-	// if err != nil {
-	// 	return exist, err
-	// }
+	accResp, err := acc.ReqAccural(newOrder.OrderNum)
+	if err != nil {
+		errCh <- err
+	}
 
-	// newOrder.Status = accResp.Status
-	// newOrder.Accural = accResp.Accural
+	newOrder.Status = accResp.Status
+	newOrder.Accural = accResp.Accural
 	newOrder.TimeStamp = time.Now()
 
 	// Get ent User struct
 	user, err := SelectUser(newOrder.User)
 	if err != nil {
-		return exist, err
+		errCh <- err
 	}
 
 	// Save new Order to db
-	entOrder, err := client.Order.Create().
+	_, err = client.Order.Create().
 		SetOrdernum(newOrder.OrderNum).
 		SetStatus(newOrder.Status).
 		SetAccural(newOrder.Accural).
@@ -56,12 +56,9 @@ func InsertOrder(newOrder models.OrderResponse) (exist bool, err error) {
 		Save(context.Background())
 
 	if err != nil {
-		if strings.Contains(err.Error(), "exist") {
-			exist = true
-		}
-		return exist, err
+		errCh <- err
 	}
 
-	fmt.Println(entOrder)
-	return exist, nil
+	errCh <- nil
+
 }

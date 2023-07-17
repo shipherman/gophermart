@@ -9,6 +9,12 @@ import (
 	"github.com/shipherman/gophermart/lib/models"
 )
 
+var addr string
+
+func SetAccuralAddress(s string) {
+	addr = s
+}
+
 // Client requests order
 // Parses results allign to provided codes
 // Return it to handler
@@ -26,7 +32,7 @@ func ReqAccural(orderNum int) (order models.OrderResponse, err error) {
 	client := resty.New()
 
 	// Build connection string
-	addr := fmt.Sprintf("http://localhost:8080/api/order/%d", orderNum)
+	addr = fmt.Sprintf("http://%s/api/order/%d", addr, orderNum)
 
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().

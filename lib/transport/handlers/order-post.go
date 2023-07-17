@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -37,7 +38,8 @@ func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	switch u {
 	case "":
 		w.WriteHeader(http.StatusAccepted)
-		go db.InsertOrder(newOrder)
+		// как отделить Хэндлер от запроса в базу и в Acural?
+		go writeOrderToDB(newOrder)
 	case newOrder.User:
 		w.WriteHeader(http.StatusOK)
 		return
@@ -46,4 +48,14 @@ func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func writeOrderToDB(newOrder models.OrderResponse) {
+	errCh := make(chan error)
+
+	for err := range errCh {
+		if err != nil {
+			log.Println(err)
+		}
+	}
 }

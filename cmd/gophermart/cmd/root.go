@@ -4,11 +4,11 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
+	"github.com/shipherman/gophermart/lib/acc"
 	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
@@ -50,9 +50,13 @@ func Execute() {
 	client := db.NewClient(cfg.DSN)
 	defer client.Close()
 
+	// Set DB client
 	db.SetClient(client)
 
-	fmt.Println(cfg.Address)
+	// Set accural address
+	acc.SetAccuralAddress(cfg.Accural)
+
+	// Run server
 	router := routes.NewRouter()
 	log.Fatal(http.ListenAndServe(cfg.Address, router))
 }

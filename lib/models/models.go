@@ -9,6 +9,11 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type Withdraw struct {
+	OrderNum int `json:"order"`
+	Sum      int `json:"sum"`
+}
+
 type OrderResponse struct {
 	OrderNum  int       `json:"number"`
 	User      string    `json:"-"`
