@@ -18,17 +18,17 @@ type Claims struct {
 	User string
 }
 
-const TOKEN_EXP = time.Hour * 3
-const SECRET_KEY = "supersecretkey"
+const tockenExpiration = time.Hour * 3
+const sercretKey = "supersecretkey"
 
 func buildJWTString(user string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(TOKEN_EXP)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(tockenExpiration)),
 		},
 		User: user,
 	})
-	tokenString, err := token.SignedString([]byte(SECRET_KEY))
+	tokenString, err := token.SignedString([]byte(sercretKey))
 
 	if err != nil {
 		return "", err
@@ -41,7 +41,7 @@ func getUser(tokenString string) (string, error) {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-		return []byte(SECRET_KEY), nil
+		return []byte(sercretKey), nil
 	})
 	if err != nil {
 		return "", err
