@@ -21,7 +21,7 @@ import (
 
 type Options struct {
 	DSN     string `env:"DATABASE_URI"`
-	Accural string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	Accrual string `env:"ACCRUAL_SYSTEM_ADDRESS"`
 	Address string `env:"RUN_ADDRESS"`
 }
 
@@ -56,13 +56,11 @@ func Execute() {
 		os.Exit(1)
 	}
 
+	// место для Graceful shutdown
 	defer dbclient.Stop()
 
-	// Set DB client
-	// db.SetClient(client)
-
-	// Set accural address
-	accrual.SetAccuralAddress(cfg.Accural)
+	// Set accruall address
+	accrual.SetAccrualAddress(cfg.Accrual)
 
 	fmt.Println(cfg)
 	// Run server
@@ -86,7 +84,7 @@ func init() {
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gophermart.yaml)")
 	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable", "DataBase connection string")
-	rootCmd.PersistentFlags().StringVarP(&cfg.Accural, "accural", "r", "localhost:8080", "Accural service address")
+	rootCmd.PersistentFlags().StringVarP(&cfg.Accrual, "Accrual", "r", "localhost:8080", "Accrual service address")
 	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")
 
 }

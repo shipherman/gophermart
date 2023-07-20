@@ -11,7 +11,7 @@ import (
 
 var addr string
 
-func SetAccuralAddress(s string) {
+func SetAccrualAddress(s string) {
 	addr = s
 }
 
