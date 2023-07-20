@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/shipherman/gophermart/ent"
-	"github.com/shipherman/gophermart/lib/acc"
+	"github.com/shipherman/gophermart/lib/accrual"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -31,7 +31,7 @@ func InsertOrder(newOrder models.OrderResponse) error {
 	client := GetClient()
 
 	// // put orderResp to accrual app
-	accResp, err := acc.ReqAccural(newOrder.OrderNum)
+	accResp, err := accrual.ReqAccural(newOrder.OrderNum)
 	if err != nil {
 		return err
 	}

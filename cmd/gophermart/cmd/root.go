@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/shipherman/gophermart/lib/acc"
+	"github.com/shipherman/gophermart/lib/accrual"
 	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
@@ -55,7 +55,7 @@ func Execute() {
 	db.SetClient(client)
 
 	// Set accural address
-	acc.SetAccuralAddress(cfg.Accural)
+	accrual.SetAccuralAddress(cfg.Accural)
 
 	fmt.Println(cfg)
 	// Run server

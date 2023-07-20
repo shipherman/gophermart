@@ -1,5 +1,5 @@
 // Interaction with accural service
-package acc
+package accrual
 
 import (
 	"encoding/json"
