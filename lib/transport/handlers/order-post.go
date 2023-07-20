@@ -7,12 +7,11 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
 // Create a new order
-func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	var buf bytes.Buffer
 	var newOrder models.OrderResponse
 
@@ -29,7 +28,7 @@ func HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	u, err := db.SelectOrderOwner(newOrder.OrderNum)
+	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

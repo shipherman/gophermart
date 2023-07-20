@@ -18,8 +18,16 @@ type Claims struct {
 	User string
 }
 
+type Authenticator struct {
+	Client *db.DBClient
+}
+
 const tockenExpiration = time.Hour * 3
 const sercretKey = "supersecretkey"
+
+func NewAuthenticator(dbclient *db.DBClient) Authenticator {
+	return Authenticator{Client: dbclient}
+}
 
 func buildJWTString(user string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
@@ -54,8 +62,8 @@ func getUser(tokenString string) (string, error) {
 	return claims.User, nil
 }
 
-func Auth(u, p string) (jwt string, err error) {
-	exist, _ := db.SelectUserExistence(u, p)
+func (a *Authenticator) Auth(u, p string) (jwt string, err error) {
+	exist, _ := a.Client.SelectUserExistence(u, p)
 	if !exist {
 		return "", fmt.Errorf("no such user")
 	}
@@ -63,7 +71,7 @@ func Auth(u, p string) (jwt string, err error) {
 	return buildJWTString(u)
 }
 
-func CheckAuth(next http.HandlerFunc) http.HandlerFunc {
+func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if authenticated
 		// Return 401 if not

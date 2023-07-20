@@ -12,9 +12,8 @@ import (
 )
 
 // Get bonuses balance for provided user
-func SelectBalance(u string) (response models.BalanceResponse, err error) {
-	client := GetClient()
-	req, err := client.User.
+func (dbc *DBClient) SelectBalance(u string) (response models.BalanceResponse, err error) {
+	req, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
 		All(context.Background())
@@ -29,10 +28,9 @@ func SelectBalance(u string) (response models.BalanceResponse, err error) {
 }
 
 // Get user by login
-func SelectUserExistence(u, p string) (bool, error) {
+func (dbc *DBClient) SelectUserExistence(u, p string) (bool, error) {
 	var exist = false
-	client := GetClient()
-	req, err := client.User.
+	req, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
 		All(context.Background())
@@ -53,9 +51,8 @@ func SelectUserExistence(u, p string) (bool, error) {
 	return exist, nil
 }
 
-func SelectUser(u string) (*ent.User, error) {
-	client := GetClient()
-	user, err := client.User.
+func (dbc *DBClient) SelectUser(u string) (*ent.User, error) {
+	user, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
 		All(context.Background())
@@ -66,9 +63,8 @@ func SelectUser(u string) (*ent.User, error) {
 	return user[0], nil
 }
 
-func SelectOrderOwner(on int) (string, error) {
-	client := GetClient()
-	order, err := client.Order.
+func (dbc *DBClient) SelectOrderOwner(on int) (string, error) {
+	order, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
 		All(context.Background())
@@ -84,11 +80,10 @@ func SelectOrderOwner(on int) (string, error) {
 	return u[0].Login, nil
 }
 
-func SelectOrders(u string) ([]models.OrderResponse, error) {
+func (dbc *DBClient) SelectOrders(u string) ([]models.OrderResponse, error) {
 	var orderResp []models.OrderResponse
 
-	client := GetClient()
-	entOrder, err := client.Order.
+	entOrder, err := dbc.Client.Order.
 		Query().
 		Where(order.HasUserWith(user.Login(u))).
 		All(context.Background())
@@ -108,11 +103,10 @@ func SelectOrders(u string) ([]models.OrderResponse, error) {
 	return orderResp, nil
 }
 
-func SelectWithdrawals(u string) ([]models.WithdrawResponse, error) {
+func (dbc *DBClient) SelectWithdrawals(u string) ([]models.WithdrawResponse, error) {
 	var wsResp []models.WithdrawResponse
 
-	client := GetClient()
-	entWs, err := client.Withdrawals.
+	entWs, err := dbc.Client.Withdrawals.
 		Query().
 		Where(withdrawals.HasUserWith(user.Login(u))).
 		All(context.Background())

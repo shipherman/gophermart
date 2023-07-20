@@ -11,6 +11,8 @@ import (
 
 	"github.com/shipherman/gophermart/lib/accrual"
 	"github.com/shipherman/gophermart/lib/db"
+	"github.com/shipherman/gophermart/lib/transport/handlers"
+	"github.com/shipherman/gophermart/lib/transport/middleware"
 	"github.com/shipherman/gophermart/lib/transport/routes"
 
 	"github.com/caarlos0/env/v8"
@@ -48,18 +50,26 @@ func Execute() {
 		os.Exit(1)
 	}
 
-	client := db.NewClient(cfg.DSN)
-	defer client.Close()
+	dbclient := db.NewClient(cfg.DSN)
+	err = dbclient.Start()
+	if err != nil {
+		os.Exit(1)
+	}
+
+	defer dbclient.Stop()
 
 	// Set DB client
-	db.SetClient(client)
+	// db.SetClient(client)
 
 	// Set accural address
 	accrual.SetAccuralAddress(cfg.Accural)
 
 	fmt.Println(cfg)
 	// Run server
-	router := routes.NewRouter()
+	handler := handlers.NewHandler(dbclient)
+	authenticator := middleware.NewAuthenticator(dbclient)
+	router := routes.NewRouter(handler, &authenticator)
+
 	log.Fatal(http.ListenAndServe(cfg.Address, router))
 }
 

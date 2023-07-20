@@ -6,11 +6,10 @@ import (
 	"net/http"
 
 	"github.com/shipherman/gophermart/ent"
-	"github.com/shipherman/gophermart/lib/db"
 )
 
 // User registration page
-func HandleRegister(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	var newUser ent.User
 
 	err := json.NewDecoder(r.Body).Decode(&newUser)
@@ -19,7 +18,7 @@ func HandleRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.InsertUser(newUser)
+	err = h.Client.InsertUser(newUser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

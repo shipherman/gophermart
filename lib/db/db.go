@@ -3,37 +3,47 @@ package db
 import (
 	"context"
 	"fmt"
-	"log"
 
 	_ "github.com/lib/pq"
 	"github.com/shipherman/gophermart/ent"
 )
 
-var entClient *ent.Client
+type DBClient struct {
+	Client     *ent.Client
+	ConnString string
+}
 
-func NewClient(connString string) *ent.Client {
-	//Open a connection to the database
-	entClient, err := ent.Open("postgres", connString)
+// Create Client instance
+func NewClient(connString string) *DBClient {
+	return &DBClient{ConnString: connString}
+}
+
+// Connect to DB
+func (dbc *DBClient) Start() error {
+	var err error
+	dbc.Client, err = ent.Open("postgres", dbc.ConnString)
 	if err != nil {
-		log.Fatal(err)
-		return nil
+		return err
 	}
 
 	fmt.Println("Connected to database successfully")
 
-	// defer EntClient.Close()
 	// AutoMigration with ENT
-	if err := entClient.Schema.Create(context.Background()); err != nil {
-		log.Fatalf("failed creating schema resources: %v", err)
-		return nil
+	if err := dbc.Client.Schema.Create(context.Background()); err != nil {
+		return fmt.Errorf("failed creating schema resources: %v", err)
 	}
-	return entClient
+	return nil
 }
 
-func GetClient() *ent.Client {
-	return entClient
+// Close connection to DB
+func (dbc *DBClient) Stop() error {
+	return dbc.Client.Close()
 }
 
-func SetClient(newClient *ent.Client) {
-	entClient = newClient
-}
+// func GetClient() *ent.Client {
+// 	return entClient
+// }
+
+// func SetClient(newClient *ent.Client) {
+// 	entClient = newClient
+// }

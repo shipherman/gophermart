@@ -5,17 +5,16 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
 // Get all transactions for user bonus account
-func HandleGetWithdrawals(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleGetWithdrawals(w http.ResponseWriter, r *http.Request) {
 	var wsResp []models.WithdrawResponse
 
 	user := chi.URLParam(r, "user")
 
-	wsResp, err := db.SelectWithdrawals(user)
+	wsResp, err := h.Client.SelectWithdrawals(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return

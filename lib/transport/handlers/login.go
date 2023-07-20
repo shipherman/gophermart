@@ -9,15 +9,15 @@ import (
 )
 
 // User login page
-func HandleLogin(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	var u ent.User
-
+	a := middleware.NewAuthenticator(h.Client)
 	err := json.NewDecoder(r.Body).Decode(&u)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	jwt, err := middleware.Auth(u.Login, u.Password)
+	jwt, err := a.Auth(u.Login, u.Password)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

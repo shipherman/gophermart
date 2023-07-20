@@ -10,9 +10,8 @@ import (
 	"github.com/shipherman/gophermart/lib/models"
 )
 
-func InsertUser(newUser ent.User) error {
-	client := GetClient()
-	user, err := client.User.Create().
+func (dbc *DBClient) InsertUser(newUser ent.User) error {
+	user, err := dbc.Client.User.Create().
 		SetLogin(newUser.Login).
 		SetPassword(newUser.Password).
 		SetBalance(0).
@@ -26,10 +25,7 @@ func InsertUser(newUser ent.User) error {
 	return nil
 }
 
-func InsertOrder(newOrder models.OrderResponse) error {
-
-	client := GetClient()
-
+func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 	// // put orderResp to accrual app
 	accResp, err := accrual.ReqAccural(newOrder.OrderNum)
 	if err != nil {
@@ -41,13 +37,13 @@ func InsertOrder(newOrder models.OrderResponse) error {
 	newOrder.TimeStamp = time.Now()
 
 	// Get ent User struct
-	user, err := SelectUser(newOrder.User)
+	user, err := dbc.SelectUser(newOrder.User)
 	if err != nil {
 		return err
 	}
 
 	// Save new Order to db
-	_, err = client.Order.Create().
+	_, err = dbc.Client.Order.Create().
 		SetOrdernum(newOrder.OrderNum).
 		SetStatus(newOrder.Status).
 		SetAccural(newOrder.Accural).
@@ -63,10 +59,8 @@ func InsertOrder(newOrder models.OrderResponse) error {
 
 }
 
-func InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
-	client := GetClient()
-
-	user, err := SelectUser(u)
+func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
+	user, err := dbc.SelectUser(u)
 	if err != nil {
 		return err
 	}
@@ -74,7 +68,7 @@ func InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
 	newWithdraw.TimeStamp = time.Now()
 	fmt.Println(newWithdraw.TimeStamp.String())
 
-	_, err = client.Withdrawals.Create().
+	_, err = dbc.Client.Withdrawals.Create().
 		SetOrder(newWithdraw.OrderNum).
 		SetSum(newWithdraw.Sum).
 		SetTimestamp(newWithdraw.TimeStamp).

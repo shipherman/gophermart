@@ -7,10 +7,8 @@ import (
 	"github.com/shipherman/gophermart/ent/user"
 )
 
-func UpdateWithdraw(u string, a int) error {
-	client := GetClient()
-
-	uent, err := client.User.Query().
+func (dbc *DBClient) UpdateWithdraw(u string, a int) error {
+	uent, err := dbc.Client.User.Query().
 		Where(user.Login(u)).First(context.Background())
 	if err != nil {
 		return err
@@ -19,7 +17,7 @@ func UpdateWithdraw(u string, a int) error {
 	if uent.Balance < a {
 		return fmt.Errorf("not anough bonuses to withdraw")
 	}
-	uent, err = uent.Update().
+	_, err = uent.Update().
 		SetBalance(uent.Balance - a).
 		SetWithdraw(uent.Withdraw + a).Save(context.Background())
 
