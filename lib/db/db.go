@@ -39,11 +39,3 @@ func (dbc *DBClient) Start() error {
 func (dbc *DBClient) Stop() error {
 	return dbc.Client.Close()
 }
-
-// func GetClient() *ent.Client {
-// 	return entClient
-// }
-
-// func SetClient(newClient *ent.Client) {
-// 	entClient = newClient
-// }
