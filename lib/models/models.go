@@ -27,3 +27,10 @@ type BalanceResponse struct {
 	Current   int `json:"current"`
 	Withdrawn int `json:"withdrawn"`
 }
+
+const (
+	New        = "NEW"
+	Processing = "PROCESSING"
+	Invalid    = "INVALID"
+	Done       = "PROCESSED"
+)

@@ -5,8 +5,10 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/shipherman/gophermart/lib/accrual"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -38,7 +40,12 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	case "":
 		w.WriteHeader(http.StatusAccepted)
 		// как отделить Хэндлер от запроса в базу и в Acural?
-		go writeOrderToDB(newOrder)
+		// maxlyaptsev Jul 18, 2023
+
+		// а зачем? Получили новый заказ - сохранили, баллы можно посчитать и позже
+
+		h.processOrder(newOrder)
+		return
 	case newOrder.User:
 		w.WriteHeader(http.StatusOK)
 		return
@@ -46,15 +53,21 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
-
 }
 
-func writeOrderToDB(newOrder models.OrderResponse) {
+func (h *Handler) processOrder(newOrder models.OrderResponse) {
 	errCh := make(chan error)
+	defer close(errCh)
+
+	// Register order as a new one
+	newOrder.Status = models.New
+	newOrder.TimeStamp = time.Now()
+
+	go h.Client.InsertOrder(newOrder, errCh)
+
+	go accrual.ReqAccural(newOrder.OrderNum, h.Client, errCh)
 
 	for err := range errCh {
-		if err != nil {
-			log.Println(err)
-		}
+		log.Print("err:", err)
 	}
 }

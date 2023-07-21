@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/go-resty/resty/v2"
+	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/models"
 )
 
@@ -27,7 +28,8 @@ func parseBody(r *resty.Response) (order models.OrderResponse, err error) {
 	return order, nil
 }
 
-func ReqAccural(orderNum int) (order models.OrderResponse, err error) {
+func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
+	var order models.OrderResponse
 
 	client := resty.New()
 
@@ -37,8 +39,10 @@ func ReqAccural(orderNum int) (order models.OrderResponse, err error) {
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().
 		Get(addr)
+	fmt.Println("reqAcc:", err)
 	if err != nil {
-		return order, err
+		errCh <- err
+		return
 	}
 
 	switch resp.StatusCode() {
@@ -46,24 +50,32 @@ func ReqAccural(orderNum int) (order models.OrderResponse, err error) {
 	case 200:
 		order, err := parseBody(resp)
 		if err != nil {
-			return order, err
+			errCh <- err
 		}
-		return order, nil
+
+		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
 	// заказ не зарегистрирован в системе расчёта
 	case 204:
 		order.Status = "IVALID"
-		return order, nil
+		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
 	// превышено количество запросов к сервису
 	case 429:
 		order.Status = "PROCESSING"
-		return order, nil
+		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
 	// внутренняя ошибка сервера
 	case 500:
 	case 404:
-		return order, fmt.Errorf("accural app is not configured")
+		errCh <- fmt.Errorf("accural app is not configured")
 	}
 
 	fmt.Println("Accural response body: ", resp)
-
-	return order, nil
 }
