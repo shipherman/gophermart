@@ -34,5 +34,4 @@ func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Authorization", jwt)
-	w.Write([]byte(jwt))
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/shipherman/gophermart/lib/db"
@@ -84,16 +83,16 @@ func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		// Separate protocol from token
-		JWTarr := strings.Split(JWT, " ")
+		// // Separate protocol from token
+		// JWTarr := strings.Split(JWT, " ")
 
-		if JWTarr[0] != "Bearer" {
-			http.Error(w, "Auth protocol shoud be Bearer", http.StatusUnauthorized)
-			return
-		}
+		// if JWTarr[0] != "Bearer" {
+		// 	http.Error(w, "Auth protocol shoud be Bearer", http.StatusUnauthorized)
+		// 	return
+		// }
 
 		// Get user
-		user, err := getUser(JWTarr[1])
+		user, err := getUser(JWT)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusUnauthorized)
 			return
