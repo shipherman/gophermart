@@ -10,6 +10,7 @@ import (
 
 func NewRouter(h *handlers.Handler, a *mid.Authenticator) chi.Router {
 	router := chi.NewRouter()
+
 	router.Use(middleware.Logger)
 	router.Use(middleware.Compress(1, "text/*", "application/*"))
 	router.Get("/", h.HandleRoot)

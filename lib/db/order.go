@@ -9,11 +9,11 @@ import (
 )
 
 // INSERT new order
-func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse, errCh chan error) {
+func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 	// // put orderResp to accrual app
 	// accResp, err := accrual.ReqAccural(newOrder.OrderNum)
 	// if err != nil {
-	// 	errCh <- err
+	// 	return err
 	// }
 
 	// newOrder.Status = accResp.Status
@@ -23,7 +23,7 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse, errCh chan error
 	// Get ent User struct
 	user, err := dbc.SelectUser(newOrder.User)
 	if err != nil {
-		errCh <- err
+		return err
 	}
 
 	// Save new Order to db
@@ -36,10 +36,10 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse, errCh chan error
 		Save(context.Background())
 
 	if err != nil {
-		errCh <- err
+		return err
 	}
 
-	errCh <- err
+	return nil
 }
 
 // UPDATE existing order

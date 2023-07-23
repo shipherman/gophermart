@@ -31,15 +31,17 @@ func parseBody(r *resty.Response) (order models.OrderResponse, err error) {
 func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
 	var order models.OrderResponse
 
+	defer close(errCh)
+
 	client := resty.New()
 
-	// Build connection string
+	// Build connection string for Accrual app
 	addr = fmt.Sprintf("http://%s/api/order/%d", addr, orderNum)
 
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().
 		Get(addr)
-	fmt.Println("reqAcc:", err)
+	// fmt.Println("reqAcc:", err)
 	if err != nil {
 		errCh <- err
 		return
@@ -76,6 +78,4 @@ func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
 	case 404:
 		errCh <- fmt.Errorf("accural app is not configured")
 	}
-
-	fmt.Println("Accural response body: ", resp)
 }
