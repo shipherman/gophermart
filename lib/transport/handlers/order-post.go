@@ -48,7 +48,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 		// а зачем? Получили новый заказ - сохранили, баллы можно посчитать и позже
 
-		go h.processOrder(newOrder)
+		go h.processOrder(newOrder, r)
 		return
 	case newOrder.User:
 		w.WriteHeader(http.StatusOK)
@@ -59,9 +59,10 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *Handler) processOrder(newOrder models.OrderResponse) {
+func (h *Handler) processOrder(newOrder models.OrderResponse, r *http.Request) {
 	errCh := make(chan error)
 
+	// Logger for outgoing requests
 	logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags), NoColor: false}
 
 	// Register order as a new one

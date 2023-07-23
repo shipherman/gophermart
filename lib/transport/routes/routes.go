@@ -12,6 +12,7 @@ func NewRouter(h *handlers.Handler, a *mid.Authenticator) chi.Router {
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)
+	router.Use(middleware.SetHeader("Content-Type", "application/json"))
 	router.Use(middleware.Compress(1, "text/*", "application/*"))
 	router.Get("/", h.HandleRoot)
 	router.Post("/api/user/register", h.HandleRegister)
