@@ -21,7 +21,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-
+	w.Header().Set("Authorization", jwt)
 	w.Write([]byte(jwt))
 
 }
