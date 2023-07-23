@@ -23,19 +23,20 @@ func (dbc *DBClient) InsertUser(newUser ent.User) error {
 // Get user by login
 func (dbc *DBClient) SelectUserExistence(u, p string) (bool, error) {
 	var exist = false
-	req, err := dbc.Client.User.
+	fmt.Println(u, p)
+	user, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
-		All(context.Background())
+		First(context.Background())
 	if err != nil {
 		return exist, err
 	}
 
-	if len(req) == 0 {
+	if user == nil {
 		return exist, fmt.Errorf("user does not exist, please register")
 	}
 
-	if req[0].Password != p {
+	if user.Password != p {
 		return exist, fmt.Errorf("wrong password")
 	} else {
 		exist = true

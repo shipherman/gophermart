@@ -63,7 +63,10 @@ func getUser(tokenString string) (string, error) {
 }
 
 func (a *Authenticator) Auth(u, p string) (jwt string, err error) {
-	exist, _ := a.Client.SelectUserExistence(u, p)
+	exist, err := a.Client.SelectUserExistence(u, p)
+	if err != nil {
+		return "", err
+	}
 	if !exist {
 		return "", fmt.Errorf("no such user")
 	}

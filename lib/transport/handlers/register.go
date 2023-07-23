@@ -2,17 +2,18 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/lib/transport/middleware"
 )
 
 // User registration page
 func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	var newUser ent.User
 
-	err := json.NewDecoder(r.Body).Decode(&newUser)
+	body := r.Body
+	err := json.NewDecoder(body).Decode(&newUser)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -23,7 +24,15 @@ func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
-	fmt.Println(r.RequestURI)
+	// Authenticator instance
+	a := middleware.NewAuthenticator(h.Client)
 
-	http.Redirect(w, r, "/api/user/login", http.StatusTemporaryRedirect)
+	// Generate JWT
+	jwt, err := a.Auth(newUser.Login, newUser.Password)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	w.Header().Set("Authorization", jwt)
+	w.Write([]byte(jwt))
 }
