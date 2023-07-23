@@ -83,8 +83,17 @@ func init() {
 	}
 
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gophermart.yaml)")
-	rootCmd.PersistentFlags().StringVarP(&cfg.DSN, "dsn", "d", "host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable", "DataBase connection string")
-	rootCmd.PersistentFlags().StringVarP(&cfg.Accrual, "Accrual", "r", "localhost:8080", "Accrual service address")
-	rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")
-
+	if cfg.DSN == "" {
+		rootCmd.PersistentFlags().StringVarP(&cfg.DSN,
+			"dsn",
+			"d",
+			"host=localhost port=5432 dbname=postgres user=postgres password=pass sslmode=disable",
+			"DataBase connection string")
+	}
+	if cfg.Accrual == "" {
+		rootCmd.PersistentFlags().StringVarP(&cfg.Accrual, "Accrual", "r", "localhost:8080", "Accrual service address")
+	}
+	if cfg.Address == "" {
+		rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")
+	}
 }
