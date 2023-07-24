@@ -29,7 +29,7 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	return order, nil
 }
 
-func ReqAccural(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan error) {
+func ReqAccrual(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan error) {
 	var order models.OrderResponse
 
 	defer close(errCh)

@@ -71,7 +71,7 @@ func (h *Handler) processOrder(newOrder models.OrderResponse, r *http.Request) {
 		logEntry.Logger.Print(err)
 	}
 
-	go accrual.ReqAccural(newOrder, h.Client, errCh)
+	go accrual.ReqAccrual(newOrder, h.Client, errCh)
 
 	for err := range errCh {
 		if err != nil {
