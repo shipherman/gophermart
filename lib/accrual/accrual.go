@@ -37,7 +37,7 @@ func ReqAccural(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 	client := resty.New()
 
 	// Build connection string for Accrual app
-	addr = fmt.Sprintf("http://%s/api/order/%d", addr, orderResp.OrderNum)
+	addr = fmt.Sprintf("http://%s/api/order/%s", addr, orderResp.OrderNum)
 
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().
