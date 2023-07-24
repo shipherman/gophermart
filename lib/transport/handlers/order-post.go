@@ -44,7 +44,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	case "":
 		orderInt, err := strconv.Atoi(newOrder.OrderNum)
 		if !luhn.Valid(orderInt) || err != nil {
-			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			http.Error(w, "wrong format of order number", http.StatusUnprocessableEntity)
 			return
 		}
 		w.WriteHeader(http.StatusAccepted)
