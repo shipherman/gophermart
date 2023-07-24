@@ -29,10 +29,6 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 	newOrder.User = chi.URLParam(r, "user")
 	newOrder.OrderNum = buf.String()
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
-	}
 
 	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)
 	if err != nil {
@@ -64,7 +60,7 @@ func (h *Handler) processOrder(newOrder models.OrderResponse, r *http.Request) {
 	errCh := make(chan error)
 
 	// Logger for outgoing requests
-	logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags), NoColor: false}
+	logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
 	// Register order as a new one
 	newOrder.Status = models.New

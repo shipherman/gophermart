@@ -20,8 +20,8 @@ func SetAccrualAddress(s string) {
 // Client requests order
 // Parses results allign to provided codes
 // Return it to handler
-func parseBody(r *resty.Response) (order models.OrderResponse, err error) {
-	err = json.Unmarshal(r.Body(), order)
+func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
+	err = json.Unmarshal(r.Body(), &order)
 	if err != nil {
 		return order, err
 	}
@@ -56,7 +56,7 @@ func ReqAccural(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 			errCh <- err
 		}
 
-		err = dbc.UpdateOrder(order)
+		err = dbc.UpdateOrder(*order)
 		if err != nil {
 			errCh <- err
 		}
