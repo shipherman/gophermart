@@ -43,9 +43,18 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 }
 
 // UPDATE existing order
-func (dbc *DBClient) UpdateOrder(order models.OrderResponse) error {
-	_, err := dbc.Client.Order.Update().
-		SetStatus(order.Status).Save(context.Background())
+func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
+	o, err := dbc.Client.Order.
+		Query().
+		Where(order.OrdernumEQ(orderResp.OrderNum)).
+		First(context.Background())
+	if err != nil {
+		return err
+	}
+
+	_, err = o.Update().
+		SetStatus(orderResp.Status).Save(context.Background())
+
 	return err
 }
 

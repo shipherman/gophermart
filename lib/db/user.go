@@ -49,12 +49,12 @@ func (dbc *DBClient) SelectUser(u string) (*ent.User, error) {
 	user, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
-		All(context.Background())
+		First(context.Background())
 	if err != nil {
 		return nil, err
 	}
 
-	return user[0], nil
+	return user, nil
 }
 
 // Get bonuses balance for provided user
@@ -71,4 +71,18 @@ func (dbc *DBClient) SelectBalance(u string) (response models.BalanceResponse, e
 	response.Withdrawn = req[0].Withdraw
 
 	return response, nil
+}
+
+// UPDATE user balance
+func (dbc *DBClient) UpdateBalance(orderResp models.OrderResponse) error {
+	u, err := dbc.SelectUser(orderResp.User)
+	if err != nil {
+		return err
+	}
+
+	_, err = u.Update().
+		AddBalance(orderResp.Accural).
+		Save(context.Background())
+
+	return err
 }

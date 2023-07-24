@@ -8,6 +8,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/lib/db"
 	"github.com/shipherman/gophermart/lib/models"
+	// "github.com/cenkalti/backoff/v4"
 )
 
 var addr string
@@ -28,7 +29,7 @@ func parseBody(r *resty.Response) (order models.OrderResponse, err error) {
 	return order, nil
 }
 
-func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
+func ReqAccural(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan error) {
 	var order models.OrderResponse
 
 	defer close(errCh)
@@ -36,7 +37,7 @@ func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
 	client := resty.New()
 
 	// Build connection string for Accrual app
-	addr = fmt.Sprintf("http://%s/api/order/%d", addr, orderNum)
+	addr = fmt.Sprintf("http://%s/api/order/%d", addr, orderResp.OrderNum)
 
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().
@@ -56,6 +57,12 @@ func ReqAccural(orderNum int, dbc *db.DBClient, errCh chan error) {
 		}
 
 		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
+
+		orderResp.Accural = order.Accural
+		err = dbc.UpdateBalance(orderResp)
 		if err != nil {
 			errCh <- err
 		}
