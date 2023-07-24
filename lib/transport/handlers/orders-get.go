@@ -21,6 +21,5 @@ func (h *Handler) HandleGetOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "applicaion/json")
 	json.NewEncoder(w).Encode(orders)
 }
