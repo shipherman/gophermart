@@ -298,7 +298,7 @@ func (oq *OrderQuery) WithUser(opts ...func(*UserQuery)) *OrderQuery {
 // Example:
 //
 //	var v []struct {
-//		Ordernum int `json:"ordernum,omitempty"`
+//		Ordernum string `json:"ordernum,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (oq *OrderQuery) GroupBy(field string, fields ...string) *OrderGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Ordernum int `json:"ordernum,omitempty"`
+//		Ordernum string `json:"ordernum,omitempty"`
 //	}
 //
 //	client.Order.Query().

@@ -16,7 +16,7 @@ type WithdrawResponse struct {
 }
 
 type OrderResponse struct {
-	OrderNum  int       `json:"number"`
+	OrderNum  string    `json:"number"`
 	User      string    `json:"-"`
 	Status    string    `json:"status"`
 	Accural   int       `json:"accural,omitempty"`

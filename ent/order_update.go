@@ -30,15 +30,8 @@ func (ou *OrderUpdate) Where(ps ...predicate.Order) *OrderUpdate {
 }
 
 // SetOrdernum sets the "ordernum" field.
-func (ou *OrderUpdate) SetOrdernum(i int) *OrderUpdate {
-	ou.mutation.ResetOrdernum()
-	ou.mutation.SetOrdernum(i)
-	return ou
-}
-
-// AddOrdernum adds i to the "ordernum" field.
-func (ou *OrderUpdate) AddOrdernum(i int) *OrderUpdate {
-	ou.mutation.AddOrdernum(i)
+func (ou *OrderUpdate) SetOrdernum(s string) *OrderUpdate {
+	ou.mutation.SetOrdernum(s)
 	return ou
 }
 
@@ -134,10 +127,7 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := ou.mutation.Ordernum(); ok {
-		_spec.SetField(order.FieldOrdernum, field.TypeInt, value)
-	}
-	if value, ok := ou.mutation.AddedOrdernum(); ok {
-		_spec.AddField(order.FieldOrdernum, field.TypeInt, value)
+		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Accural(); ok {
 		_spec.SetField(order.FieldAccural, field.TypeInt, value)
@@ -201,15 +191,8 @@ type OrderUpdateOne struct {
 }
 
 // SetOrdernum sets the "ordernum" field.
-func (ouo *OrderUpdateOne) SetOrdernum(i int) *OrderUpdateOne {
-	ouo.mutation.ResetOrdernum()
-	ouo.mutation.SetOrdernum(i)
-	return ouo
-}
-
-// AddOrdernum adds i to the "ordernum" field.
-func (ouo *OrderUpdateOne) AddOrdernum(i int) *OrderUpdateOne {
-	ouo.mutation.AddOrdernum(i)
+func (ouo *OrderUpdateOne) SetOrdernum(s string) *OrderUpdateOne {
+	ouo.mutation.SetOrdernum(s)
 	return ouo
 }
 
@@ -335,10 +318,7 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		}
 	}
 	if value, ok := ouo.mutation.Ordernum(); ok {
-		_spec.SetField(order.FieldOrdernum, field.TypeInt, value)
-	}
-	if value, ok := ouo.mutation.AddedOrdernum(); ok {
-		_spec.AddField(order.FieldOrdernum, field.TypeInt, value)
+		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Accural(); ok {
 		_spec.SetField(order.FieldAccural, field.TypeInt, value)

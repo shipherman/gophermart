@@ -28,7 +28,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newOrder.User = chi.URLParam(r, "user")
-	newOrder.OrderNum, err = strconv.Atoi(buf.String())
+	newOrder.OrderNum = buf.String()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -42,7 +42,8 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 	switch u {
 	case "":
-		if !luhn.Valid(newOrder.OrderNum) {
+		orderInt, err := strconv.Atoi(newOrder.OrderNum)
+		if !luhn.Valid(orderInt) || err != nil {
 			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
 			return
 		}

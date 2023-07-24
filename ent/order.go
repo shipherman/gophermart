@@ -19,7 +19,7 @@ type Order struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Ordernum holds the value of the "ordernum" field.
-	Ordernum int `json:"ordernum,omitempty"`
+	Ordernum string `json:"ordernum,omitempty"`
 	// Accural holds the value of the "accural" field.
 	Accural int `json:"accural,omitempty"`
 	// Status holds the value of the "status" field.
@@ -60,9 +60,9 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldOrdernum, order.FieldAccural:
+		case order.FieldID, order.FieldAccural:
 			values[i] = new(sql.NullInt64)
-		case order.FieldStatus:
+		case order.FieldOrdernum, order.FieldStatus:
 			values[i] = new(sql.NullString)
 		case order.FieldTimestamp:
 			values[i] = new(sql.NullTime)
@@ -90,10 +90,10 @@ func (o *Order) assignValues(columns []string, values []any) error {
 			}
 			o.ID = int(value.Int64)
 		case order.FieldOrdernum:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ordernum", values[i])
 			} else if value.Valid {
-				o.Ordernum = int(value.Int64)
+				o.Ordernum = value.String
 			}
 		case order.FieldAccural:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -162,7 +162,7 @@ func (o *Order) String() string {
 	builder.WriteString("Order(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", o.ID))
 	builder.WriteString("ordernum=")
-	builder.WriteString(fmt.Sprintf("%v", o.Ordernum))
+	builder.WriteString(o.Ordernum)
 	builder.WriteString(", ")
 	builder.WriteString("accural=")
 	builder.WriteString(fmt.Sprintf("%v", o.Accural))

@@ -22,8 +22,8 @@ type OrderCreate struct {
 }
 
 // SetOrdernum sets the "ordernum" field.
-func (oc *OrderCreate) SetOrdernum(i int) *OrderCreate {
-	oc.mutation.SetOrdernum(i)
+func (oc *OrderCreate) SetOrdernum(s string) *OrderCreate {
+	oc.mutation.SetOrdernum(s)
 	return oc
 }
 
@@ -137,7 +137,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec = sqlgraph.NewCreateSpec(order.Table, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt))
 	)
 	if value, ok := oc.mutation.Ordernum(); ok {
-		_spec.SetField(order.FieldOrdernum, field.TypeInt, value)
+		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 		_node.Ordernum = value
 	}
 	if value, ok := oc.mutation.Accural(); ok {

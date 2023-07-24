@@ -15,7 +15,7 @@ type Order struct {
 // Fields of the Order.
 func (Order) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("ordernum").
+		field.String("ordernum").
 			Unique(),
 		field.Int("accural"),
 		field.String("status"),

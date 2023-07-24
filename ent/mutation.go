@@ -37,8 +37,7 @@ type OrderMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	ordernum      *int
-	addordernum   *int
+	ordernum      *string
 	accural       *int
 	addaccural    *int
 	status        *string
@@ -150,13 +149,12 @@ func (m *OrderMutation) IDs(ctx context.Context) ([]int, error) {
 }
 
 // SetOrdernum sets the "ordernum" field.
-func (m *OrderMutation) SetOrdernum(i int) {
-	m.ordernum = &i
-	m.addordernum = nil
+func (m *OrderMutation) SetOrdernum(s string) {
+	m.ordernum = &s
 }
 
 // Ordernum returns the value of the "ordernum" field in the mutation.
-func (m *OrderMutation) Ordernum() (r int, exists bool) {
+func (m *OrderMutation) Ordernum() (r string, exists bool) {
 	v := m.ordernum
 	if v == nil {
 		return
@@ -167,7 +165,7 @@ func (m *OrderMutation) Ordernum() (r int, exists bool) {
 // OldOrdernum returns the old "ordernum" field's value of the Order entity.
 // If the Order object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldOrdernum(ctx context.Context) (v int, err error) {
+func (m *OrderMutation) OldOrdernum(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOrdernum is only allowed on UpdateOne operations")
 	}
@@ -181,28 +179,9 @@ func (m *OrderMutation) OldOrdernum(ctx context.Context) (v int, err error) {
 	return oldValue.Ordernum, nil
 }
 
-// AddOrdernum adds i to the "ordernum" field.
-func (m *OrderMutation) AddOrdernum(i int) {
-	if m.addordernum != nil {
-		*m.addordernum += i
-	} else {
-		m.addordernum = &i
-	}
-}
-
-// AddedOrdernum returns the value that was added to the "ordernum" field in this mutation.
-func (m *OrderMutation) AddedOrdernum() (r int, exists bool) {
-	v := m.addordernum
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetOrdernum resets all changes to the "ordernum" field.
 func (m *OrderMutation) ResetOrdernum() {
 	m.ordernum = nil
-	m.addordernum = nil
 }
 
 // SetAccural sets the "accural" field.
@@ -462,7 +441,7 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 func (m *OrderMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case order.FieldOrdernum:
-		v, ok := value.(int)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -497,9 +476,6 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *OrderMutation) AddedFields() []string {
 	var fields []string
-	if m.addordernum != nil {
-		fields = append(fields, order.FieldOrdernum)
-	}
 	if m.addaccural != nil {
 		fields = append(fields, order.FieldAccural)
 	}
@@ -511,8 +487,6 @@ func (m *OrderMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case order.FieldOrdernum:
-		return m.AddedOrdernum()
 	case order.FieldAccural:
 		return m.AddedAccural()
 	}
@@ -524,13 +498,6 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case order.FieldOrdernum:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddOrdernum(v)
-		return nil
 	case order.FieldAccural:
 		v, ok := value.(int)
 		if !ok {

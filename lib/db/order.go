@@ -59,7 +59,7 @@ func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
 }
 
 // SELECT Order owner
-func (dbc *DBClient) SelectOrderOwner(on int) (string, error) {
+func (dbc *DBClient) SelectOrderOwner(on string) (string, error) {
 	order, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
