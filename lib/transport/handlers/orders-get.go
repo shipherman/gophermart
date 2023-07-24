@@ -21,5 +21,8 @@ func (h *Handler) HandleGetOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(orders)
+	err = json.NewEncoder(w).Encode(orders)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
 }
