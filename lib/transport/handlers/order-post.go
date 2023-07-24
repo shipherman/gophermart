@@ -10,6 +10,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/shipherman/gophermart/lib/accrual"
+	"github.com/shipherman/gophermart/lib/luhn"
 	"github.com/shipherman/gophermart/lib/models"
 
 	"github.com/go-chi/chi/v5/middleware"
@@ -41,12 +42,11 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 	switch u {
 	case "":
+		if !luhn.Valid(newOrder.OrderNum) {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
 		w.WriteHeader(http.StatusAccepted)
-
-		// как отделить Хэндлер от запроса в базу и в Acural?
-		// maxlyaptsev Jul 18, 2023
-
-		// а зачем? Получили новый заказ - сохранили, баллы можно посчитать и позже
 
 		go h.processOrder(newOrder, r)
 		return
