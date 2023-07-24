@@ -88,7 +88,7 @@ LOOP:
 		// внутренняя ошибка сервера
 		case 500:
 		case 404:
-			errCh <- fmt.Errorf("accural app is not configured")
+			// errCh <- fmt.Errorf("accural app is not configured")
 		}
 
 		time.Sleep(3 * time.Second)
