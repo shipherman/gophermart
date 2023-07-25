@@ -22,7 +22,7 @@ func NewRouter(h *handlers.Handler, a *mid.Authenticator) chi.Router {
 	router.Get("/api/user/orders", a.CheckAuth(h.HandleGetOrders))
 	router.Get("/api/user/balance", a.CheckAuth(h.HandleBalance))
 	router.Post("/api/user/balance/withdraw", a.CheckAuth(h.HandlePostWithdraw))
-	router.Get("/api/user/balance/withdrawals", a.CheckAuth(h.HandleGetWithdrawals))
+	router.Get("/api/user/withdrawals", a.CheckAuth(h.HandleGetWithdrawals))
 
 	return router
 }
