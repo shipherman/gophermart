@@ -91,7 +91,7 @@ func init() {
 			"DataBase connection string")
 	}
 	if cfg.Accrual == "" {
-		rootCmd.PersistentFlags().StringVarP(&cfg.Accrual, "Accrual", "r", "localhost:8080", "Accrual service address")
+		rootCmd.PersistentFlags().StringVarP(&cfg.Accrual, "Accrual", "r", "http://localhost:8080", "Accrual service address")
 	}
 	if cfg.Address == "" {
 		rootCmd.PersistentFlags().StringVarP(&cfg.Address, "address", "a", "localhost:9090", "Gophermart address string")

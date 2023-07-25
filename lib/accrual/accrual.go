@@ -4,7 +4,6 @@ package accrual
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/lib/db"
@@ -48,49 +47,41 @@ func ReqAccrual(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 		errCh <- err
 		return
 	}
-LOOP:
-	for i := 0; i < 3; i++ {
-		switch resp.StatusCode() {
-		// успешная обработка запроса
-		case 200:
-			order, err := parseBody(resp)
-			if err != nil {
-				errCh <- err
-			}
-
-			err = dbc.UpdateOrder(*order)
-			if err != nil {
-				errCh <- err
-			}
-
-			orderResp.Accural = order.Accural
-			err = dbc.UpdateBalance(orderResp)
-			if err != nil {
-				errCh <- err
-			}
-			break LOOP
-		// заказ не зарегистрирован в системе расчёта
-		case 204:
-			order.Status = "IVALID"
-			err = dbc.UpdateOrder(order)
-			if err != nil {
-				errCh <- err
-			}
-			break LOOP
-		// превышено количество запросов к сервису
-		case 429:
-			order.Status = "PROCESSING"
-			err = dbc.UpdateOrder(order)
-			if err != nil {
-				errCh <- err
-			}
-			break LOOP
-		// внутренняя ошибка сервера
-		case 500:
-		case 404:
-			// errCh <- fmt.Errorf("accural app is not configured")
+	switch resp.StatusCode() {
+	// успешная обработка запроса
+	case 200:
+		order, err := parseBody(resp)
+		if err != nil {
+			errCh <- err
 		}
 
-		time.Sleep(3 * time.Second)
+		err = dbc.UpdateOrder(*order)
+		if err != nil {
+			errCh <- err
+		}
+
+		orderResp.Accural = order.Accural
+		err = dbc.UpdateBalance(orderResp)
+		if err != nil {
+			errCh <- err
+		}
+	// заказ не зарегистрирован в системе расчёта
+	case 204:
+		order.Status = "IVALID"
+		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
+	// превышено количество запросов к сервису
+	case 429:
+		order.Status = "PROCESSING"
+		err = dbc.UpdateOrder(order)
+		if err != nil {
+			errCh <- err
+		}
+	// внутренняя ошибка сервера
+	case 500:
+	case 404:
+		// errCh <- fmt.Errorf("accural app is not configured")
 	}
 }
