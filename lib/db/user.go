@@ -23,7 +23,6 @@ func (dbc *DBClient) InsertUser(newUser ent.User) error {
 // Get user by login
 func (dbc *DBClient) SelectUserExistence(u, p string) (bool, error) {
 	var exist = false
-	fmt.Println(u, p)
 	user, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
