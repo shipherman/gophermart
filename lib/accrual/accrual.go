@@ -75,15 +75,17 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 				errCh <- err
 			}
 			fmt.Println(orderResp)
-			done = true
+			if orderResp.Status == "PROCESSED" || orderResp.Status == "INVALID" {
+				done = true
+			}
 		// заказ не зарегистрирован в системе расчёта
 		case 204:
-			orderResp.Status = "IVALID"
-			err = dbc.UpdateOrder(*orderResp)
-			if err != nil {
-				errCh <- err
-			}
-			done = true
+			// orderResp.Status = "IVALID"
+			// err = dbc.UpdateOrder(*orderResp)
+			// if err != nil {
+			// 	errCh <- err
+			// }
+			// done = true
 		// превышено количество запросов к сервису
 		case 429:
 			orderResp.Status = "PROCESSING"
@@ -93,6 +95,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			}
 		// внутренняя ошибка сервера
 		case 500:
+			// to do
 		case 404:
 			// errCh <- fmt.Errorf("accural app is not configured")
 		}
