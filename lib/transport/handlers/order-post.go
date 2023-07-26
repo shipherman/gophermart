@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,6 +30,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 	newOrder.User = chi.URLParam(r, "user")
 	newOrder.OrderNum = buf.String()
+	fmt.Println(newOrder.OrderNum)
 
 	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)
 	if err != nil {

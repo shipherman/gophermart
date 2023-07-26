@@ -41,16 +41,17 @@ func ReqAccrual(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/order/%s", addr, orderResp.OrderNum)
 
-	// Get accural for the order
-	resp, err := client.R().EnableTrace().
-		Get(orderAddr)
-	fmt.Printf("reqAcc response: %v; Addr: %s", resp, orderAddr)
-	if err != nil {
-		errCh <- err
-		return
-	}
-
 	for !done {
+
+		// Get accural for the order
+		resp, err := client.R().EnableTrace().
+			Get(orderAddr)
+		fmt.Printf("reqAcc response: %v; Addr: %s", resp, orderAddr)
+		if err != nil {
+			errCh <- err
+			return
+		}
+
 		switch resp.StatusCode() {
 		// успешная обработка запроса
 		case 200:
