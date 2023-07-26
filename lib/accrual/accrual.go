@@ -44,7 +44,7 @@ func ReqAccrual(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 	// Get accural for the order
 	resp, err := client.R().EnableTrace().
 		Get(orderAddr)
-	// fmt.Println("reqAcc:", err)
+	fmt.Printf("reqAcc response: %v; Addr: %s", resp, orderAddr)
 	if err != nil {
 		errCh <- err
 		return
@@ -69,6 +69,7 @@ func ReqAccrual(orderResp models.OrderResponse, dbc *db.DBClient, errCh chan err
 			if err != nil {
 				errCh <- err
 			}
+			fmt.Println(orderResp)
 			done = true
 		// заказ не зарегистрирован в системе расчёта
 		case 204:
