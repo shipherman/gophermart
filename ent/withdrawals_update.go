@@ -30,15 +30,8 @@ func (wu *WithdrawalsUpdate) Where(ps ...predicate.Withdrawals) *WithdrawalsUpda
 }
 
 // SetOrder sets the "order" field.
-func (wu *WithdrawalsUpdate) SetOrder(i int) *WithdrawalsUpdate {
-	wu.mutation.ResetOrder()
-	wu.mutation.SetOrder(i)
-	return wu
-}
-
-// AddOrder adds i to the "order" field.
-func (wu *WithdrawalsUpdate) AddOrder(i int) *WithdrawalsUpdate {
-	wu.mutation.AddOrder(i)
+func (wu *WithdrawalsUpdate) SetOrder(s string) *WithdrawalsUpdate {
+	wu.mutation.SetOrder(s)
 	return wu
 }
 
@@ -128,10 +121,7 @@ func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 	}
 	if value, ok := wu.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
-	}
-	if value, ok := wu.mutation.AddedOrder(); ok {
-		_spec.AddField(withdrawals.FieldOrder, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
 	}
 	if value, ok := wu.mutation.Sum(); ok {
 		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
@@ -192,15 +182,8 @@ type WithdrawalsUpdateOne struct {
 }
 
 // SetOrder sets the "order" field.
-func (wuo *WithdrawalsUpdateOne) SetOrder(i int) *WithdrawalsUpdateOne {
-	wuo.mutation.ResetOrder()
-	wuo.mutation.SetOrder(i)
-	return wuo
-}
-
-// AddOrder adds i to the "order" field.
-func (wuo *WithdrawalsUpdateOne) AddOrder(i int) *WithdrawalsUpdateOne {
-	wuo.mutation.AddOrder(i)
+func (wuo *WithdrawalsUpdateOne) SetOrder(s string) *WithdrawalsUpdateOne {
+	wuo.mutation.SetOrder(s)
 	return wuo
 }
 
@@ -320,10 +303,7 @@ func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawal
 		}
 	}
 	if value, ok := wuo.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
-	}
-	if value, ok := wuo.mutation.AddedOrder(); ok {
-		_spec.AddField(withdrawals.FieldOrder, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
 	}
 	if value, ok := wuo.mutation.Sum(); ok {
 		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)

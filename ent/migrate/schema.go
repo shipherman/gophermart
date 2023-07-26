@@ -48,7 +48,7 @@ var (
 	// WithdrawalsColumns holds the columns for the "withdrawals" table.
 	WithdrawalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "order", Type: field.TypeInt, Unique: true},
+		{Name: "order", Type: field.TypeString, Unique: true},
 		{Name: "sum", Type: field.TypeInt},
 		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "user_withdrawals", Type: field.TypeInt, Nullable: true},

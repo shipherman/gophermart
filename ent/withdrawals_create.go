@@ -22,8 +22,8 @@ type WithdrawalsCreate struct {
 }
 
 // SetOrder sets the "order" field.
-func (wc *WithdrawalsCreate) SetOrder(i int) *WithdrawalsCreate {
-	wc.mutation.SetOrder(i)
+func (wc *WithdrawalsCreate) SetOrder(s string) *WithdrawalsCreate {
+	wc.mutation.SetOrder(s)
 	return wc
 }
 
@@ -128,7 +128,7 @@ func (wc *WithdrawalsCreate) createSpec() (*Withdrawals, *sqlgraph.CreateSpec) {
 		_spec = sqlgraph.NewCreateSpec(withdrawals.Table, sqlgraph.NewFieldSpec(withdrawals.FieldID, field.TypeInt))
 	)
 	if value, ok := wc.mutation.Order(); ok {
-		_spec.SetField(withdrawals.FieldOrder, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
 		_node.Order = value
 	}
 	if value, ok := wc.mutation.Sum(); ok {

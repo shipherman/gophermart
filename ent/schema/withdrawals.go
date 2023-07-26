@@ -15,7 +15,7 @@ type Withdrawals struct {
 // Fields of the Withdrawals.
 func (Withdrawals) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("order").
+		field.String("order").
 			Unique(),
 		field.Int("sum"),
 		field.Time("timestamp").SchemaType(map[string]string{

@@ -19,7 +19,7 @@ type Withdrawals struct {
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
 	// Order holds the value of the "order" field.
-	Order int `json:"order,omitempty"`
+	Order string `json:"order,omitempty"`
 	// Sum holds the value of the "sum" field.
 	Sum int `json:"sum,omitempty"`
 	// Timestamp holds the value of the "timestamp" field.
@@ -58,8 +58,10 @@ func (*Withdrawals) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case withdrawals.FieldID, withdrawals.FieldOrder, withdrawals.FieldSum:
+		case withdrawals.FieldID, withdrawals.FieldSum:
 			values[i] = new(sql.NullInt64)
+		case withdrawals.FieldOrder:
+			values[i] = new(sql.NullString)
 		case withdrawals.FieldTimestamp:
 			values[i] = new(sql.NullTime)
 		case withdrawals.ForeignKeys[0]: // user_withdrawals
@@ -86,10 +88,10 @@ func (w *Withdrawals) assignValues(columns []string, values []any) error {
 			}
 			w.ID = int(value.Int64)
 		case withdrawals.FieldOrder:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field order", values[i])
 			} else if value.Valid {
-				w.Order = int(value.Int64)
+				w.Order = value.String
 			}
 		case withdrawals.FieldSum:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -152,7 +154,7 @@ func (w *Withdrawals) String() string {
 	builder.WriteString("Withdrawals(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", w.ID))
 	builder.WriteString("order=")
-	builder.WriteString(fmt.Sprintf("%v", w.Order))
+	builder.WriteString(w.Order)
 	builder.WriteString(", ")
 	builder.WriteString("sum=")
 	builder.WriteString(fmt.Sprintf("%v", w.Sum))

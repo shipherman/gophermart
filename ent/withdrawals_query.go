@@ -298,7 +298,7 @@ func (wq *WithdrawalsQuery) WithUser(opts ...func(*UserQuery)) *WithdrawalsQuery
 // Example:
 //
 //	var v []struct {
-//		Order int `json:"order,omitempty"`
+//		Order string `json:"order,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
@@ -321,7 +321,7 @@ func (wq *WithdrawalsQuery) GroupBy(field string, fields ...string) *Withdrawals
 // Example:
 //
 //	var v []struct {
-//		Order int `json:"order,omitempty"`
+//		Order string `json:"order,omitempty"`
 //	}
 //
 //	client.Withdrawals.Query().

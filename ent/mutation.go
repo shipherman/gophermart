@@ -1361,8 +1361,7 @@ type WithdrawalsMutation struct {
 	op            Op
 	typ           string
 	id            *int
-	_order        *int
-	add_order     *int
+	_order        *string
 	sum           *int
 	addsum        *int
 	timestamp     *time.Time
@@ -1473,13 +1472,12 @@ func (m *WithdrawalsMutation) IDs(ctx context.Context) ([]int, error) {
 }
 
 // SetOrder sets the "order" field.
-func (m *WithdrawalsMutation) SetOrder(i int) {
-	m._order = &i
-	m.add_order = nil
+func (m *WithdrawalsMutation) SetOrder(s string) {
+	m._order = &s
 }
 
 // Order returns the value of the "order" field in the mutation.
-func (m *WithdrawalsMutation) Order() (r int, exists bool) {
+func (m *WithdrawalsMutation) Order() (r string, exists bool) {
 	v := m._order
 	if v == nil {
 		return
@@ -1490,7 +1488,7 @@ func (m *WithdrawalsMutation) Order() (r int, exists bool) {
 // OldOrder returns the old "order" field's value of the Withdrawals entity.
 // If the Withdrawals object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawalsMutation) OldOrder(ctx context.Context) (v int, err error) {
+func (m *WithdrawalsMutation) OldOrder(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldOrder is only allowed on UpdateOne operations")
 	}
@@ -1504,28 +1502,9 @@ func (m *WithdrawalsMutation) OldOrder(ctx context.Context) (v int, err error) {
 	return oldValue.Order, nil
 }
 
-// AddOrder adds i to the "order" field.
-func (m *WithdrawalsMutation) AddOrder(i int) {
-	if m.add_order != nil {
-		*m.add_order += i
-	} else {
-		m.add_order = &i
-	}
-}
-
-// AddedOrder returns the value that was added to the "order" field in this mutation.
-func (m *WithdrawalsMutation) AddedOrder() (r int, exists bool) {
-	v := m.add_order
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetOrder resets all changes to the "order" field.
 func (m *WithdrawalsMutation) ResetOrder() {
 	m._order = nil
-	m.add_order = nil
 }
 
 // SetSum sets the "sum" field.
@@ -1742,7 +1721,7 @@ func (m *WithdrawalsMutation) OldField(ctx context.Context, name string) (ent.Va
 func (m *WithdrawalsMutation) SetField(name string, value ent.Value) error {
 	switch name {
 	case withdrawals.FieldOrder:
-		v, ok := value.(int)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1770,9 +1749,6 @@ func (m *WithdrawalsMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *WithdrawalsMutation) AddedFields() []string {
 	var fields []string
-	if m.add_order != nil {
-		fields = append(fields, withdrawals.FieldOrder)
-	}
 	if m.addsum != nil {
 		fields = append(fields, withdrawals.FieldSum)
 	}
@@ -1784,8 +1760,6 @@ func (m *WithdrawalsMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *WithdrawalsMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case withdrawals.FieldOrder:
-		return m.AddedOrder()
 	case withdrawals.FieldSum:
 		return m.AddedSum()
 	}
@@ -1797,13 +1771,6 @@ func (m *WithdrawalsMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *WithdrawalsMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case withdrawals.FieldOrder:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddOrder(v)
-		return nil
 	case withdrawals.FieldSum:
 		v, ok := value.(int)
 		if !ok {
