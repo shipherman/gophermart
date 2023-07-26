@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
@@ -21,6 +22,8 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 	// newOrder.TimeStamp = time.Now()
 
 	// Get ent User struct
+	fmt.Println(newOrder)
+
 	user, err := dbc.SelectUser(newOrder.User)
 	if err != nil {
 		return err
@@ -44,18 +47,22 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 
 // UPDATE existing order
 func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
+	fmt.Println("Update order:", orderResp)
 	o, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(orderResp.OrderNum)).
 		First(context.Background())
 	if err != nil {
-		return err
+		return fmt.Errorf("UpdateOrder error during selecting order: %w", err)
 	}
 
 	_, err = o.Update().
 		SetStatus(orderResp.Status).Save(context.Background())
+	if err != nil {
+		return fmt.Errorf("UpdateOrder error: %w", err)
+	}
 
-	return err
+	return nil
 }
 
 // SELECT Order owner
@@ -70,12 +77,13 @@ func (dbc *DBClient) SelectOrderOwner(on string) (string, error) {
 
 	u, err := order[0].QueryUser().All(context.Background())
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 
 	return u[0].Login, nil
 }
 
+// SELECT Orders
 func (dbc *DBClient) SelectOrders(u string) ([]models.OrderResponse, error) {
 	var orderResp []models.OrderResponse
 
@@ -84,7 +92,7 @@ func (dbc *DBClient) SelectOrders(u string) ([]models.OrderResponse, error) {
 		Where(order.HasUserWith(user.Login(u))).
 		All(context.Background())
 	if err != nil {
-		return orderResp, err
+		return orderResp, fmt.Errorf("SelectOrders error: %w", err)
 	}
 
 	for _, o := range entOrder {

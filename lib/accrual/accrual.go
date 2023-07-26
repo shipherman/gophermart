@@ -30,8 +30,8 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	return order, nil
 }
 
+// Request Accural for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan error) {
-	var order models.OrderResponse
 	var done bool = false
 
 	defer close(errCh)
@@ -55,17 +55,21 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		switch resp.StatusCode() {
 		// успешная обработка запроса
 		case 200:
-			order, err := parseBody(resp)
+			// Parse accrual response and save to
+			// OrderREsp structure
+			orderParsed, err := parseBody(resp)
+			orderResp.Status = orderParsed.Status
+			orderResp.Accural = orderParsed.Accural
+
 			if err != nil {
 				errCh <- err
 			}
 
-			err = dbc.UpdateOrder(*order)
+			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
 				errCh <- err
 			}
 
-			orderResp.Accural = order.Accural
 			err = dbc.UpdateBalance(*orderResp)
 			if err != nil {
 				errCh <- err
@@ -74,16 +78,16 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			done = true
 		// заказ не зарегистрирован в системе расчёта
 		case 204:
-			order.Status = "IVALID"
-			err = dbc.UpdateOrder(order)
+			orderResp.Status = "IVALID"
+			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
 				errCh <- err
 			}
 			done = true
 		// превышено количество запросов к сервису
 		case 429:
-			order.Status = "PROCESSING"
-			err = dbc.UpdateOrder(order)
+			orderResp.Status = "PROCESSING"
+			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
 				errCh <- err
 			}
