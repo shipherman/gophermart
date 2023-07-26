@@ -30,6 +30,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 
 	newOrder.User = chi.URLParam(r, "user")
 	newOrder.OrderNum = buf.String()
+
 	fmt.Println(newOrder.OrderNum)
 
 	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)
@@ -47,18 +48,19 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusAccepted)
 
-		go h.processOrder(newOrder, r)
+		go h.processOrder(&newOrder, r)
 		return
 	case newOrder.User:
 		w.WriteHeader(http.StatusOK)
 		return
+	// Order uploaded by differen user
 	default:
 		w.WriteHeader(http.StatusConflict)
 		return
 	}
 }
 
-func (h *Handler) processOrder(newOrder models.OrderResponse, r *http.Request) {
+func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) {
 	errCh := make(chan error)
 
 	// Logger for outgoing requests
@@ -68,7 +70,7 @@ func (h *Handler) processOrder(newOrder models.OrderResponse, r *http.Request) {
 	newOrder.Status = models.New
 	newOrder.TimeStamp = time.Now()
 
-	err := h.Client.InsertOrder(newOrder)
+	err := h.Client.InsertOrder(*newOrder)
 	if err != nil {
 		logEntry.Logger.Print(err)
 	}

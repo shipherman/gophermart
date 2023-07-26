@@ -20,7 +20,7 @@ type OrderResponse struct {
 	User      string    `json:"-"`
 	Status    string    `json:"status"`
 	Accural   int       `json:"accural,omitempty"`
-	TimeStamp time.Time `json:"uploaded_at"`
+	TimeStamp time.Time `json:"uploaded_at,omitempty"`
 }
 
 type BalanceResponse struct {
