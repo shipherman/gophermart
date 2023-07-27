@@ -57,7 +57,9 @@ func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
 	}
 
 	_, err = o.Update().
-		SetStatus(orderResp.Status).Save(context.Background())
+		SetStatus(orderResp.Status).
+		SetAccrual(orderResp.Accrual).
+		Save(context.Background())
 	if err != nil {
 		return fmt.Errorf("UpdateOrder error: %w", err)
 	}
