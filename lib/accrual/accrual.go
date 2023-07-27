@@ -82,12 +82,11 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			}
 		// Заказ не зарегистрирован в системе расчёта
 		case 204:
-			orderResp.Status = "IVALID"
+			orderResp.Status = "PROCESSING"
 			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
 				errCh <- err
 			}
-			done = true
 		// Превышено количество запросов к сервису
 		case 429:
 			orderResp.Status = "PROCESSING"

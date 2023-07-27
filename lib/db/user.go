@@ -44,6 +44,7 @@ func (dbc *DBClient) SelectUserExistence(u, p string) (bool, error) {
 	return exist, nil
 }
 
+// SELECT user entity
 func (dbc *DBClient) SelectUser(u string) (*ent.User, error) {
 	user, err := dbc.Client.User.
 		Query().
@@ -56,7 +57,7 @@ func (dbc *DBClient) SelectUser(u string) (*ent.User, error) {
 	return user, nil
 }
 
-// Get bonuses balance for provided user
+// SELECT balance for provided user
 func (dbc *DBClient) SelectBalance(u string) (response models.BalanceResponse, err error) {
 	req, err := dbc.Client.User.
 		Query().
