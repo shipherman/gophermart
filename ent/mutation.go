@@ -38,8 +38,8 @@ type OrderMutation struct {
 	typ           string
 	id            *int
 	ordernum      *string
-	accrual       *int
-	addaccrual    *int
+	accrual       *float64
+	addaccrual    *float64
 	status        *string
 	timestamp     *time.Time
 	clearedFields map[string]struct{}
@@ -185,13 +185,13 @@ func (m *OrderMutation) ResetOrdernum() {
 }
 
 // SetAccrual sets the "accrual" field.
-func (m *OrderMutation) SetAccrual(i int) {
-	m.accrual = &i
+func (m *OrderMutation) SetAccrual(f float64) {
+	m.accrual = &f
 	m.addaccrual = nil
 }
 
 // Accrual returns the value of the "accrual" field in the mutation.
-func (m *OrderMutation) Accrual() (r int, exists bool) {
+func (m *OrderMutation) Accrual() (r float64, exists bool) {
 	v := m.accrual
 	if v == nil {
 		return
@@ -202,7 +202,7 @@ func (m *OrderMutation) Accrual() (r int, exists bool) {
 // OldAccrual returns the old "accrual" field's value of the Order entity.
 // If the Order object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldAccrual(ctx context.Context) (v int, err error) {
+func (m *OrderMutation) OldAccrual(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAccrual is only allowed on UpdateOne operations")
 	}
@@ -216,17 +216,17 @@ func (m *OrderMutation) OldAccrual(ctx context.Context) (v int, err error) {
 	return oldValue.Accrual, nil
 }
 
-// AddAccrual adds i to the "accrual" field.
-func (m *OrderMutation) AddAccrual(i int) {
+// AddAccrual adds f to the "accrual" field.
+func (m *OrderMutation) AddAccrual(f float64) {
 	if m.addaccrual != nil {
-		*m.addaccrual += i
+		*m.addaccrual += f
 	} else {
-		m.addaccrual = &i
+		m.addaccrual = &f
 	}
 }
 
 // AddedAccrual returns the value that was added to the "accrual" field in this mutation.
-func (m *OrderMutation) AddedAccrual() (r int, exists bool) {
+func (m *OrderMutation) AddedAccrual() (r float64, exists bool) {
 	v := m.addaccrual
 	if v == nil {
 		return
@@ -448,7 +448,7 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		m.SetOrdernum(v)
 		return nil
 	case order.FieldAccrual:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -499,7 +499,7 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case order.FieldAccrual:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -630,10 +630,10 @@ type UserMutation struct {
 	id                 *int
 	login              *string
 	password           *string
-	balance            *int
-	addbalance         *int
-	withdraw           *int
-	addwithdraw        *int
+	balance            *float64
+	addbalance         *float64
+	withdraw           *float64
+	addwithdraw        *float64
 	clearedFields      map[string]struct{}
 	orders             map[int]struct{}
 	removedorders      map[int]struct{}
@@ -817,13 +817,13 @@ func (m *UserMutation) ResetPassword() {
 }
 
 // SetBalance sets the "balance" field.
-func (m *UserMutation) SetBalance(i int) {
-	m.balance = &i
+func (m *UserMutation) SetBalance(f float64) {
+	m.balance = &f
 	m.addbalance = nil
 }
 
 // Balance returns the value of the "balance" field in the mutation.
-func (m *UserMutation) Balance() (r int, exists bool) {
+func (m *UserMutation) Balance() (r float64, exists bool) {
 	v := m.balance
 	if v == nil {
 		return
@@ -834,7 +834,7 @@ func (m *UserMutation) Balance() (r int, exists bool) {
 // OldBalance returns the old "balance" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldBalance(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldBalance(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBalance is only allowed on UpdateOne operations")
 	}
@@ -848,17 +848,17 @@ func (m *UserMutation) OldBalance(ctx context.Context) (v int, err error) {
 	return oldValue.Balance, nil
 }
 
-// AddBalance adds i to the "balance" field.
-func (m *UserMutation) AddBalance(i int) {
+// AddBalance adds f to the "balance" field.
+func (m *UserMutation) AddBalance(f float64) {
 	if m.addbalance != nil {
-		*m.addbalance += i
+		*m.addbalance += f
 	} else {
-		m.addbalance = &i
+		m.addbalance = &f
 	}
 }
 
 // AddedBalance returns the value that was added to the "balance" field in this mutation.
-func (m *UserMutation) AddedBalance() (r int, exists bool) {
+func (m *UserMutation) AddedBalance() (r float64, exists bool) {
 	v := m.addbalance
 	if v == nil {
 		return
@@ -873,13 +873,13 @@ func (m *UserMutation) ResetBalance() {
 }
 
 // SetWithdraw sets the "withdraw" field.
-func (m *UserMutation) SetWithdraw(i int) {
-	m.withdraw = &i
+func (m *UserMutation) SetWithdraw(f float64) {
+	m.withdraw = &f
 	m.addwithdraw = nil
 }
 
 // Withdraw returns the value of the "withdraw" field in the mutation.
-func (m *UserMutation) Withdraw() (r int, exists bool) {
+func (m *UserMutation) Withdraw() (r float64, exists bool) {
 	v := m.withdraw
 	if v == nil {
 		return
@@ -890,7 +890,7 @@ func (m *UserMutation) Withdraw() (r int, exists bool) {
 // OldWithdraw returns the old "withdraw" field's value of the User entity.
 // If the User object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *UserMutation) OldWithdraw(ctx context.Context) (v int, err error) {
+func (m *UserMutation) OldWithdraw(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWithdraw is only allowed on UpdateOne operations")
 	}
@@ -904,17 +904,17 @@ func (m *UserMutation) OldWithdraw(ctx context.Context) (v int, err error) {
 	return oldValue.Withdraw, nil
 }
 
-// AddWithdraw adds i to the "withdraw" field.
-func (m *UserMutation) AddWithdraw(i int) {
+// AddWithdraw adds f to the "withdraw" field.
+func (m *UserMutation) AddWithdraw(f float64) {
 	if m.addwithdraw != nil {
-		*m.addwithdraw += i
+		*m.addwithdraw += f
 	} else {
-		m.addwithdraw = &i
+		m.addwithdraw = &f
 	}
 }
 
 // AddedWithdraw returns the value that was added to the "withdraw" field in this mutation.
-func (m *UserMutation) AddedWithdraw() (r int, exists bool) {
+func (m *UserMutation) AddedWithdraw() (r float64, exists bool) {
 	v := m.addwithdraw
 	if v == nil {
 		return
@@ -1140,14 +1140,14 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		m.SetPassword(v)
 		return nil
 	case user.FieldBalance:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBalance(v)
 		return nil
 	case user.FieldWithdraw:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1189,14 +1189,14 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case user.FieldBalance:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddBalance(v)
 		return nil
 	case user.FieldWithdraw:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1362,8 +1362,8 @@ type WithdrawalsMutation struct {
 	typ           string
 	id            *int
 	_order        *string
-	sum           *int
-	addsum        *int
+	sum           *float64
+	addsum        *float64
 	timestamp     *time.Time
 	clearedFields map[string]struct{}
 	user          *int
@@ -1508,13 +1508,13 @@ func (m *WithdrawalsMutation) ResetOrder() {
 }
 
 // SetSum sets the "sum" field.
-func (m *WithdrawalsMutation) SetSum(i int) {
-	m.sum = &i
+func (m *WithdrawalsMutation) SetSum(f float64) {
+	m.sum = &f
 	m.addsum = nil
 }
 
 // Sum returns the value of the "sum" field in the mutation.
-func (m *WithdrawalsMutation) Sum() (r int, exists bool) {
+func (m *WithdrawalsMutation) Sum() (r float64, exists bool) {
 	v := m.sum
 	if v == nil {
 		return
@@ -1525,7 +1525,7 @@ func (m *WithdrawalsMutation) Sum() (r int, exists bool) {
 // OldSum returns the old "sum" field's value of the Withdrawals entity.
 // If the Withdrawals object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *WithdrawalsMutation) OldSum(ctx context.Context) (v int, err error) {
+func (m *WithdrawalsMutation) OldSum(ctx context.Context) (v float64, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSum is only allowed on UpdateOne operations")
 	}
@@ -1539,17 +1539,17 @@ func (m *WithdrawalsMutation) OldSum(ctx context.Context) (v int, err error) {
 	return oldValue.Sum, nil
 }
 
-// AddSum adds i to the "sum" field.
-func (m *WithdrawalsMutation) AddSum(i int) {
+// AddSum adds f to the "sum" field.
+func (m *WithdrawalsMutation) AddSum(f float64) {
 	if m.addsum != nil {
-		*m.addsum += i
+		*m.addsum += f
 	} else {
-		m.addsum = &i
+		m.addsum = &f
 	}
 }
 
 // AddedSum returns the value that was added to the "sum" field in this mutation.
-func (m *WithdrawalsMutation) AddedSum() (r int, exists bool) {
+func (m *WithdrawalsMutation) AddedSum() (r float64, exists bool) {
 	v := m.addsum
 	if v == nil {
 		return
@@ -1728,7 +1728,7 @@ func (m *WithdrawalsMutation) SetField(name string, value ent.Value) error {
 		m.SetOrder(v)
 		return nil
 	case withdrawals.FieldSum:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1772,7 +1772,7 @@ func (m *WithdrawalsMutation) AddedField(name string) (ent.Value, bool) {
 func (m *WithdrawalsMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case withdrawals.FieldSum:
-		v, ok := value.(int)
+		v, ok := value.(float64)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}

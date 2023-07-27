@@ -61,7 +61,7 @@ func Order(v string) predicate.Withdrawals {
 }
 
 // Sum applies equality check predicate on the "sum" field. It's identical to SumEQ.
-func Sum(v int) predicate.Withdrawals {
+func Sum(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldSum, v))
 }
 
@@ -136,42 +136,42 @@ func OrderContainsFold(v string) predicate.Withdrawals {
 }
 
 // SumEQ applies the EQ predicate on the "sum" field.
-func SumEQ(v int) predicate.Withdrawals {
+func SumEQ(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldEQ(FieldSum, v))
 }
 
 // SumNEQ applies the NEQ predicate on the "sum" field.
-func SumNEQ(v int) predicate.Withdrawals {
+func SumNEQ(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNEQ(FieldSum, v))
 }
 
 // SumIn applies the In predicate on the "sum" field.
-func SumIn(vs ...int) predicate.Withdrawals {
+func SumIn(vs ...float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldIn(FieldSum, vs...))
 }
 
 // SumNotIn applies the NotIn predicate on the "sum" field.
-func SumNotIn(vs ...int) predicate.Withdrawals {
+func SumNotIn(vs ...float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldNotIn(FieldSum, vs...))
 }
 
 // SumGT applies the GT predicate on the "sum" field.
-func SumGT(v int) predicate.Withdrawals {
+func SumGT(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGT(FieldSum, v))
 }
 
 // SumGTE applies the GTE predicate on the "sum" field.
-func SumGTE(v int) predicate.Withdrawals {
+func SumGTE(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldGTE(FieldSum, v))
 }
 
 // SumLT applies the LT predicate on the "sum" field.
-func SumLT(v int) predicate.Withdrawals {
+func SumLT(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLT(FieldSum, v))
 }
 
 // SumLTE applies the LTE predicate on the "sum" field.
-func SumLTE(v int) predicate.Withdrawals {
+func SumLTE(v float64) predicate.Withdrawals {
 	return predicate.Withdrawals(sql.FieldLTE(FieldSum, v))
 }
 

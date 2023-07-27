@@ -11,7 +11,7 @@ type User struct {
 
 type WithdrawResponse struct {
 	OrderNum  string    `json:"order"`
-	Sum       int       `json:"sum"`
+	Sum       float64   `json:"sum"`
 	TimeStamp time.Time `json:"processed_at,omitempty"`
 }
 
@@ -19,13 +19,13 @@ type OrderResponse struct {
 	OrderNum  string    `json:"number"`
 	User      string    `json:"-"`
 	Status    string    `json:"status"`
-	Accrual   int       `json:"accrual,omitempty"`
+	Accrual   float64   `json:"accrual,omitempty"`
 	TimeStamp time.Time `json:"uploaded_at,omitempty"`
 }
 
 type BalanceResponse struct {
-	Current   int `json:"current"`
-	Withdrawn int `json:"withdrawn"`
+	Current   float64 `json:"current"`
+	Withdrawn float64 `json:"withdrawn"`
 }
 
 const (

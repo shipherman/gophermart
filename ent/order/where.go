@@ -61,7 +61,7 @@ func Ordernum(v string) predicate.Order {
 }
 
 // Accrual applies equality check predicate on the "accrual" field. It's identical to AccrualEQ.
-func Accrual(v int) predicate.Order {
+func Accrual(v float64) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldAccrual, v))
 }
 
@@ -141,42 +141,42 @@ func OrdernumContainsFold(v string) predicate.Order {
 }
 
 // AccrualEQ applies the EQ predicate on the "accrual" field.
-func AccrualEQ(v int) predicate.Order {
+func AccrualEQ(v float64) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldAccrual, v))
 }
 
 // AccrualNEQ applies the NEQ predicate on the "accrual" field.
-func AccrualNEQ(v int) predicate.Order {
+func AccrualNEQ(v float64) predicate.Order {
 	return predicate.Order(sql.FieldNEQ(FieldAccrual, v))
 }
 
 // AccrualIn applies the In predicate on the "accrual" field.
-func AccrualIn(vs ...int) predicate.Order {
+func AccrualIn(vs ...float64) predicate.Order {
 	return predicate.Order(sql.FieldIn(FieldAccrual, vs...))
 }
 
 // AccrualNotIn applies the NotIn predicate on the "accrual" field.
-func AccrualNotIn(vs ...int) predicate.Order {
+func AccrualNotIn(vs ...float64) predicate.Order {
 	return predicate.Order(sql.FieldNotIn(FieldAccrual, vs...))
 }
 
 // AccrualGT applies the GT predicate on the "accrual" field.
-func AccrualGT(v int) predicate.Order {
+func AccrualGT(v float64) predicate.Order {
 	return predicate.Order(sql.FieldGT(FieldAccrual, v))
 }
 
 // AccrualGTE applies the GTE predicate on the "accrual" field.
-func AccrualGTE(v int) predicate.Order {
+func AccrualGTE(v float64) predicate.Order {
 	return predicate.Order(sql.FieldGTE(FieldAccrual, v))
 }
 
 // AccrualLT applies the LT predicate on the "accrual" field.
-func AccrualLT(v int) predicate.Order {
+func AccrualLT(v float64) predicate.Order {
 	return predicate.Order(sql.FieldLT(FieldAccrual, v))
 }
 
 // AccrualLTE applies the LTE predicate on the "accrual" field.
-func AccrualLTE(v int) predicate.Order {
+func AccrualLTE(v float64) predicate.Order {
 	return predicate.Order(sql.FieldLTE(FieldAccrual, v))
 }
 

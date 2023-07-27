@@ -34,14 +34,14 @@ func (uc *UserCreate) SetPassword(s string) *UserCreate {
 }
 
 // SetBalance sets the "balance" field.
-func (uc *UserCreate) SetBalance(i int) *UserCreate {
-	uc.mutation.SetBalance(i)
+func (uc *UserCreate) SetBalance(f float64) *UserCreate {
+	uc.mutation.SetBalance(f)
 	return uc
 }
 
 // SetWithdraw sets the "withdraw" field.
-func (uc *UserCreate) SetWithdraw(i int) *UserCreate {
-	uc.mutation.SetWithdraw(i)
+func (uc *UserCreate) SetWithdraw(f float64) *UserCreate {
+	uc.mutation.SetWithdraw(f)
 	return uc
 }
 
@@ -166,11 +166,11 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node.Password = value
 	}
 	if value, ok := uc.mutation.Balance(); ok {
-		_spec.SetField(user.FieldBalance, field.TypeInt, value)
+		_spec.SetField(user.FieldBalance, field.TypeFloat64, value)
 		_node.Balance = value
 	}
 	if value, ok := uc.mutation.Withdraw(); ok {
-		_spec.SetField(user.FieldWithdraw, field.TypeInt, value)
+		_spec.SetField(user.FieldWithdraw, field.TypeFloat64, value)
 		_node.Withdraw = value
 	}
 	if nodes := uc.mutation.OrdersIDs(); len(nodes) > 0 {

@@ -36,15 +36,15 @@ func (ou *OrderUpdate) SetOrdernum(s string) *OrderUpdate {
 }
 
 // SetAccrual sets the "accrual" field.
-func (ou *OrderUpdate) SetAccrual(i int) *OrderUpdate {
+func (ou *OrderUpdate) SetAccrual(f float64) *OrderUpdate {
 	ou.mutation.ResetAccrual()
-	ou.mutation.SetAccrual(i)
+	ou.mutation.SetAccrual(f)
 	return ou
 }
 
-// AddAccrual adds i to the "accrual" field.
-func (ou *OrderUpdate) AddAccrual(i int) *OrderUpdate {
-	ou.mutation.AddAccrual(i)
+// AddAccrual adds f to the "accrual" field.
+func (ou *OrderUpdate) AddAccrual(f float64) *OrderUpdate {
+	ou.mutation.AddAccrual(f)
 	return ou
 }
 
@@ -130,10 +130,10 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
 	if value, ok := ou.mutation.Accrual(); ok {
-		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
+		_spec.SetField(order.FieldAccrual, field.TypeFloat64, value)
 	}
 	if value, ok := ou.mutation.AddedAccrual(); ok {
-		_spec.AddField(order.FieldAccrual, field.TypeInt, value)
+		_spec.AddField(order.FieldAccrual, field.TypeFloat64, value)
 	}
 	if value, ok := ou.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)
@@ -197,15 +197,15 @@ func (ouo *OrderUpdateOne) SetOrdernum(s string) *OrderUpdateOne {
 }
 
 // SetAccrual sets the "accrual" field.
-func (ouo *OrderUpdateOne) SetAccrual(i int) *OrderUpdateOne {
+func (ouo *OrderUpdateOne) SetAccrual(f float64) *OrderUpdateOne {
 	ouo.mutation.ResetAccrual()
-	ouo.mutation.SetAccrual(i)
+	ouo.mutation.SetAccrual(f)
 	return ouo
 }
 
-// AddAccrual adds i to the "accrual" field.
-func (ouo *OrderUpdateOne) AddAccrual(i int) *OrderUpdateOne {
-	ouo.mutation.AddAccrual(i)
+// AddAccrual adds f to the "accrual" field.
+func (ouo *OrderUpdateOne) AddAccrual(f float64) *OrderUpdateOne {
+	ouo.mutation.AddAccrual(f)
 	return ouo
 }
 
@@ -321,10 +321,10 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
 	if value, ok := ouo.mutation.Accrual(); ok {
-		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
+		_spec.SetField(order.FieldAccrual, field.TypeFloat64, value)
 	}
 	if value, ok := ouo.mutation.AddedAccrual(); ok {
-		_spec.AddField(order.FieldAccrual, field.TypeInt, value)
+		_spec.AddField(order.FieldAccrual, field.TypeFloat64, value)
 	}
 	if value, ok := ouo.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)

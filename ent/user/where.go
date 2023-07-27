@@ -64,12 +64,12 @@ func Password(v string) predicate.User {
 }
 
 // Balance applies equality check predicate on the "balance" field. It's identical to BalanceEQ.
-func Balance(v int) predicate.User {
+func Balance(v float64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBalance, v))
 }
 
 // Withdraw applies equality check predicate on the "withdraw" field. It's identical to WithdrawEQ.
-func Withdraw(v int) predicate.User {
+func Withdraw(v float64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldWithdraw, v))
 }
 
@@ -204,82 +204,82 @@ func PasswordContainsFold(v string) predicate.User {
 }
 
 // BalanceEQ applies the EQ predicate on the "balance" field.
-func BalanceEQ(v int) predicate.User {
+func BalanceEQ(v float64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldBalance, v))
 }
 
 // BalanceNEQ applies the NEQ predicate on the "balance" field.
-func BalanceNEQ(v int) predicate.User {
+func BalanceNEQ(v float64) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldBalance, v))
 }
 
 // BalanceIn applies the In predicate on the "balance" field.
-func BalanceIn(vs ...int) predicate.User {
+func BalanceIn(vs ...float64) predicate.User {
 	return predicate.User(sql.FieldIn(FieldBalance, vs...))
 }
 
 // BalanceNotIn applies the NotIn predicate on the "balance" field.
-func BalanceNotIn(vs ...int) predicate.User {
+func BalanceNotIn(vs ...float64) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldBalance, vs...))
 }
 
 // BalanceGT applies the GT predicate on the "balance" field.
-func BalanceGT(v int) predicate.User {
+func BalanceGT(v float64) predicate.User {
 	return predicate.User(sql.FieldGT(FieldBalance, v))
 }
 
 // BalanceGTE applies the GTE predicate on the "balance" field.
-func BalanceGTE(v int) predicate.User {
+func BalanceGTE(v float64) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldBalance, v))
 }
 
 // BalanceLT applies the LT predicate on the "balance" field.
-func BalanceLT(v int) predicate.User {
+func BalanceLT(v float64) predicate.User {
 	return predicate.User(sql.FieldLT(FieldBalance, v))
 }
 
 // BalanceLTE applies the LTE predicate on the "balance" field.
-func BalanceLTE(v int) predicate.User {
+func BalanceLTE(v float64) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldBalance, v))
 }
 
 // WithdrawEQ applies the EQ predicate on the "withdraw" field.
-func WithdrawEQ(v int) predicate.User {
+func WithdrawEQ(v float64) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldWithdraw, v))
 }
 
 // WithdrawNEQ applies the NEQ predicate on the "withdraw" field.
-func WithdrawNEQ(v int) predicate.User {
+func WithdrawNEQ(v float64) predicate.User {
 	return predicate.User(sql.FieldNEQ(FieldWithdraw, v))
 }
 
 // WithdrawIn applies the In predicate on the "withdraw" field.
-func WithdrawIn(vs ...int) predicate.User {
+func WithdrawIn(vs ...float64) predicate.User {
 	return predicate.User(sql.FieldIn(FieldWithdraw, vs...))
 }
 
 // WithdrawNotIn applies the NotIn predicate on the "withdraw" field.
-func WithdrawNotIn(vs ...int) predicate.User {
+func WithdrawNotIn(vs ...float64) predicate.User {
 	return predicate.User(sql.FieldNotIn(FieldWithdraw, vs...))
 }
 
 // WithdrawGT applies the GT predicate on the "withdraw" field.
-func WithdrawGT(v int) predicate.User {
+func WithdrawGT(v float64) predicate.User {
 	return predicate.User(sql.FieldGT(FieldWithdraw, v))
 }
 
 // WithdrawGTE applies the GTE predicate on the "withdraw" field.
-func WithdrawGTE(v int) predicate.User {
+func WithdrawGTE(v float64) predicate.User {
 	return predicate.User(sql.FieldGTE(FieldWithdraw, v))
 }
 
 // WithdrawLT applies the LT predicate on the "withdraw" field.
-func WithdrawLT(v int) predicate.User {
+func WithdrawLT(v float64) predicate.User {
 	return predicate.User(sql.FieldLT(FieldWithdraw, v))
 }
 
 // WithdrawLTE applies the LTE predicate on the "withdraw" field.
-func WithdrawLTE(v int) predicate.User {
+func WithdrawLTE(v float64) predicate.User {
 	return predicate.User(sql.FieldLTE(FieldWithdraw, v))
 }
 

@@ -18,8 +18,8 @@ func (User) Fields() []ent.Field {
 			NotEmpty().Unique(),
 		field.String("password").
 			NotEmpty(),
-		field.Int("balance"),
-		field.Int("withdraw"),
+		field.Float("balance"),
+		field.Float("withdraw"),
 	}
 }
 

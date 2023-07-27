@@ -17,7 +17,7 @@ func (Withdrawals) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("order").
 			Unique(),
-		field.Int("sum"),
+		field.Float("sum"),
 		field.Time("timestamp").SchemaType(map[string]string{
 			dialect.Postgres: "timestamptz",
 		}),

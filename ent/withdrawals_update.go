@@ -36,15 +36,15 @@ func (wu *WithdrawalsUpdate) SetOrder(s string) *WithdrawalsUpdate {
 }
 
 // SetSum sets the "sum" field.
-func (wu *WithdrawalsUpdate) SetSum(i int) *WithdrawalsUpdate {
+func (wu *WithdrawalsUpdate) SetSum(f float64) *WithdrawalsUpdate {
 	wu.mutation.ResetSum()
-	wu.mutation.SetSum(i)
+	wu.mutation.SetSum(f)
 	return wu
 }
 
-// AddSum adds i to the "sum" field.
-func (wu *WithdrawalsUpdate) AddSum(i int) *WithdrawalsUpdate {
-	wu.mutation.AddSum(i)
+// AddSum adds f to the "sum" field.
+func (wu *WithdrawalsUpdate) AddSum(f float64) *WithdrawalsUpdate {
+	wu.mutation.AddSum(f)
 	return wu
 }
 
@@ -124,10 +124,10 @@ func (wu *WithdrawalsUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
 	}
 	if value, ok := wu.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeFloat64, value)
 	}
 	if value, ok := wu.mutation.AddedSum(); ok {
-		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
+		_spec.AddField(withdrawals.FieldSum, field.TypeFloat64, value)
 	}
 	if value, ok := wu.mutation.Timestamp(); ok {
 		_spec.SetField(withdrawals.FieldTimestamp, field.TypeTime, value)
@@ -188,15 +188,15 @@ func (wuo *WithdrawalsUpdateOne) SetOrder(s string) *WithdrawalsUpdateOne {
 }
 
 // SetSum sets the "sum" field.
-func (wuo *WithdrawalsUpdateOne) SetSum(i int) *WithdrawalsUpdateOne {
+func (wuo *WithdrawalsUpdateOne) SetSum(f float64) *WithdrawalsUpdateOne {
 	wuo.mutation.ResetSum()
-	wuo.mutation.SetSum(i)
+	wuo.mutation.SetSum(f)
 	return wuo
 }
 
-// AddSum adds i to the "sum" field.
-func (wuo *WithdrawalsUpdateOne) AddSum(i int) *WithdrawalsUpdateOne {
-	wuo.mutation.AddSum(i)
+// AddSum adds f to the "sum" field.
+func (wuo *WithdrawalsUpdateOne) AddSum(f float64) *WithdrawalsUpdateOne {
+	wuo.mutation.AddSum(f)
 	return wuo
 }
 
@@ -306,10 +306,10 @@ func (wuo *WithdrawalsUpdateOne) sqlSave(ctx context.Context) (_node *Withdrawal
 		_spec.SetField(withdrawals.FieldOrder, field.TypeString, value)
 	}
 	if value, ok := wuo.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeFloat64, value)
 	}
 	if value, ok := wuo.mutation.AddedSum(); ok {
-		_spec.AddField(withdrawals.FieldSum, field.TypeInt, value)
+		_spec.AddField(withdrawals.FieldSum, field.TypeFloat64, value)
 	}
 	if value, ok := wuo.mutation.Timestamp(); ok {
 		_spec.SetField(withdrawals.FieldTimestamp, field.TypeTime, value)

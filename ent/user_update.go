@@ -42,28 +42,28 @@ func (uu *UserUpdate) SetPassword(s string) *UserUpdate {
 }
 
 // SetBalance sets the "balance" field.
-func (uu *UserUpdate) SetBalance(i int) *UserUpdate {
+func (uu *UserUpdate) SetBalance(f float64) *UserUpdate {
 	uu.mutation.ResetBalance()
-	uu.mutation.SetBalance(i)
+	uu.mutation.SetBalance(f)
 	return uu
 }
 
-// AddBalance adds i to the "balance" field.
-func (uu *UserUpdate) AddBalance(i int) *UserUpdate {
-	uu.mutation.AddBalance(i)
+// AddBalance adds f to the "balance" field.
+func (uu *UserUpdate) AddBalance(f float64) *UserUpdate {
+	uu.mutation.AddBalance(f)
 	return uu
 }
 
 // SetWithdraw sets the "withdraw" field.
-func (uu *UserUpdate) SetWithdraw(i int) *UserUpdate {
+func (uu *UserUpdate) SetWithdraw(f float64) *UserUpdate {
 	uu.mutation.ResetWithdraw()
-	uu.mutation.SetWithdraw(i)
+	uu.mutation.SetWithdraw(f)
 	return uu
 }
 
-// AddWithdraw adds i to the "withdraw" field.
-func (uu *UserUpdate) AddWithdraw(i int) *UserUpdate {
-	uu.mutation.AddWithdraw(i)
+// AddWithdraw adds f to the "withdraw" field.
+func (uu *UserUpdate) AddWithdraw(f float64) *UserUpdate {
+	uu.mutation.AddWithdraw(f)
 	return uu
 }
 
@@ -205,16 +205,16 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
 	if value, ok := uu.mutation.Balance(); ok {
-		_spec.SetField(user.FieldBalance, field.TypeInt, value)
+		_spec.SetField(user.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := uu.mutation.AddedBalance(); ok {
-		_spec.AddField(user.FieldBalance, field.TypeInt, value)
+		_spec.AddField(user.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := uu.mutation.Withdraw(); ok {
-		_spec.SetField(user.FieldWithdraw, field.TypeInt, value)
+		_spec.SetField(user.FieldWithdraw, field.TypeFloat64, value)
 	}
 	if value, ok := uu.mutation.AddedWithdraw(); ok {
-		_spec.AddField(user.FieldWithdraw, field.TypeInt, value)
+		_spec.AddField(user.FieldWithdraw, field.TypeFloat64, value)
 	}
 	if uu.mutation.OrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -339,28 +339,28 @@ func (uuo *UserUpdateOne) SetPassword(s string) *UserUpdateOne {
 }
 
 // SetBalance sets the "balance" field.
-func (uuo *UserUpdateOne) SetBalance(i int) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetBalance(f float64) *UserUpdateOne {
 	uuo.mutation.ResetBalance()
-	uuo.mutation.SetBalance(i)
+	uuo.mutation.SetBalance(f)
 	return uuo
 }
 
-// AddBalance adds i to the "balance" field.
-func (uuo *UserUpdateOne) AddBalance(i int) *UserUpdateOne {
-	uuo.mutation.AddBalance(i)
+// AddBalance adds f to the "balance" field.
+func (uuo *UserUpdateOne) AddBalance(f float64) *UserUpdateOne {
+	uuo.mutation.AddBalance(f)
 	return uuo
 }
 
 // SetWithdraw sets the "withdraw" field.
-func (uuo *UserUpdateOne) SetWithdraw(i int) *UserUpdateOne {
+func (uuo *UserUpdateOne) SetWithdraw(f float64) *UserUpdateOne {
 	uuo.mutation.ResetWithdraw()
-	uuo.mutation.SetWithdraw(i)
+	uuo.mutation.SetWithdraw(f)
 	return uuo
 }
 
-// AddWithdraw adds i to the "withdraw" field.
-func (uuo *UserUpdateOne) AddWithdraw(i int) *UserUpdateOne {
-	uuo.mutation.AddWithdraw(i)
+// AddWithdraw adds f to the "withdraw" field.
+func (uuo *UserUpdateOne) AddWithdraw(f float64) *UserUpdateOne {
+	uuo.mutation.AddWithdraw(f)
 	return uuo
 }
 
@@ -532,16 +532,16 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 	}
 	if value, ok := uuo.mutation.Balance(); ok {
-		_spec.SetField(user.FieldBalance, field.TypeInt, value)
+		_spec.SetField(user.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := uuo.mutation.AddedBalance(); ok {
-		_spec.AddField(user.FieldBalance, field.TypeInt, value)
+		_spec.AddField(user.FieldBalance, field.TypeFloat64, value)
 	}
 	if value, ok := uuo.mutation.Withdraw(); ok {
-		_spec.SetField(user.FieldWithdraw, field.TypeInt, value)
+		_spec.SetField(user.FieldWithdraw, field.TypeFloat64, value)
 	}
 	if value, ok := uuo.mutation.AddedWithdraw(); ok {
-		_spec.AddField(user.FieldWithdraw, field.TypeInt, value)
+		_spec.AddField(user.FieldWithdraw, field.TypeFloat64, value)
 	}
 	if uuo.mutation.OrdersCleared() {
 		edge := &sqlgraph.EdgeSpec{

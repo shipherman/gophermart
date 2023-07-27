@@ -12,7 +12,7 @@ var (
 	OrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "ordernum", Type: field.TypeString, Unique: true},
-		{Name: "accrual", Type: field.TypeInt},
+		{Name: "accrual", Type: field.TypeFloat64},
 		{Name: "status", Type: field.TypeString},
 		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "user_orders", Type: field.TypeInt, Nullable: true},
@@ -36,8 +36,8 @@ var (
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "login", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
-		{Name: "balance", Type: field.TypeInt},
-		{Name: "withdraw", Type: field.TypeInt},
+		{Name: "balance", Type: field.TypeFloat64},
+		{Name: "withdraw", Type: field.TypeFloat64},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -49,7 +49,7 @@ var (
 	WithdrawalsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "order", Type: field.TypeString, Unique: true},
-		{Name: "sum", Type: field.TypeInt},
+		{Name: "sum", Type: field.TypeFloat64},
 		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "user_withdrawals", Type: field.TypeInt, Nullable: true},
 	}

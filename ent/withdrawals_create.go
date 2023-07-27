@@ -28,8 +28,8 @@ func (wc *WithdrawalsCreate) SetOrder(s string) *WithdrawalsCreate {
 }
 
 // SetSum sets the "sum" field.
-func (wc *WithdrawalsCreate) SetSum(i int) *WithdrawalsCreate {
-	wc.mutation.SetSum(i)
+func (wc *WithdrawalsCreate) SetSum(f float64) *WithdrawalsCreate {
+	wc.mutation.SetSum(f)
 	return wc
 }
 
@@ -132,7 +132,7 @@ func (wc *WithdrawalsCreate) createSpec() (*Withdrawals, *sqlgraph.CreateSpec) {
 		_node.Order = value
 	}
 	if value, ok := wc.mutation.Sum(); ok {
-		_spec.SetField(withdrawals.FieldSum, field.TypeInt, value)
+		_spec.SetField(withdrawals.FieldSum, field.TypeFloat64, value)
 		_node.Sum = value
 	}
 	if value, ok := wc.mutation.Timestamp(); ok {

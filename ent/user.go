@@ -21,9 +21,9 @@ type User struct {
 	// Password holds the value of the "password" field.
 	Password string `json:"password,omitempty"`
 	// Balance holds the value of the "balance" field.
-	Balance int `json:"balance,omitempty"`
+	Balance float64 `json:"balance,omitempty"`
 	// Withdraw holds the value of the "withdraw" field.
-	Withdraw int `json:"withdraw,omitempty"`
+	Withdraw float64 `json:"withdraw,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -64,7 +64,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldID, user.FieldBalance, user.FieldWithdraw:
+		case user.FieldBalance, user.FieldWithdraw:
+			values[i] = new(sql.NullFloat64)
+		case user.FieldID:
 			values[i] = new(sql.NullInt64)
 		case user.FieldLogin, user.FieldPassword:
 			values[i] = new(sql.NullString)
@@ -102,16 +104,16 @@ func (u *User) assignValues(columns []string, values []any) error {
 				u.Password = value.String
 			}
 		case user.FieldBalance:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field balance", values[i])
 			} else if value.Valid {
-				u.Balance = int(value.Int64)
+				u.Balance = value.Float64
 			}
 		case user.FieldWithdraw:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field withdraw", values[i])
 			} else if value.Valid {
-				u.Withdraw = int(value.Int64)
+				u.Withdraw = value.Float64
 			}
 		default:
 			u.selectValues.Set(columns[i], values[i])

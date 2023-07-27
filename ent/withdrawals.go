@@ -21,7 +21,7 @@ type Withdrawals struct {
 	// Order holds the value of the "order" field.
 	Order string `json:"order,omitempty"`
 	// Sum holds the value of the "sum" field.
-	Sum int `json:"sum,omitempty"`
+	Sum float64 `json:"sum,omitempty"`
 	// Timestamp holds the value of the "timestamp" field.
 	Timestamp time.Time `json:"timestamp,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -58,7 +58,9 @@ func (*Withdrawals) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case withdrawals.FieldID, withdrawals.FieldSum:
+		case withdrawals.FieldSum:
+			values[i] = new(sql.NullFloat64)
+		case withdrawals.FieldID:
 			values[i] = new(sql.NullInt64)
 		case withdrawals.FieldOrder:
 			values[i] = new(sql.NullString)
@@ -94,10 +96,10 @@ func (w *Withdrawals) assignValues(columns []string, values []any) error {
 				w.Order = value.String
 			}
 		case withdrawals.FieldSum:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field sum", values[i])
 			} else if value.Valid {
-				w.Sum = int(value.Int64)
+				w.Sum = value.Float64
 			}
 		case withdrawals.FieldTimestamp:
 			if value, ok := values[i].(*sql.NullTime); !ok {

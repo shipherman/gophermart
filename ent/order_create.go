@@ -28,8 +28,8 @@ func (oc *OrderCreate) SetOrdernum(s string) *OrderCreate {
 }
 
 // SetAccrual sets the "accrual" field.
-func (oc *OrderCreate) SetAccrual(i int) *OrderCreate {
-	oc.mutation.SetAccrual(i)
+func (oc *OrderCreate) SetAccrual(f float64) *OrderCreate {
+	oc.mutation.SetAccrual(f)
 	return oc
 }
 
@@ -141,7 +141,7 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_node.Ordernum = value
 	}
 	if value, ok := oc.mutation.Accrual(); ok {
-		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
+		_spec.SetField(order.FieldAccrual, field.TypeFloat64, value)
 		_node.Accrual = value
 	}
 	if value, ok := oc.mutation.Status(); ok {

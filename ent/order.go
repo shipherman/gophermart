@@ -21,7 +21,7 @@ type Order struct {
 	// Ordernum holds the value of the "ordernum" field.
 	Ordernum string `json:"ordernum,omitempty"`
 	// Accrual holds the value of the "accrual" field.
-	Accrual int `json:"accrual,omitempty"`
+	Accrual float64 `json:"accrual,omitempty"`
 	// Status holds the value of the "status" field.
 	Status string `json:"status,omitempty"`
 	// Timestamp holds the value of the "timestamp" field.
@@ -60,7 +60,9 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldAccrual:
+		case order.FieldAccrual:
+			values[i] = new(sql.NullFloat64)
+		case order.FieldID:
 			values[i] = new(sql.NullInt64)
 		case order.FieldOrdernum, order.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -96,10 +98,10 @@ func (o *Order) assignValues(columns []string, values []any) error {
 				o.Ordernum = value.String
 			}
 		case order.FieldAccrual:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field accrual", values[i])
 			} else if value.Valid {
-				o.Accrual = int(value.Int64)
+				o.Accrual = value.Float64
 			}
 		case order.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
