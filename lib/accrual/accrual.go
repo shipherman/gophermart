@@ -22,11 +22,11 @@ func SetAccrualAddress(s string) {
 // Parses results allign to provided codes
 // Return it to handler
 func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
-	err = json.Unmarshal(r.Body(), &order)
+	err = json.NewDecoder(r.RawResponse.Body).Decode(&order)
 	if err != nil {
-		return order, err
+		return order, fmt.Errorf("error during parsing to json: %w", err)
 	}
-
+	fmt.Println("parsed: ", *order)
 	return order, nil
 }
 
