@@ -46,7 +46,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		// Get Accrual for the order
 		resp, err := client.R().EnableTrace().
 			Get(orderAddr)
-		fmt.Printf("reqAcc response: %v; Addr: %s\n", resp, orderAddr)
+		fmt.Printf("resp code: %v; resp body: %v; Addr: %s\n", resp.StatusCode(), resp, orderAddr)
 		if err != nil {
 			errCh <- err
 			return
