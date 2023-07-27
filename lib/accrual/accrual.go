@@ -4,7 +4,6 @@ package accrual
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/lib/db"
@@ -64,7 +63,6 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			orderResp.Status = parsedBody.Status
 			orderResp.Accrual = parsedBody.Accrual
 
-			fmt.Println(parsedBody)
 			if err != nil {
 				errCh <- err
 			}
@@ -78,7 +76,6 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			if err != nil {
 				errCh <- err
 			}
-			fmt.Println(orderResp)
 			if orderResp.Status == "PROCESSED" || orderResp.Status == "INVALID" {
 				done = true
 			}
@@ -103,6 +100,6 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		case 404:
 			// errCh <- fmt.Errorf("Accrual app is not configured")
 		}
-		time.Sleep(5 * time.Microsecond)
+		// time.Sleep(5 * time.Microsecond)
 	}
 }
