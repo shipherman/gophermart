@@ -3,6 +3,7 @@ package db
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/shipherman/gophermart/ent/order"
 	"github.com/shipherman/gophermart/ent/user"
@@ -72,17 +73,25 @@ func (dbc *DBClient) SelectOrderOwner(on string) (string, error) {
 	order, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
-		All(context.Background())
-	if err != nil || len(order) == 0 {
-		return "", err
+		First(context.Background())
+	if err != nil {
+		// Check if it was uploaded already
+		if strings.Contains(err.Error(), "order not found") {
+			return "", nil
+		}
+		return "", fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 
-	u, err := order[0].QueryUser().All(context.Background())
+	u, err := order.QueryUser().First(context.Background())
 	if err != nil {
 		return "", fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 
-	return u[0].Login, nil
+	if u == nil {
+		return "", nil
+	}
+
+	return u.Login, nil
 }
 
 // SELECT Orders
