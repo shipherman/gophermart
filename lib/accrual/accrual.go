@@ -58,6 +58,9 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			// Parse accrual response and save to
 			// OrderREsp structure
 			parsedBody, err := parseBody(resp)
+			if err != nil {
+				errCh <- fmt.Errorf("ReqAccrual parsing Accrual reponse error: %w", err)
+			}
 			orderResp.Status = parsedBody.Status
 			orderResp.Accural = parsedBody.Accural
 
