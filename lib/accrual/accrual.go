@@ -22,17 +22,17 @@ func SetAccrualAddress(s string) {
 // Parses results allign to provided codes
 // Return it to handler
 func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
-	err = json.Unmarshal(r.Body(), order)
+	err = json.Unmarshal(r.Body(), &order)
 	if err != nil {
 		return order, fmt.Errorf("error during parsing to json: %w", err)
 	}
-	fmt.Println("parsed: ", *order)
+	fmt.Println("parsed: ", order)
 	return order, nil
 }
 
 // Request Accural for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan error) {
-	var done bool = false
+	var done = false
 
 	defer close(errCh)
 
