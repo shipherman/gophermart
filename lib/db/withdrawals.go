@@ -33,7 +33,7 @@ func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawRespons
 	return nil
 }
 
-func (dbc *DBClient) UpdateWithdraw(u string, a int) error {
+func (dbc *DBClient) UpdateWithdraw(u string, a float64) error {
 	uent, err := dbc.Client.User.Query().
 		Where(user.Login(u)).First(context.Background())
 	if err != nil {
