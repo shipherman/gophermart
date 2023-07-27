@@ -22,7 +22,7 @@ func SetAccrualAddress(s string) {
 // Parses results allign to provided codes
 // Return it to handler
 func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
-	err = json.NewDecoder(r.RawResponse.Body).Decode(&order)
+	err = json.Unmarshal(r.Body(), order)
 	if err != nil {
 		return order, fmt.Errorf("error during parsing to json: %w", err)
 	}
@@ -57,11 +57,11 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		case 200:
 			// Parse accrual response and save to
 			// OrderREsp structure
-			orderParsed, err := parseBody(resp)
-			orderResp.Status = orderParsed.Status
-			orderResp.Accural = orderParsed.Accural
+			parsedBody, err := parseBody(resp)
+			orderResp.Status = parsedBody.Status
+			orderResp.Accural = parsedBody.Accural
 
-			fmt.Println(orderParsed)
+			fmt.Println(parsedBody)
 			if err != nil {
 				errCh <- err
 			}

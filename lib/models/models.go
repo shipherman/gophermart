@@ -19,7 +19,7 @@ type OrderResponse struct {
 	OrderNum  string    `json:"number"`
 	User      string    `json:"-"`
 	Status    string    `json:"status"`
-	Accural   int       `json:"accural,omitempty"`
+	Accural   int       `json:"accrual,omitempty"`
 	TimeStamp time.Time `json:"uploaded_at,omitempty"`
 }
 
