@@ -4,6 +4,7 @@ package accrual
 import (
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/lib/db"
@@ -52,7 +53,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		}
 
 		switch resp.StatusCode() {
-		// успешная обработка запроса
+		// Успешная обработка запроса
 		case 200:
 			// Parse accrual response and save to
 			// OrderREsp structure
@@ -79,7 +80,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			if orderResp.Status == "PROCESSED" || orderResp.Status == "INVALID" {
 				done = true
 			}
-		// заказ не зарегистрирован в системе расчёта
+		// Заказ не зарегистрирован в системе расчёта
 		case 204:
 			// orderResp.Status = "IVALID"
 			// err = dbc.UpdateOrder(*orderResp)
@@ -87,18 +88,19 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			// 	errCh <- err
 			// }
 			// done = true
-		// превышено количество запросов к сервису
+		// Превышено количество запросов к сервису
 		case 429:
 			orderResp.Status = "PROCESSING"
 			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
-				errCh <- err
+				errCh <- fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
 			}
-		// внутренняя ошибка сервера
+			time.Sleep(60 * time.Second)
+		// Внутренняя ошибка сервера
 		case 500:
 			// to do
 		case 404:
-			// errCh <- fmt.Errorf("Accrual app is not configured")
+			errCh <- fmt.Errorf("accrual app is not configured: %s", resp.Status())
 		}
 		// time.Sleep(5 * time.Microsecond)
 	}
