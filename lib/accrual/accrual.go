@@ -103,6 +103,6 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		case 404:
 			// errCh <- fmt.Errorf("Accrual app is not configured")
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(5 * time.Microsecond)
 	}
 }
