@@ -61,6 +61,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 			orderResp.Status = orderParsed.Status
 			orderResp.Accural = orderParsed.Accural
 
+			fmt.Println(orderParsed)
 			if err != nil {
 				errCh <- err
 			}
