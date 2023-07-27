@@ -1,4 +1,4 @@
-// Interaction with accural service
+// Interaction with Accrual service
 package accrual
 
 import (
@@ -30,7 +30,7 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	return order, nil
 }
 
-// Request Accural for discount
+// Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan error) {
 	var done = false
 
@@ -43,7 +43,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 
 	for !done {
 
-		// Get accural for the order
+		// Get Accrual for the order
 		resp, err := client.R().EnableTrace().
 			Get(orderAddr)
 		fmt.Printf("reqAcc response: %v; Addr: %s\n", resp, orderAddr)
@@ -62,7 +62,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 				errCh <- fmt.Errorf("ReqAccrual parsing Accrual reponse error: %w", err)
 			}
 			orderResp.Status = parsedBody.Status
-			orderResp.Accural = parsedBody.Accural
+			orderResp.Accrual = parsedBody.Accrual
 
 			fmt.Println(parsedBody)
 			if err != nil {
@@ -101,7 +101,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		case 500:
 			// to do
 		case 404:
-			// errCh <- fmt.Errorf("accural app is not configured")
+			// errCh <- fmt.Errorf("Accrual app is not configured")
 		}
 		time.Sleep(5 * time.Second)
 	}

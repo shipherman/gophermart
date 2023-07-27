@@ -14,8 +14,8 @@ const (
 	FieldID = "id"
 	// FieldOrdernum holds the string denoting the ordernum field in the database.
 	FieldOrdernum = "ordernum"
-	// FieldAccural holds the string denoting the accural field in the database.
-	FieldAccural = "accural"
+	// FieldAccrual holds the string denoting the accrual field in the database.
+	FieldAccrual = "accrual"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldTimestamp holds the string denoting the timestamp field in the database.
@@ -37,7 +37,7 @@ const (
 var Columns = []string{
 	FieldID,
 	FieldOrdernum,
-	FieldAccural,
+	FieldAccrual,
 	FieldStatus,
 	FieldTimestamp,
 }
@@ -76,9 +76,9 @@ func ByOrdernum(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldOrdernum, opts...).ToFunc()
 }
 
-// ByAccural orders the results by the accural field.
-func ByAccural(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldAccural, opts...).ToFunc()
+// ByAccrual orders the results by the accrual field.
+func ByAccrual(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAccrual, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

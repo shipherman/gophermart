@@ -17,7 +17,7 @@ func (Order) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("ordernum").
 			Unique(),
-		field.Int("accural"),
+		field.Int("accrual"),
 		field.String("status"),
 		field.Time("timestamp").SchemaType(map[string]string{
 			dialect.Postgres: "timestamptz",

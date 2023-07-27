@@ -12,13 +12,13 @@ import (
 // INSERT new order
 func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 	// // put orderResp to accrual app
-	// accResp, err := accrual.ReqAccural(newOrder.OrderNum)
+	// accResp, err := accrual.ReqAccrual(newOrder.OrderNum)
 	// if err != nil {
 	// 	return err
 	// }
 
 	// newOrder.Status = accResp.Status
-	// newOrder.Accural = accResp.Accural
+	// newOrder.Accrual = accResp.Accrual
 	// newOrder.TimeStamp = time.Now()
 
 	// Get ent User struct
@@ -33,7 +33,7 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 	_, err = dbc.Client.Order.Create().
 		SetOrdernum(newOrder.OrderNum).
 		SetStatus(newOrder.Status).
-		SetAccural(newOrder.Accural).
+		SetAccrual(newOrder.Accrual).
 		SetTimestamp(newOrder.TimeStamp).
 		SetUser(user).
 		Save(context.Background())
@@ -97,7 +97,7 @@ func (dbc *DBClient) SelectOrders(u string) ([]models.OrderResponse, error) {
 
 	for _, o := range entOrder {
 		var order models.OrderResponse
-		order.Accural = o.Accural
+		order.Accrual = o.Accrual
 		order.OrderNum = o.Ordernum
 		order.Status = o.Status
 		order.TimeStamp = o.Timestamp

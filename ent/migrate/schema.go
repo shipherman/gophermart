@@ -12,7 +12,7 @@ var (
 	OrdersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
 		{Name: "ordernum", Type: field.TypeString, Unique: true},
-		{Name: "accural", Type: field.TypeInt},
+		{Name: "accrual", Type: field.TypeInt},
 		{Name: "status", Type: field.TypeString},
 		{Name: "timestamp", Type: field.TypeTime, SchemaType: map[string]string{"postgres": "timestamptz"}},
 		{Name: "user_orders", Type: field.TypeInt, Nullable: true},

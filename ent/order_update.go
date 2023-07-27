@@ -35,16 +35,16 @@ func (ou *OrderUpdate) SetOrdernum(s string) *OrderUpdate {
 	return ou
 }
 
-// SetAccural sets the "accural" field.
-func (ou *OrderUpdate) SetAccural(i int) *OrderUpdate {
-	ou.mutation.ResetAccural()
-	ou.mutation.SetAccural(i)
+// SetAccrual sets the "accrual" field.
+func (ou *OrderUpdate) SetAccrual(i int) *OrderUpdate {
+	ou.mutation.ResetAccrual()
+	ou.mutation.SetAccrual(i)
 	return ou
 }
 
-// AddAccural adds i to the "accural" field.
-func (ou *OrderUpdate) AddAccural(i int) *OrderUpdate {
-	ou.mutation.AddAccural(i)
+// AddAccrual adds i to the "accrual" field.
+func (ou *OrderUpdate) AddAccrual(i int) *OrderUpdate {
+	ou.mutation.AddAccrual(i)
 	return ou
 }
 
@@ -129,11 +129,11 @@ func (ou *OrderUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ou.mutation.Ordernum(); ok {
 		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
-	if value, ok := ou.mutation.Accural(); ok {
-		_spec.SetField(order.FieldAccural, field.TypeInt, value)
+	if value, ok := ou.mutation.Accrual(); ok {
+		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
 	}
-	if value, ok := ou.mutation.AddedAccural(); ok {
-		_spec.AddField(order.FieldAccural, field.TypeInt, value)
+	if value, ok := ou.mutation.AddedAccrual(); ok {
+		_spec.AddField(order.FieldAccrual, field.TypeInt, value)
 	}
 	if value, ok := ou.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)
@@ -196,16 +196,16 @@ func (ouo *OrderUpdateOne) SetOrdernum(s string) *OrderUpdateOne {
 	return ouo
 }
 
-// SetAccural sets the "accural" field.
-func (ouo *OrderUpdateOne) SetAccural(i int) *OrderUpdateOne {
-	ouo.mutation.ResetAccural()
-	ouo.mutation.SetAccural(i)
+// SetAccrual sets the "accrual" field.
+func (ouo *OrderUpdateOne) SetAccrual(i int) *OrderUpdateOne {
+	ouo.mutation.ResetAccrual()
+	ouo.mutation.SetAccrual(i)
 	return ouo
 }
 
-// AddAccural adds i to the "accural" field.
-func (ouo *OrderUpdateOne) AddAccural(i int) *OrderUpdateOne {
-	ouo.mutation.AddAccural(i)
+// AddAccrual adds i to the "accrual" field.
+func (ouo *OrderUpdateOne) AddAccrual(i int) *OrderUpdateOne {
+	ouo.mutation.AddAccrual(i)
 	return ouo
 }
 
@@ -320,11 +320,11 @@ func (ouo *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error
 	if value, ok := ouo.mutation.Ordernum(); ok {
 		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 	}
-	if value, ok := ouo.mutation.Accural(); ok {
-		_spec.SetField(order.FieldAccural, field.TypeInt, value)
+	if value, ok := ouo.mutation.Accrual(); ok {
+		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
 	}
-	if value, ok := ouo.mutation.AddedAccural(); ok {
-		_spec.AddField(order.FieldAccural, field.TypeInt, value)
+	if value, ok := ouo.mutation.AddedAccrual(); ok {
+		_spec.AddField(order.FieldAccrual, field.TypeInt, value)
 	}
 	if value, ok := ouo.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)

@@ -81,7 +81,7 @@ func (dbc *DBClient) UpdateBalance(orderResp models.OrderResponse) error {
 	}
 
 	_, err = u.Update().
-		AddBalance(orderResp.Accural).
+		AddBalance(orderResp.Accrual).
 		Save(context.Background())
 	if err != nil {
 		return fmt.Errorf("UpdateBalance error during saving: %w", err)

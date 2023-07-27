@@ -38,8 +38,8 @@ type OrderMutation struct {
 	typ           string
 	id            *int
 	ordernum      *string
-	accural       *int
-	addaccural    *int
+	accrual       *int
+	addaccrual    *int
 	status        *string
 	timestamp     *time.Time
 	clearedFields map[string]struct{}
@@ -184,60 +184,60 @@ func (m *OrderMutation) ResetOrdernum() {
 	m.ordernum = nil
 }
 
-// SetAccural sets the "accural" field.
-func (m *OrderMutation) SetAccural(i int) {
-	m.accural = &i
-	m.addaccural = nil
+// SetAccrual sets the "accrual" field.
+func (m *OrderMutation) SetAccrual(i int) {
+	m.accrual = &i
+	m.addaccrual = nil
 }
 
-// Accural returns the value of the "accural" field in the mutation.
-func (m *OrderMutation) Accural() (r int, exists bool) {
-	v := m.accural
+// Accrual returns the value of the "accrual" field in the mutation.
+func (m *OrderMutation) Accrual() (r int, exists bool) {
+	v := m.accrual
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldAccural returns the old "accural" field's value of the Order entity.
+// OldAccrual returns the old "accrual" field's value of the Order entity.
 // If the Order object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *OrderMutation) OldAccural(ctx context.Context) (v int, err error) {
+func (m *OrderMutation) OldAccrual(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAccural is only allowed on UpdateOne operations")
+		return v, errors.New("OldAccrual is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAccural requires an ID field in the mutation")
+		return v, errors.New("OldAccrual requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAccural: %w", err)
+		return v, fmt.Errorf("querying old value for OldAccrual: %w", err)
 	}
-	return oldValue.Accural, nil
+	return oldValue.Accrual, nil
 }
 
-// AddAccural adds i to the "accural" field.
-func (m *OrderMutation) AddAccural(i int) {
-	if m.addaccural != nil {
-		*m.addaccural += i
+// AddAccrual adds i to the "accrual" field.
+func (m *OrderMutation) AddAccrual(i int) {
+	if m.addaccrual != nil {
+		*m.addaccrual += i
 	} else {
-		m.addaccural = &i
+		m.addaccrual = &i
 	}
 }
 
-// AddedAccural returns the value that was added to the "accural" field in this mutation.
-func (m *OrderMutation) AddedAccural() (r int, exists bool) {
-	v := m.addaccural
+// AddedAccrual returns the value that was added to the "accrual" field in this mutation.
+func (m *OrderMutation) AddedAccrual() (r int, exists bool) {
+	v := m.addaccrual
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ResetAccural resets all changes to the "accural" field.
-func (m *OrderMutation) ResetAccural() {
-	m.accural = nil
-	m.addaccural = nil
+// ResetAccrual resets all changes to the "accrual" field.
+func (m *OrderMutation) ResetAccrual() {
+	m.accrual = nil
+	m.addaccrual = nil
 }
 
 // SetStatus sets the "status" field.
@@ -389,8 +389,8 @@ func (m *OrderMutation) Fields() []string {
 	if m.ordernum != nil {
 		fields = append(fields, order.FieldOrdernum)
 	}
-	if m.accural != nil {
-		fields = append(fields, order.FieldAccural)
+	if m.accrual != nil {
+		fields = append(fields, order.FieldAccrual)
 	}
 	if m.status != nil {
 		fields = append(fields, order.FieldStatus)
@@ -408,8 +408,8 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 	switch name {
 	case order.FieldOrdernum:
 		return m.Ordernum()
-	case order.FieldAccural:
-		return m.Accural()
+	case order.FieldAccrual:
+		return m.Accrual()
 	case order.FieldStatus:
 		return m.Status()
 	case order.FieldTimestamp:
@@ -425,8 +425,8 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 	switch name {
 	case order.FieldOrdernum:
 		return m.OldOrdernum(ctx)
-	case order.FieldAccural:
-		return m.OldAccural(ctx)
+	case order.FieldAccrual:
+		return m.OldAccrual(ctx)
 	case order.FieldStatus:
 		return m.OldStatus(ctx)
 	case order.FieldTimestamp:
@@ -447,12 +447,12 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetOrdernum(v)
 		return nil
-	case order.FieldAccural:
+	case order.FieldAccrual:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAccural(v)
+		m.SetAccrual(v)
 		return nil
 	case order.FieldStatus:
 		v, ok := value.(string)
@@ -476,8 +476,8 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *OrderMutation) AddedFields() []string {
 	var fields []string
-	if m.addaccural != nil {
-		fields = append(fields, order.FieldAccural)
+	if m.addaccrual != nil {
+		fields = append(fields, order.FieldAccrual)
 	}
 	return fields
 }
@@ -487,8 +487,8 @@ func (m *OrderMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case order.FieldAccural:
-		return m.AddedAccural()
+	case order.FieldAccrual:
+		return m.AddedAccrual()
 	}
 	return nil, false
 }
@@ -498,12 +498,12 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *OrderMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case order.FieldAccural:
+	case order.FieldAccrual:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddAccural(v)
+		m.AddAccrual(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
@@ -535,8 +535,8 @@ func (m *OrderMutation) ResetField(name string) error {
 	case order.FieldOrdernum:
 		m.ResetOrdernum()
 		return nil
-	case order.FieldAccural:
-		m.ResetAccural()
+	case order.FieldAccrual:
+		m.ResetAccrual()
 		return nil
 	case order.FieldStatus:
 		m.ResetStatus()

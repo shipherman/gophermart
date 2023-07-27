@@ -27,9 +27,9 @@ func (oc *OrderCreate) SetOrdernum(s string) *OrderCreate {
 	return oc
 }
 
-// SetAccural sets the "accural" field.
-func (oc *OrderCreate) SetAccural(i int) *OrderCreate {
-	oc.mutation.SetAccural(i)
+// SetAccrual sets the "accrual" field.
+func (oc *OrderCreate) SetAccrual(i int) *OrderCreate {
+	oc.mutation.SetAccrual(i)
 	return oc
 }
 
@@ -101,8 +101,8 @@ func (oc *OrderCreate) check() error {
 	if _, ok := oc.mutation.Ordernum(); !ok {
 		return &ValidationError{Name: "ordernum", err: errors.New(`ent: missing required field "Order.ordernum"`)}
 	}
-	if _, ok := oc.mutation.Accural(); !ok {
-		return &ValidationError{Name: "accural", err: errors.New(`ent: missing required field "Order.accural"`)}
+	if _, ok := oc.mutation.Accrual(); !ok {
+		return &ValidationError{Name: "accrual", err: errors.New(`ent: missing required field "Order.accrual"`)}
 	}
 	if _, ok := oc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "Order.status"`)}
@@ -140,9 +140,9 @@ func (oc *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_spec.SetField(order.FieldOrdernum, field.TypeString, value)
 		_node.Ordernum = value
 	}
-	if value, ok := oc.mutation.Accural(); ok {
-		_spec.SetField(order.FieldAccural, field.TypeInt, value)
-		_node.Accural = value
+	if value, ok := oc.mutation.Accrual(); ok {
+		_spec.SetField(order.FieldAccrual, field.TypeInt, value)
+		_node.Accrual = value
 	}
 	if value, ok := oc.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeString, value)

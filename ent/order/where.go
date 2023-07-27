@@ -60,9 +60,9 @@ func Ordernum(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldOrdernum, v))
 }
 
-// Accural applies equality check predicate on the "accural" field. It's identical to AccuralEQ.
-func Accural(v int) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldAccural, v))
+// Accrual applies equality check predicate on the "accrual" field. It's identical to AccrualEQ.
+func Accrual(v int) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldAccrual, v))
 }
 
 // Status applies equality check predicate on the "status" field. It's identical to StatusEQ.
@@ -140,44 +140,44 @@ func OrdernumContainsFold(v string) predicate.Order {
 	return predicate.Order(sql.FieldContainsFold(FieldOrdernum, v))
 }
 
-// AccuralEQ applies the EQ predicate on the "accural" field.
-func AccuralEQ(v int) predicate.Order {
-	return predicate.Order(sql.FieldEQ(FieldAccural, v))
+// AccrualEQ applies the EQ predicate on the "accrual" field.
+func AccrualEQ(v int) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldAccrual, v))
 }
 
-// AccuralNEQ applies the NEQ predicate on the "accural" field.
-func AccuralNEQ(v int) predicate.Order {
-	return predicate.Order(sql.FieldNEQ(FieldAccural, v))
+// AccrualNEQ applies the NEQ predicate on the "accrual" field.
+func AccrualNEQ(v int) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldAccrual, v))
 }
 
-// AccuralIn applies the In predicate on the "accural" field.
-func AccuralIn(vs ...int) predicate.Order {
-	return predicate.Order(sql.FieldIn(FieldAccural, vs...))
+// AccrualIn applies the In predicate on the "accrual" field.
+func AccrualIn(vs ...int) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldAccrual, vs...))
 }
 
-// AccuralNotIn applies the NotIn predicate on the "accural" field.
-func AccuralNotIn(vs ...int) predicate.Order {
-	return predicate.Order(sql.FieldNotIn(FieldAccural, vs...))
+// AccrualNotIn applies the NotIn predicate on the "accrual" field.
+func AccrualNotIn(vs ...int) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldAccrual, vs...))
 }
 
-// AccuralGT applies the GT predicate on the "accural" field.
-func AccuralGT(v int) predicate.Order {
-	return predicate.Order(sql.FieldGT(FieldAccural, v))
+// AccrualGT applies the GT predicate on the "accrual" field.
+func AccrualGT(v int) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldAccrual, v))
 }
 
-// AccuralGTE applies the GTE predicate on the "accural" field.
-func AccuralGTE(v int) predicate.Order {
-	return predicate.Order(sql.FieldGTE(FieldAccural, v))
+// AccrualGTE applies the GTE predicate on the "accrual" field.
+func AccrualGTE(v int) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldAccrual, v))
 }
 
-// AccuralLT applies the LT predicate on the "accural" field.
-func AccuralLT(v int) predicate.Order {
-	return predicate.Order(sql.FieldLT(FieldAccural, v))
+// AccrualLT applies the LT predicate on the "accrual" field.
+func AccrualLT(v int) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldAccrual, v))
 }
 
-// AccuralLTE applies the LTE predicate on the "accural" field.
-func AccuralLTE(v int) predicate.Order {
-	return predicate.Order(sql.FieldLTE(FieldAccural, v))
+// AccrualLTE applies the LTE predicate on the "accrual" field.
+func AccrualLTE(v int) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldAccrual, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.
