@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shipherman/gophermart/ent/order"
-	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/generated/ent/order"
+	"github.com/shipherman/gophermart/generated/ent/user"
 	"github.com/shipherman/gophermart/lib/models"
 )
 

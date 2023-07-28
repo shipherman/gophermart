@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	_ "github.com/lib/pq"
-	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/generated/ent"
 )
 
 type DBClient struct {

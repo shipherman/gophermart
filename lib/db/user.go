@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shipherman/gophermart/ent"
-	"github.com/shipherman/gophermart/ent/user"
+	"github.com/shipherman/gophermart/generated/ent"
+	"github.com/shipherman/gophermart/generated/ent/user"
 	"github.com/shipherman/gophermart/lib/models"
 )
 

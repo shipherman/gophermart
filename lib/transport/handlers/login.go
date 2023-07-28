@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/shipherman/gophermart/ent"
+	"github.com/shipherman/gophermart/generated/ent"
 	"github.com/shipherman/gophermart/lib/transport/middleware"
 )
 
