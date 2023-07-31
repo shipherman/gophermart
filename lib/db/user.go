@@ -75,7 +75,6 @@ func (dbc *DBClient) SelectBalance(u string) (response models.BalanceResponse, e
 
 // UPDATE user balance
 func (dbc *DBClient) UpdateBalance(orderResp models.OrderResponse) error {
-	fmt.Println(orderResp)
 	u, err := dbc.SelectUser(orderResp.User)
 	if err != nil {
 		return fmt.Errorf("UpdateBalance error: %w", err)
@@ -87,8 +86,6 @@ func (dbc *DBClient) UpdateBalance(orderResp models.OrderResponse) error {
 	if err != nil {
 		return fmt.Errorf("UpdateBalance error during saving: %w", err)
 	}
-
-	fmt.Println("updated balance: ", u)
 
 	return nil
 }

@@ -17,7 +17,6 @@ func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawRespons
 	}
 
 	newWithdraw.TimeStamp = time.Now()
-	fmt.Println(newWithdraw.TimeStamp.String())
 
 	_, err = dbc.Client.Withdrawals.Create().
 		SetOrder(newWithdraw.OrderNum).
@@ -66,7 +65,6 @@ func (dbc *DBClient) SelectWithdrawals(u string) ([]models.WithdrawResponse, err
 	}
 
 	for _, w := range entWs {
-		fmt.Println()
 		var wdraw models.WithdrawResponse
 		wdraw.OrderNum = w.Order
 		wdraw.Sum = w.Sum

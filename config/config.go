@@ -1,7 +1,5 @@
-package config 
-
-import "fmt"
+package config
 
 func main() {
-	fmt.Println("vim-go")
+	// to do
 }

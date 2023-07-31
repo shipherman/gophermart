@@ -35,7 +35,6 @@ func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
 
 // UPDATE existing order
 func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
-	fmt.Println("Update order:", orderResp)
 	o, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(orderResp.OrderNum)).

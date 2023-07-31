@@ -4,7 +4,6 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -62,7 +61,6 @@ func Execute() {
 	// Set accruall address
 	accrual.SetAccrualAddress(cfg.Accrual)
 
-	fmt.Println(cfg)
 	// Run server
 	handler := handlers.NewHandler(dbclient)
 	authenticator := middleware.NewAuthenticator(dbclient)

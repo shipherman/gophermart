@@ -26,7 +26,6 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	if err != nil {
 		return order, fmt.Errorf("error during parsing to json: %w", err)
 	}
-	fmt.Println("parsed: ", order)
 	return order, nil
 }
 
