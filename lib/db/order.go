@@ -12,19 +12,6 @@ import (
 
 // INSERT new order
 func (dbc *DBClient) InsertOrder(newOrder models.OrderResponse) error {
-	// // put orderResp to accrual app
-	// accResp, err := accrual.ReqAccrual(newOrder.OrderNum)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// newOrder.Status = accResp.Status
-	// newOrder.Accrual = accResp.Accrual
-	// newOrder.TimeStamp = time.Now()
-
-	// Get ent User struct
-	fmt.Println(newOrder)
-
 	user, err := dbc.SelectUser(newOrder.User)
 	if err != nil {
 		return err
