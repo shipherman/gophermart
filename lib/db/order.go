@@ -73,10 +73,6 @@ func (dbc *DBClient) SelectOrderOwner(on string) (string, error) {
 		return "", fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 
-	if u == nil {
-		return "", nil
-	}
-
 	return u.Login, nil
 }
 
