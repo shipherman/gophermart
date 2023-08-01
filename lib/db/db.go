@@ -6,11 +6,27 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/shipherman/gophermart/generated/ent"
+	"github.com/shipherman/gophermart/lib/models"
 )
 
 type DBClient struct {
 	Client     *ent.Client
 	ConnString string
+}
+
+type DBClientInt interface {
+	Start() error
+	Stop() error
+	InsertOrder(models.OrderResponse) error
+	UpdateOrder(models.OrderResponse) error
+	SelectOrderOwner(string) (string, error)
+	SelectOrders(string) ([]models.OrderResponse, error)
+	InsertUser(ent.User) error
+	SelectUserExistence(string, string) (bool, error)
+	SelectUser(string) (*ent.User, error)
+	SelectBalance(string) (response models.BalanceResponse, err error)
+	UpdateBalance(models.OrderResponse) error
+	InsertWithdraw(string, models.WithdrawResponse) error
 }
 
 // Create Client instance
