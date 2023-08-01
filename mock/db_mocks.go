@@ -9,7 +9,7 @@ import (
 
 	gomock "github.com/golang/mock/gomock"
 	ent "github.com/shipherman/gophermart/generated/ent"
-	models "github.com/shipherman/gophermart/lib/models"
+	models "github.com/shipherman/gophermart/internal/models"
 )
 
 // MockDBClientInt is a mock of DBClientInt interface.

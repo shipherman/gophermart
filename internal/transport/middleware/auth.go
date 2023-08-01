@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/shipherman/gophermart/lib/db"
+	"github.com/shipherman/gophermart/internal/db"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v4"

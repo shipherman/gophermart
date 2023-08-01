@@ -8,11 +8,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/shipherman/gophermart/lib/accrual"
-	"github.com/shipherman/gophermart/lib/db"
-	"github.com/shipherman/gophermart/lib/transport/handlers"
-	"github.com/shipherman/gophermart/lib/transport/middleware"
-	"github.com/shipherman/gophermart/lib/transport/routes"
+	"github.com/shipherman/gophermart/internal/accrual"
+	"github.com/shipherman/gophermart/internal/db"
+	"github.com/shipherman/gophermart/internal/handlers"
+	"github.com/shipherman/gophermart/internal/transport/middleware"
+	"github.com/shipherman/gophermart/internal/transport/routes"
 
 	"github.com/caarlos0/env/v8"
 	"github.com/spf13/cobra"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/shipherman/gophermart/generated/ent/user"
 	"github.com/shipherman/gophermart/generated/ent/withdrawals"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/models"
 )
 
 func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {

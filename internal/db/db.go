@@ -6,7 +6,7 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/shipherman/gophermart/generated/ent"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/models"
 )
 
 type DBClient struct {

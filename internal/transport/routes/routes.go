@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/shipherman/gophermart/lib/transport/handlers"
-	mid "github.com/shipherman/gophermart/lib/transport/middleware"
+	"github.com/shipherman/gophermart/internal/handlers"
+	mid "github.com/shipherman/gophermart/internal/transport/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/go-resty/resty/v2"
-	"github.com/shipherman/gophermart/lib/db"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/db"
+	"github.com/shipherman/gophermart/internal/models"
 	// "github.com/cenkalti/backoff/v4"
 )
 

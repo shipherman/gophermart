@@ -7,7 +7,7 @@ import (
 
 	"github.com/shipherman/gophermart/generated/ent/order"
 	"github.com/shipherman/gophermart/generated/ent/user"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/models"
 )
 
 // INSERT new order

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -13,28 +12,32 @@ import (
 )
 
 func TestHandleBalance(t *testing.T) {
+	type mockBehavior func(r *mock.MockDBClientInt, u string)
+
+	const contentType = "applicaiton/json"
+
+	// Init mock controller
 	ctr := gomock.NewController(t)
 	defer ctr.Finish()
-
-	mockClient := mock.NewMockDBClientInt(ctr)
-	gomock.InOrder(mockClient.EXPECT().SelectBalance("user").Return(nil))
 
 	type want struct {
 		contentType string
 		statusCode  int
 	}
 	tests := []struct {
-		name       string
-		request    string
-		httpMethod string
-		want       want
+		name         string
+		user         string
+		mockBehavior mockBehavior
+		want         want
 	}{
 		{
-			name:       "Test_check_balance",
-			request:    "/api/user/balance",
-			httpMethod: http.MethodGet,
+			name: "Test_check_balance",
+			user: "user",
+			mockBehavior: func(r *mock.MockDBClientInt, u string) {
+				r.EXPECT().SelectBalance(u).Return(1)
+			},
 			want: want{
-				contentType: "application/json",
+				contentType: contentType,
 				statusCode:  http.StatusOK,
 			},
 		},
@@ -42,8 +45,11 @@ func TestHandleBalance(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			req := httptest.NewRequest(tc.httpMethod, tc.request, nil)
-			w := httptest.NewRecorder()
+			c := gomock.NewController(t)
+			defer c.Finish()
+
+			dbcln := mock.NewMockDBClientInt(c)
+			tc.mockBehavior(dbcln, tc.user)
 
 			h := NewHandler(mockClient)
 			h.HandleBalance(w, req)

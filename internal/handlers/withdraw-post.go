@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/models"
 )
 
 // Pay with bonuses

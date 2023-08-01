@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/shipherman/gophermart/generated/ent"
-	"github.com/shipherman/gophermart/lib/transport/middleware"
+	"github.com/shipherman/gophermart/internal/transport/middleware"
 )
 
 // User registration page

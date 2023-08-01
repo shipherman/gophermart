@@ -9,9 +9,9 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shipherman/gophermart/lib/accrual"
-	"github.com/shipherman/gophermart/lib/luhn"
-	"github.com/shipherman/gophermart/lib/models"
+	"github.com/shipherman/gophermart/internal/accrual"
+	"github.com/shipherman/gophermart/internal/models"
+	"github.com/shipherman/gophermart/pkg/luhn"
 
 	"github.com/go-chi/chi/v5/middleware"
 )
