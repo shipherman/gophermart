@@ -1,5 +1,5 @@
 // Interaction with Accrual service
-package accrual
+package clients
 
 import (
 	"encoding/json"

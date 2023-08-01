@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/shipherman/gophermart/internal/accrual"
+	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/pkg/luhn"
 
@@ -72,7 +72,7 @@ func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) 
 		logEntry.Logger.Print(err)
 	}
 
-	go accrual.ReqAccrual(newOrder, h.Client, errCh)
+	go clients.ReqAccrual(newOrder, h.Client, errCh)
 
 	for err := range errCh {
 		if err != nil {

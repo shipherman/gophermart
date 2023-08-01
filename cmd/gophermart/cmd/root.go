@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/shipherman/gophermart/internal/accrual"
+	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/db"
 	"github.com/shipherman/gophermart/internal/handlers"
 	"github.com/shipherman/gophermart/internal/transport/middleware"
@@ -59,7 +59,7 @@ func Execute() {
 	defer dbclient.Stop()
 
 	// Set accruall address
-	accrual.SetAccrualAddress(cfg.Accrual)
+	clients.SetAccrualAddress(cfg.Accrual)
 
 	// Run server
 	handler := handlers.NewHandler(dbclient)
