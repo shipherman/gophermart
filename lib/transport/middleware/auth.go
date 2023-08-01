@@ -18,13 +18,13 @@ type Claims struct {
 }
 
 type Authenticator struct {
-	Client *db.DBClient
+	Client db.DBClientInt
 }
 
 const tockenExpiration = time.Hour * 3
 const sercretKey = "supersecretkey"
 
-func NewAuthenticator(dbclient *db.DBClient) Authenticator {
+func NewAuthenticator(dbclient db.DBClientInt) Authenticator {
 	return Authenticator{Client: dbclient}
 }
 

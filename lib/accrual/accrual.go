@@ -30,7 +30,7 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 }
 
 // Request Accrual for discount
-func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan error) {
+func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
 	var done = false
 
 	defer close(errCh)
@@ -100,6 +100,5 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc *db.DBClient, errCh chan er
 		case 404:
 			errCh <- fmt.Errorf("accrual app is not configured: %s", resp.Status())
 		}
-		// time.Sleep(5 * time.Microsecond)
 	}
 }

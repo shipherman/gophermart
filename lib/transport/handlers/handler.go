@@ -3,10 +3,10 @@ package handlers
 import "github.com/shipherman/gophermart/lib/db"
 
 type Handler struct {
-	Client *db.DBClient
+	Client db.DBClientInt
 }
 
 // Create handler instance ???
-func NewHandler(dbclient *db.DBClient) *Handler {
+func NewHandler(dbclient db.DBClientInt) *Handler {
 	return &Handler{Client: dbclient}
 }

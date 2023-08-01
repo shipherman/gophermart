@@ -27,6 +27,8 @@ type DBClientInt interface {
 	SelectBalance(string) (response models.BalanceResponse, err error)
 	UpdateBalance(models.OrderResponse) error
 	InsertWithdraw(string, models.WithdrawResponse) error
+	UpdateWithdraw(string, float64) error
+	SelectWithdrawals(string) ([]models.WithdrawResponse, error)
 }
 
 // Create Client instance

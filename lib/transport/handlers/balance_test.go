@@ -8,14 +8,16 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/shipherman/gophermart/mock"
 )
 
 func TestHandleBalance(t *testing.T) {
 	ctr := gomock.NewController(t)
 	defer ctr.Finish()
 
-	mockClient := mock_db.NewMockDBClientInt()
-	mockClient.EXPECT().Get()
+	mockClient := mock.NewMockDBClientInt(ctr)
+	gomock.InOrder(mockClient.EXPECT().SelectBalance("user").Return(nil))
 
 	type want struct {
 		contentType string
