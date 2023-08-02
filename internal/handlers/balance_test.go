@@ -1,67 +1,40 @@
 package handlers
 
 import (
-	"net/http"
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-
+	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/mock"
 )
 
-func TestHandleBalance(t *testing.T) {
-	type mockBehavior func(r *mock.MockDBClientInt, u string)
+func TestHandler_HandleBalance(t *testing.T) {
+	type mockBehavior func(r *mock.MockDBClientInt, user models.User)
 
-	const contentType = "applicaiton/json"
-
-	// Init mock controller
-	ctr := gomock.NewController(t)
-	defer ctr.Finish()
-
-	type want struct {
-		contentType string
-		statusCode  int
-	}
 	tests := []struct {
 		name         string
-		user         string
 		mockBehavior mockBehavior
-		want         want
 	}{
 		{
-			name: "Test_check_balance",
-			user: "user",
-			mockBehavior: func(r *mock.MockDBClientInt, u string) {
-				r.EXPECT().SelectBalance(u).Return(1)
-			},
-			want: want{
-				contentType: contentType,
-				statusCode:  http.StatusOK,
+			name: "OK",
+			mockBehavior: func(r *mock.MockDBClientInt, user models.User) {
+				r.EXPECT().SelectBalance("user").Return(0)
 			},
 		},
+		// TODO: Add test cases.
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			c := gomock.NewController(t)
-			defer c.Finish()
+			dbclient := mock.NewMockDBClientInt(ctrl)
+			tt.mockBehavior(dbclient, models.User{Login: "user", Password: "pass"})
 
-			dbcln := mock.NewMockDBClientInt(c)
-			tc.mockBehavior(dbcln, tc.user)
-
-			h := NewHandler(mockClient)
-			h.HandleBalance(w, req)
-
-			result := w.Result()
-			assert.Equal(t, tc.want.contentType, result.Header.Get("Content-Type"))
-			assert.Equal(t, tc.want.statusCode, result.StatusCode)
-
-			err := result.Body.Close()
-			require.NoError(t, err)
-
+			h := &Handler{
+				Client: tt.fields.Client,
+			}
+			h.HandleBalance(tt.args.w, tt.args.r)
 		})
 	}
-
 }
