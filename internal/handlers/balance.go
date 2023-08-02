@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/shipherman/gophermart/internal/models"
@@ -16,7 +15,6 @@ func (h *Handler) HandleBalance(w http.ResponseWriter, r *http.Request) {
 	// Execute user from context
 	user := r.Context().Value(models.UserCtxKey{}).(string)
 
-	log.Println(user)
 	balance, err = h.Client.SelectBalance(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

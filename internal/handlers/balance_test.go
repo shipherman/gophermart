@@ -24,7 +24,7 @@ func TestHandler_HandleBalance(t *testing.T) {
 		expectedResponseBody string
 	}{
 		{
-			name: "OK",
+			name: "Test_withdrawals_for_existing_user",
 			mockBehavior: func(r *mock.MockDBClientInt, user models.User) {
 				r.EXPECT().SelectBalance("user").Return(models.BalanceResponse{
 					Current:   0,
@@ -33,9 +33,8 @@ func TestHandler_HandleBalance(t *testing.T) {
 			},
 			inputBody:            "",
 			expectedStatusCode:   http.StatusOK,
-			expectedResponseBody: `"current":0,"withdrawn":0\n`,
+			expectedResponseBody: `{"current":0,"withdrawn":0}` + "\n",
 		},
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
