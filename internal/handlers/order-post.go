@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/pkg/luhn"
@@ -27,7 +26,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newOrder.User = chi.URLParam(r, "user")
+	newOrder.User = r.Context().Value(models.UserCtxKey{}).(string)
 	newOrder.OrderNum = buf.String()
 
 	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)

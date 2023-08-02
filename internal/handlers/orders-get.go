@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
+	"github.com/shipherman/gophermart/internal/models"
 )
 
 // Get a list of user orders
 func (h *Handler) HandleGetOrders(w http.ResponseWriter, r *http.Request) {
-	u := chi.URLParam(r, "user")
+	u := r.Context().Value(models.UserCtxKey{}).(string)
 
 	orders, err := h.Client.SelectOrders(u)
 	if err != nil {

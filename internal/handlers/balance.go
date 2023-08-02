@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/shipherman/gophermart/internal/models"
-	"github.com/shipherman/gophermart/internal/transport/middleware"
 )
 
 // Get bonuses balance
@@ -15,7 +14,7 @@ func (h *Handler) HandleBalance(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// Execute user from context
-	user := r.Context().Value(middleware.UserCtxKey{}).(string)
+	user := r.Context().Value(models.UserCtxKey{}).(string)
 
 	log.Println(user)
 	balance, err = h.Client.SelectBalance(user)

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/shipherman/gophermart/internal/models"
 )
 
@@ -12,7 +11,7 @@ import (
 func (h *Handler) HandleGetWithdrawals(w http.ResponseWriter, r *http.Request) {
 	var wsResp []models.WithdrawResponse
 
-	user := chi.URLParam(r, "user")
+	user := r.Context().Value(models.UserCtxKey{}).(string)
 
 	wsResp, err := h.Client.SelectWithdrawals(user)
 	if err != nil {

@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/shipherman/gophermart/internal/models"
 )
 
@@ -13,7 +12,7 @@ func (h *Handler) HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {
 	var newWithdraw models.WithdrawResponse
 
 	// Execute user from context
-	user := chi.URLParam(r, "user")
+	user := r.Context().Value(models.UserCtxKey{}).(string)
 
 	err := json.NewDecoder(r.Body).Decode(&newWithdraw)
 	if err != nil {

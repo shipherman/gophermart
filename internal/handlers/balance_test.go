@@ -7,8 +7,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	mid "github.com/shipherman/gophermart/internal/transport/middleware"
-
 	"github.com/golang/mock/gomock"
 	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/mock"
@@ -56,7 +54,7 @@ func TestHandler_HandleBalance(t *testing.T) {
 			req := httptest.NewRequest("GET", "/api/user/balance",
 				bytes.NewBufferString(tt.inputBody))
 
-			req = req.WithContext(context.WithValue(req.Context(), mid.UserCtxKey{}, "user"))
+			req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey{}, "user"))
 
 			// Make Request
 			h.HandleBalance(w, req)

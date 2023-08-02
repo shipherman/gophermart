@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/shipherman/gophermart/internal/db"
+	mid "github.com/shipherman/gophermart/internal/models"
 
 	"github.com/golang-jwt/jwt/v4"
 )
@@ -72,8 +73,6 @@ func (a *Authenticator) Auth(u, p string) (jwt string, err error) {
 	return buildJWTString(u)
 }
 
-type UserCtxKey struct{}
-
 func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if authenticated
@@ -100,7 +99,7 @@ func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Add user as context parameter
-		r = r.WithContext(context.WithValue(r.Context(), UserCtxKey{}, user))
+		r = r.WithContext(context.WithValue(r.Context(), mid.UserCtxKey{}, user))
 
 		next.ServeHTTP(w, r)
 	})
