@@ -62,13 +62,13 @@ func (dbc *DBClient) SelectBalance(u string) (response models.BalanceResponse, e
 	req, err := dbc.Client.User.
 		Query().
 		Where(user.LoginEQ(u)).
-		All(context.Background())
+		First(context.Background())
 	if err != nil {
 		return response, err
 	}
 
-	response.Current = req[0].Balance
-	response.Withdrawn = req[0].Withdraw
+	response.Current = req.Balance
+	response.Withdrawn = req.Withdraw
 
 	return response, nil
 }
