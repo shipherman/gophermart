@@ -9,6 +9,9 @@ type User struct {
 	Password string `json:"password"`
 }
 
+// Structure to provide username throuh context to handlers
+type UserCtxKey struct{}
+
 type WithdrawResponse struct {
 	OrderNum  string    `json:"order"`
 	Sum       float64   `json:"sum"`
