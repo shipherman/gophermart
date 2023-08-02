@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -23,6 +24,8 @@ type Authenticator struct {
 
 const tockenExpiration = time.Hour * 3
 const sercretKey = "supersecretkey"
+
+var ErrUserDoesNotExist = errors.New("no such user")
 
 func NewAuthenticator(dbclient db.DBClientInt) Authenticator {
 	return Authenticator{Client: dbclient}
@@ -67,7 +70,7 @@ func (a *Authenticator) Auth(u, p string) (jwt string, err error) {
 		return "", err
 	}
 	if !exist {
-		return "", fmt.Errorf("no such user")
+		return "", ErrUserDoesNotExist
 	}
 
 	return buildJWTString(u)
