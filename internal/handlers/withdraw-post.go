@@ -7,7 +7,7 @@ import (
 	"github.com/shipherman/gophermart/internal/models"
 )
 
-// Pay with bonuses
+// Handle payments with user Balance
 func (h *Handler) HandlePostWithdraw(w http.ResponseWriter, r *http.Request) {
 	var newWithdraw models.WithdrawResponse
 

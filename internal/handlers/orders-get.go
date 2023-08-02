@@ -9,6 +9,7 @@ import (
 
 // Get a list of user orders
 func (h *Handler) HandleGetOrders(w http.ResponseWriter, r *http.Request) {
+	// Execute username from context
 	u := r.Context().Value(models.UserCtxKey{}).(string)
 
 	orders, err := h.Client.SelectOrders(u)

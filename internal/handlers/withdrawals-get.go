@@ -11,8 +11,10 @@ import (
 func (h *Handler) HandleGetWithdrawals(w http.ResponseWriter, r *http.Request) {
 	var wsResp []models.WithdrawResponse
 
+	// Execute username from context
 	user := r.Context().Value(models.UserCtxKey{}).(string)
 
+	// Select all withdrawal
 	wsResp, err := h.Client.SelectWithdrawals(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
