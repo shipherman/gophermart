@@ -4,7 +4,6 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/go-resty/resty/v2"
@@ -29,21 +28,8 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	return order, nil
 }
 
-func request(client http.Client) error {
-	//b := backoff.NewConstantBackOff(time.Second)
-	b := backoff.NewExponentialBackOff()
-
-	return backoff.Retry(func() error {
-		_, err := client.Get("http://ya.ru")
-
-		return err
-	}, b)
-}
-
 // Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
-	var done = false
-
 	defer close(errCh)
 
 	client := resty.New()
@@ -51,13 +37,11 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
 
-	backoff.Retry(func() error {
-
+	f := func() error {
 		// Get Accrual for the order
 		resp, err := client.R().EnableTrace().
 			Get(orderAddr)
-		resp.
-			fmt.Printf("resp code: %v; resp body: %v; Addr: %s\n", resp.StatusCode(), resp, orderAddr)
+		// fmt.Printf("resp code: %v; resp body: %v; Addr: %s\n", resp.StatusCode(), resp, orderAddr)
 		if err != nil {
 			return err
 		}
@@ -88,7 +72,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 				return err
 			}
 			if orderResp.Status == "PROCESSED" || orderResp.Status == "INVALID" {
-				done = true
+				return nil
 			}
 		// Заказ не зарегистрирован в системе расчёта
 		case 204:
@@ -106,5 +90,8 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			}
 			// time.Sleep(60 * time.Second) //Backoff is doing this job
 		}
-	}, backoff.NewExponentialBackOff())()
+		return nil
+	}
+
+	backoff.Retry(f, backoff.NewExponentialBackOff())
 }
