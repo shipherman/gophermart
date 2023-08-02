@@ -8,7 +8,6 @@ import (
 
 	"github.com/shipherman/gophermart/internal/db"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/golang-jwt/jwt/v4"
 )
 
@@ -73,6 +72,8 @@ func (a *Authenticator) Auth(u, p string) (jwt string, err error) {
 	return buildJWTString(u)
 }
 
+type UserCtxKey struct{}
+
 func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check if authenticated
@@ -99,9 +100,7 @@ func (a *Authenticator) CheckAuth(next http.HandlerFunc) http.HandlerFunc {
 		}
 
 		// Add user as context parameter
-		ctx := chi.NewRouteContext()
-		ctx.URLParams.Add("user", user)
-		r = r.WithContext(context.WithValue(r.Context(), chi.RouteCtxKey, ctx))
+		r = r.WithContext(context.WithValue(r.Context(), UserCtxKey{}, user))
 
 		next.ServeHTTP(w, r)
 	})

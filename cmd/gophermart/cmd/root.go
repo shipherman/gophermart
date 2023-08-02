@@ -60,6 +60,7 @@ func Execute() {
 
 	// Set accruall address
 	clients.SetAccrualAddress(cfg.Accrual)
+	// put accrual worker here
 
 	// Run server
 	handler := handlers.NewHandler(dbclient)

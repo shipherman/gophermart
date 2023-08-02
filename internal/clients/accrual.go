@@ -4,12 +4,12 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
-	"time"
+	"net/http"
 
+	"github.com/cenkalti/backoff/v4"
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/internal/db"
 	"github.com/shipherman/gophermart/internal/models"
-	// "github.com/cenkalti/backoff/v4"
 )
 
 var addr string
@@ -29,6 +29,17 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 	return order, nil
 }
 
+func request(client http.Client) error {
+	//b := backoff.NewConstantBackOff(time.Second)
+	b := backoff.NewExponentialBackOff()
+
+	return backoff.Retry(func() error {
+		_, err := client.Get("http://ya.ru")
+
+		return err
+	}, b)
+}
+
 // Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
 	var done = false
@@ -40,15 +51,15 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
 
-	for !done {
+	backoff.Retry(func() error {
 
 		// Get Accrual for the order
 		resp, err := client.R().EnableTrace().
 			Get(orderAddr)
-		fmt.Printf("resp code: %v; resp body: %v; Addr: %s\n", resp.StatusCode(), resp, orderAddr)
+		resp.
+			fmt.Printf("resp code: %v; resp body: %v; Addr: %s\n", resp.StatusCode(), resp, orderAddr)
 		if err != nil {
-			errCh <- err
-			return
+			return err
 		}
 
 		switch resp.StatusCode() {
@@ -58,23 +69,23 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			// OrderREsp structure
 			parsedBody, err := parseBody(resp)
 			if err != nil {
-				errCh <- fmt.Errorf("ReqAccrual parsing Accrual reponse error: %w", err)
+				return fmt.Errorf("ReqAccrual parsing Accrual reponse error: %w", err)
 			}
 			orderResp.Status = parsedBody.Status
 			orderResp.Accrual = parsedBody.Accrual
 
 			if err != nil {
-				errCh <- err
+				return err
 			}
 
 			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
-				errCh <- err
+				return err
 			}
 
 			err = dbc.UpdateBalance(*orderResp)
 			if err != nil {
-				errCh <- err
+				return err
 			}
 			if orderResp.Status == "PROCESSED" || orderResp.Status == "INVALID" {
 				done = true
@@ -84,7 +95,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			orderResp.Status = "PROCESSING"
 			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
-				errCh <- err
+				return err
 			}
 		// Превышено количество запросов к сервису
 		case 429:
@@ -93,12 +104,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			if err != nil {
 				errCh <- fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
 			}
-			time.Sleep(60 * time.Second)
-		// Внутренняя ошибка сервера
-		case 500:
-			// to do
-		case 404:
-			errCh <- fmt.Errorf("accrual app is not configured: %s", resp.Status())
+			// time.Sleep(60 * time.Second) //Backoff is doing this job
 		}
-	}
+	}, backoff.NewExponentialBackOff())()
 }

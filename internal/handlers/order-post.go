@@ -72,6 +72,7 @@ func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) 
 		logEntry.Logger.Print(err)
 	}
 
+	// move to separate pkg/service
 	go clients.ReqAccrual(newOrder, h.Client, errCh)
 
 	for err := range errCh {

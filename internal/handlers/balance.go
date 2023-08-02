@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/shipherman/gophermart/internal/models"
+	"github.com/shipherman/gophermart/internal/transport/middleware"
 )
 
 // Get bonuses balance
@@ -14,8 +15,9 @@ func (h *Handler) HandleBalance(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	// Execute user from context
-	user := chi.URLParam(r, "user")
+	user := r.Context().Value(middleware.UserCtxKey{}).(string)
 
+	log.Println(user)
 	balance, err = h.Client.SelectBalance(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
