@@ -27,7 +27,7 @@ func TestAuthenticator_Auth(t *testing.T) {
 			},
 			user:          "user",
 			password:      "pass",
-			expectedJWT:   ".*", //some JWT string should be returned
+			expectedJWT:   ".*", // some JWT string should be returned
 			expectedError: nil,
 		},
 		{
@@ -37,7 +37,7 @@ func TestAuthenticator_Auth(t *testing.T) {
 			},
 			user:          "user",
 			password:      "pass",
-			expectedJWT:   "", //some JWT string should be returned
+			expectedJWT:   "", // empty JWT string should be returned
 			expectedError: ErrUserDoesNotExist,
 		},
 	}
