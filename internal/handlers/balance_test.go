@@ -62,6 +62,7 @@ func TestHandler_HandleBalance(t *testing.T) {
 			assert.Equal(t, result.StatusCode, tt.expectedStatusCode)
 			assert.Equal(t, w.Body.String(), tt.expectedResponseBody)
 
+			result.Body.Close()
 		})
 	}
 }
