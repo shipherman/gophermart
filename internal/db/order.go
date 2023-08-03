@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/shipherman/gophermart/generated/ent/order"
 	"github.com/shipherman/gophermart/generated/ent/user"
 	"github.com/shipherman/gophermart/internal/models"
@@ -111,6 +112,7 @@ func (dbc *DBClient) SelectFirstUnprocessedOrder() (models.OrderResponse, error)
 		Where(order.Or(
 			order.Status("NEW")),
 			order.Status("PROCESSING")).
+		Order(order.ByID(sql.OrderDesc())).
 		First(context.Background())
 
 	if err != nil {
