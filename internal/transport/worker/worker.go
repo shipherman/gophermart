@@ -3,7 +3,6 @@ package worker
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/db"
@@ -27,19 +26,22 @@ func (w *Worker) Run() {
 	defer close(w.InCh)
 
 	for {
-		fmt.Println(time.Now())
 		orderResp, err := w.Client.SelectFirstUnprocessedOrder()
 		if err != nil {
-			// if err == db.ErrorOrderNotFound {
-			// 	continue
-			// }
+			if err == db.ErrorOrderNotFound {
+				continue
+			}
 			w.ErrCh <- fmt.Errorf("Worker error: %w", err)
 		}
 
 		clients.ReqAccrual(&orderResp, w.Client, w.ErrCh)
-		if <-w.CloseCh {
+		select {
+		case <-w.CloseCh:
 			log.Println("Closing worker goroutine")
+			close(w.CloseCh)
 			return
+		default:
+			continue
 		}
 	}
 }

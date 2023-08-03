@@ -33,6 +33,9 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 // Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
 	client := resty.New()
+	client.RetryMaxWaitTime = time.Second * 1
+	client.RetryCount = 5
+
 	fmt.Println("running accrual")
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
@@ -91,10 +94,10 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			if err != nil {
 				return fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
 			}
-		case 404:
-			fmt.Println("404")
-			return fmt.Errorf("accrual is not configured")
+		default:
+			return nil
 		}
+
 		return nil
 	}
 
