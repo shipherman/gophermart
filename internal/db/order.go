@@ -112,7 +112,7 @@ func (dbc *DBClient) SelectFirstUnprocessedOrder() (models.OrderResponse, error)
 		Where(order.Or(
 			order.Status("NEW")),
 			order.Status("PROCESSING")).
-		Order(order.ByID(sql.OrderDesc())).
+		Order(order.ByID(sql.OrderAsc())).
 		First(context.Background())
 
 	if err != nil {
