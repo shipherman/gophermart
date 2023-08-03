@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/pkg/luhn"
@@ -39,9 +40,19 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "wrong format of order number", http.StatusUnprocessableEntity)
 			return
 		}
+
+		// Write order to DB
+		// newOrder := models.OrderResponse{}
+		newOrder.Status = models.New
+		newOrder.TimeStamp = time.Now()
+		err = h.Client.InsertOrder(newOrder)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusUnprocessableEntity)
+			return
+		}
+
 		w.WriteHeader(http.StatusAccepted)
 
-		// go h.processOrder(&newOrder, r)
 		return
 
 	// Order uploaded by current user

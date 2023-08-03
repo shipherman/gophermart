@@ -4,9 +4,13 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"sync"
+	"syscall"
 
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/db"
@@ -62,19 +66,20 @@ func Execute() {
 		os.Exit(1)
 	}
 
-	// место для Graceful shutdown
-	defer dbclient.Stop()
-
 	// Set accruall address
 	clients.SetAccrualAddress(cfg.Accrual)
 
 	// put accrual worker here
 	aWorker := worker.New(dbclient)
+	wg := sync.WaitGroup{}
+
 	go func() {
 		go aWorker.Run()
-		for err := range aWorker.ErrCh {
-			if err != nil {
-				logEntry.Logger.Print(err)
+		for {
+			for err := range aWorker.ErrCh {
+				if err != nil {
+					logEntry.Logger.Print(err)
+				}
 			}
 		}
 	}()
@@ -84,7 +89,35 @@ func Execute() {
 	authenticator := gmiddw.NewAuthenticator(dbclient)
 	router := routes.NewRouter(handler, &authenticator)
 
-	log.Fatal(http.ListenAndServe(cfg.Address, router))
+	server := http.Server{
+		Addr:    cfg.Address,
+		Handler: router,
+	}
+
+	// место для Graceful shutdown
+	idleConnectionsClosed := make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+		<-sigint
+		log.Println("Shutting down server")
+
+		aWorker.CloseCh <- true
+		close(aWorker.CloseCh)
+		wg.Wait()
+
+		defer dbclient.Stop()
+
+		if err := server.Shutdown(context.Background()); err != nil {
+			log.Printf("HTTP Server Shutdown Error: %v", err)
+		}
+		close(idleConnectionsClosed)
+	}()
+
+	log.Fatal(server.ListenAndServe())
+
+	<-idleConnectionsClosed
+
 }
 
 func init() {

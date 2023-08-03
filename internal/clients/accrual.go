@@ -4,6 +4,8 @@ package clients
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/cenkalti/backoff/v4"
 	"github.com/go-resty/resty/v2"
@@ -31,7 +33,7 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 // Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
 	client := resty.New()
-
+	fmt.Println("running accrual")
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
 
@@ -44,6 +46,8 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 		if err != nil {
 			return err
 		}
+
+		fmt.Println(resp.StatusCode())
 
 		switch resp.StatusCode() {
 		// Успешная обработка запроса
@@ -87,13 +91,21 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			if err != nil {
 				return fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
 			}
+		case 404:
+			fmt.Println("404")
+			return fmt.Errorf("accrual is not configured")
 		}
 		return nil
 	}
 
 	// Use backoff package to implement retryer with increasing interval between attempts
-	err := backoff.Retry(f, backoff.NewExponentialBackOff())
+	b := backoff.NewExponentialBackOff()
+	b.MaxInterval = time.Second * 10
+	err := backoff.Retry(f, b)
 	if err != nil {
 		errCh <- fmt.Errorf("ReqAccrual error: %w", err)
 	}
+
+	log.Println(orderResp.OrderNum, " order is processed by accrual app")
+
 }
