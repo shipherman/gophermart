@@ -99,3 +99,29 @@ func (dbc *DBClient) SelectOrders(u string) ([]models.OrderResponse, error) {
 
 	return orderResp, nil
 }
+
+var ErrorOrderNotFound error
+
+// SELECT first order with non-final status
+func (dbc *DBClient) SelectFirstUnprocessedOrder() (models.OrderResponse, error) {
+	var orderResp models.OrderResponse
+
+	entOrder, err := dbc.Client.Order.
+		Query().
+		Where(order.Or(
+			order.Status("NEW")),
+			order.Status("PROCESSING")).
+		First(context.Background())
+
+	if err != nil {
+		ErrorOrderNotFound = fmt.Errorf("SelectFirstUnprocessedOrder error: %w", err)
+		return orderResp, ErrorOrderNotFound
+	}
+
+	orderResp.Accrual = entOrder.Accrual
+	orderResp.OrderNum = entOrder.Ordernum
+	orderResp.Status = entOrder.Status
+	orderResp.TimeStamp = entOrder.Timestamp
+
+	return orderResp, nil
+}

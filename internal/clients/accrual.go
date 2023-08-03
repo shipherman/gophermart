@@ -30,13 +30,12 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 
 // Request Accrual for discount
 func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
-	defer close(errCh)
-
 	client := resty.New()
 
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
 
+	// Create lambda to use it in backoff.Retry()
 	f := func() error {
 		// Get Accrual for the order
 		resp, err := client.R().EnableTrace().
@@ -86,12 +85,15 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			orderResp.Status = "PROCESSING"
 			err = dbc.UpdateOrder(*orderResp)
 			if err != nil {
-				errCh <- fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
+				return fmt.Errorf("too much requests error, retry in 60 sec: %w", err)
 			}
-			// time.Sleep(60 * time.Second) //Backoff is doing this job
 		}
 		return nil
 	}
 
-	backoff.Retry(f, backoff.NewExponentialBackOff())
+	// Use backoff package to implement retryer with increasing interval between attempts
+	err := backoff.Retry(f, backoff.NewExponentialBackOff())
+	if err != nil {
+		errCh <- fmt.Errorf("ReqAccrual error: %w", err)
+	}
 }

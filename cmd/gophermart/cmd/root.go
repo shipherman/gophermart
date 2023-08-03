@@ -11,10 +11,12 @@ import (
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/db"
 	"github.com/shipherman/gophermart/internal/handlers"
-	"github.com/shipherman/gophermart/internal/transport/middleware"
+	gmiddw "github.com/shipherman/gophermart/internal/transport/middleware"
 	"github.com/shipherman/gophermart/internal/transport/routes"
+	"github.com/shipherman/gophermart/internal/transport/worker"
 
 	"github.com/caarlos0/env/v8"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +27,11 @@ type Options struct {
 }
 
 var cfg Options
+
+// Init new logger;
+// To do
+// Make it general to gophermart app
+var logEntry = middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -60,11 +67,21 @@ func Execute() {
 
 	// Set accruall address
 	clients.SetAccrualAddress(cfg.Accrual)
+
 	// put accrual worker here
+	aWorker := worker.New(dbclient)
+	go func() {
+		go aWorker.Run()
+		for err := range aWorker.ErrCh {
+			if err != nil {
+				logEntry.Logger.Print(err)
+			}
+		}
+	}()
 
 	// Run server
 	handler := handlers.NewHandler(dbclient)
-	authenticator := middleware.NewAuthenticator(dbclient)
+	authenticator := gmiddw.NewAuthenticator(dbclient)
 	router := routes.NewRouter(handler, &authenticator)
 
 	log.Fatal(http.ListenAndServe(cfg.Address, router))

@@ -29,6 +29,7 @@ type DBClientInt interface {
 	InsertWithdraw(string, models.WithdrawResponse) error
 	UpdateWithdraw(string, float64) error
 	SelectWithdrawals(string) ([]models.WithdrawResponse, error)
+	SelectFirstUnprocessedOrder() (models.OrderResponse, error)
 }
 
 // Create Client instance

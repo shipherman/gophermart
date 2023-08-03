@@ -2,17 +2,11 @@ package handlers
 
 import (
 	"bytes"
-	"log"
 	"net/http"
-	"os"
 	"strconv"
-	"time"
 
-	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/models"
 	"github.com/shipherman/gophermart/pkg/luhn"
-
-	"github.com/go-chi/chi/v5/middleware"
 )
 
 // Create a new order
@@ -35,7 +29,10 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if order is already registred by someone
 	switch u {
+
+	// New Order
 	case "":
 		orderInt, err := strconv.Atoi(newOrder.OrderNum)
 		if !luhn.Valid(orderInt) || err != nil {
@@ -44,11 +41,14 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusAccepted)
 
-		go h.processOrder(&newOrder, r)
+		// go h.processOrder(&newOrder, r)
 		return
+
+	// Order uploaded by current user
 	case newOrder.User:
 		w.WriteHeader(http.StatusOK)
 		return
+
 	// Order uploaded by differen user
 	default:
 		w.WriteHeader(http.StatusConflict)
@@ -56,8 +56,9 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+/*	Move Order processing logic to worker
 func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) {
-	errCh := make(chan error)
+	// errCh := make(chan error)
 
 	// Logger for outgoing requests
 	logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
@@ -72,11 +73,12 @@ func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) 
 	}
 
 	// move to separate pkg/service
-	go clients.ReqAccrual(newOrder, h.Client, errCh)
+	//go clients.ReqAccrual(newOrder, h.Client, errCh)
 
-	for err := range errCh {
-		if err != nil {
-			logEntry.Logger.Print(err)
-		}
-	}
+	// for err := range errCh {
+	// 	if err != nil {
+	// 		logEntry.Logger.Print(err)
+	// 	}
+	// }
 }
+*/

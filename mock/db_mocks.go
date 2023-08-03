@@ -92,6 +92,21 @@ func (mr *MockDBClientIntMockRecorder) SelectBalance(arg0 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectBalance", reflect.TypeOf((*MockDBClientInt)(nil).SelectBalance), arg0)
 }
 
+// SelectFirstUnprocessedOrder mocks base method.
+func (m *MockDBClientInt) SelectFirstUnprocessedOrder() (models.OrderResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SelectFirstUnprocessedOrder")
+	ret0, _ := ret[0].(models.OrderResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SelectFirstUnprocessedOrder indicates an expected call of SelectFirstUnprocessedOrder.
+func (mr *MockDBClientIntMockRecorder) SelectFirstUnprocessedOrder() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SelectFirstUnprocessedOrder", reflect.TypeOf((*MockDBClientInt)(nil).SelectFirstUnprocessedOrder))
+}
+
 // SelectOrderOwner mocks base method.
 func (m *MockDBClientInt) SelectOrderOwner(arg0 string) (string, error) {
 	m.ctrl.T.Helper()
