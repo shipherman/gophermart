@@ -36,7 +36,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 	client.RetryMaxWaitTime = time.Second * 1
 	client.RetryCount = 5
 
-	fmt.Println("running accrual")
+	// fmt.Println("running accrual")
 	// Build connection string for Accrual app
 	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
 
@@ -50,7 +50,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 			return err
 		}
 
-		fmt.Println(resp.StatusCode())
+		// fmt.Println(resp.StatusCode())
 
 		switch resp.StatusCode() {
 		// Успешная обработка запроса

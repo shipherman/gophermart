@@ -73,16 +73,16 @@ func Execute() {
 	aWorker := worker.New(dbclient)
 	wg := sync.WaitGroup{}
 
-	go func() {
-		go aWorker.Run()
-		for {
-			for err := range aWorker.ErrCh {
-				if err != nil {
-					logEntry.Logger.Print(err)
-				}
+	wg.Add(2)
+	go func(wg *sync.WaitGroup) {
+		go aWorker.Run(wg)
+		for err := range aWorker.ErrCh {
+			if err != nil {
+				logEntry.Logger.Print(err)
 			}
+			wg.Done()
 		}
-	}()
+	}(&wg)
 
 	// Run server
 	handler := handlers.NewHandler(dbclient)
@@ -104,9 +104,9 @@ func Execute() {
 
 		aWorker.CloseCh <- true
 		close(aWorker.CloseCh)
-		wg.Wait()
+		dbclient.Stop()
 
-		defer dbclient.Stop()
+		wg.Wait()
 
 		if err := server.Shutdown(context.Background()); err != nil {
 			log.Printf("HTTP Server Shutdown Error: %v", err)

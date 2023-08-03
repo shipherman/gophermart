@@ -108,9 +108,7 @@ func (dbc *DBClient) SelectFirstUnprocessedOrder() (models.OrderResponse, error)
 
 	entOrder, err := dbc.Client.Order.
 		Query().
-		Where(order.Or(
-			order.Status("NEW")),
-			order.Status("PROCESSING")).
+		Where(order.Status("NEW")).
 		// Order(order.ByID(sql.OrderAsc())).
 		First(context.Background())
 

@@ -2,11 +2,16 @@ package handlers
 
 import (
 	"bytes"
+	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/models"
+
 	"github.com/shipherman/gophermart/pkg/luhn"
 )
 
@@ -52,7 +57,17 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		}
 
 		w.WriteHeader(http.StatusAccepted)
+		go func() {
+			logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
+			errCh := make(chan error)
+			clients.ReqAccrual(&newOrder, h.Client, errCh)
+			for err := range errCh {
+				if err != nil {
+					logEntry.Logger.Print(err)
+				}
+			}
+		}()
 		return
 
 	// Order uploaded by current user
