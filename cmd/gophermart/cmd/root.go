@@ -74,8 +74,9 @@ func Execute() {
 	wg := sync.WaitGroup{}
 
 	wg.Add(2)
+        go aWorker.Run(wg)
 	go func(wg *sync.WaitGroup) {
-		go aWorker.Run(wg)
+		
 		for err := range aWorker.ErrCh {
 			if err != nil {
 				logEntry.Logger.Print(err)
