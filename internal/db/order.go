@@ -55,8 +55,6 @@ func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
 
 // SELECT Order owner
 func (dbc *DBClient) SelectOrderOwner(on string) (orderResp *models.OrderResponse, err error) {
-	orderResp = &models.OrderResponse{}
-
 	entOrder, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
@@ -76,7 +74,7 @@ func (dbc *DBClient) SelectOrderOwner(on string) (orderResp *models.OrderRespons
 	}
 	// Save username
 	if u != nil {
-		orderResp.User = u.Login
+		orderResp = &models.OrderResponse{User: u.Login}
 	}
 	return orderResp, nil
 }
