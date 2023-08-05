@@ -73,17 +73,9 @@ func Execute() {
 	aWorker := worker.New(dbclient)
 	wg := sync.WaitGroup{}
 
-	wg.Add(2)
-        go aWorker.Run(wg)
-	go func(wg *sync.WaitGroup) {
-		
-		for err := range aWorker.ErrCh {
-			if err != nil {
-				logEntry.Logger.Print(err)
-			}
-			wg.Done()
-		}
-	}(&wg)
+	// Worker pluc through oders in DB those are does not have final status
+	wg.Add(1)
+	go aWorker.Run(&wg)
 
 	// Run server
 	handler := handlers.NewHandler(dbclient)

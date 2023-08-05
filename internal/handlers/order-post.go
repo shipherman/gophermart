@@ -61,7 +61,7 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 			logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
 			errCh := make(chan error)
-			clients.ReqAccrual(&newOrder, h.Client, errCh)
+			clients.ReqAccrual(&newOrder, h.Client)
 			for err := range errCh {
 				if err != nil {
 					logEntry.Logger.Print(err)

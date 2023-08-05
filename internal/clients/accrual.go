@@ -5,15 +5,18 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/cenkalti/backoff/v4"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-resty/resty/v2"
 	"github.com/shipherman/gophermart/internal/db"
 	"github.com/shipherman/gophermart/internal/models"
 )
 
 var addr string
+var logEntry = middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
 func SetAccrualAddress(s string) {
 	addr = s
@@ -31,7 +34,7 @@ func parseBody(r *resty.Response) (order *models.OrderResponse, err error) {
 }
 
 // Request Accrual for discount
-func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan error) {
+func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt) {
 	client := resty.New()
 	client.RetryMaxWaitTime = time.Second * 1
 	client.RetryCount = 5
@@ -102,7 +105,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt, errCh chan 
 	b.MaxInterval = time.Second * 10
 	err := backoff.Retry(f, b)
 	if err != nil {
-		errCh <- fmt.Errorf("ReqAccrual error: %w", err)
+		logEntry.Logger.Print(fmt.Errorf("ReqAccrual error: %w", err))
 	}
 
 	log.Println(orderResp.OrderNum, " order is processed by accrual app")
