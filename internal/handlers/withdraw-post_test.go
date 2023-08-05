@@ -39,6 +39,20 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 			user:               "user",
 			expectedStatusCode: http.StatusOK,
 		},
+		{
+			name: "Test_withdrawals_for_non_existing_user",
+			mockBehavior: func(r *mock.MockDBClientInt, wr models.WithdrawResponse) {
+				r.EXPECT().InsertWithdraw("user", wr).Return(nil).Times(1)
+				r.EXPECT().UpdateWithdraw("user", wr.Sum).Return(nil).Times(1)
+			},
+			inputBody: `{"order":"2673220062063","sum":10.1}`,
+			order: models.WithdrawResponse{
+				OrderNum: "2673220062063",
+				Sum:      10.1,
+			},
+			user:               "nouser",
+			expectedStatusCode: http.StatusOK,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
