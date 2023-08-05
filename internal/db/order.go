@@ -73,8 +73,9 @@ func (dbc *DBClient) SelectOrderOwner(on string) (orderResp *models.OrderRespons
 		return orderResp, fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 	// Save username
-	orderResp.User = u.Login
-
+	if u != nil {
+		orderResp.User = u.Login
+	}
 	return orderResp, nil
 }
 
