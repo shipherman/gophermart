@@ -1,4 +1,10 @@
-# todo
+# Build gophermart binary
+.PHONY: build
+build:
+	go build -o ./cmd/gophermart/gophermart ./cmd/gophermart
+
+
+# Generate mocks
 MOCKS_DESTINATION=mock
 .PHONY: mocks
 mocks: internal/db/*.go
