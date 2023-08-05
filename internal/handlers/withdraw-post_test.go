@@ -20,15 +20,23 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 		name                 string
 		mockBehavior         mockBehavior
 		inputBody            string
+		order                models.WithdrawResponse
+		user                 string
 		expectedStatusCode   int
 		expectedResponseBody string
 	}{
 		{
 			name: "Test_withdrawals_for_existing_user",
 			mockBehavior: func(r *mock.MockDBClientInt, wr models.WithdrawResponse) {
-				r.EXPECT().InsertWithdraw("user", "10").Return(nil).Times(1)
+				r.EXPECT().InsertWithdraw("user", wr).Return(nil).Times(1)
+				r.EXPECT().UpdateWithdraw("user", wr.Sum).Return(nil).Times(1)
 			},
-			inputBody:          "",
+			inputBody: `{"order":"2673220062063","sum":10.1}`,
+			order: models.WithdrawResponse{
+				OrderNum: "2673220062063",
+				Sum:      10.1,
+			},
+			user:               "user",
 			expectedStatusCode: http.StatusOK,
 		},
 	}
@@ -38,7 +46,7 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 			defer ctrl.Finish()
 
 			dbclient := mock.NewMockDBClientInt(ctrl)
-			tt.mockBehavior(dbclient, models.WithdrawResponse{OrderNum: "2673220062063", Sum: 10})
+			tt.mockBehavior(dbclient, models.WithdrawResponse{OrderNum: tt.order.OrderNum, Sum: tt.order.Sum})
 
 			h := &Handler{
 				Client: dbclient,
@@ -49,17 +57,16 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 			req := httptest.NewRequest("POST", "/api/user/balance/withdraw",
 				bytes.NewBufferString(tt.inputBody))
 
-			req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey{}, "user"))
+			req = req.WithContext(context.WithValue(req.Context(), models.UserCtxKey{}, tt.user))
 
 			// Make Request
 			h.HandlePostWithdraw(w, req)
 			result := w.Result()
 
-			assert.Equal(t, result.StatusCode, tt.expectedStatusCode)
-			assert.Equal(t, w.Body.String(), tt.expectedResponseBody)
+			assert.Equal(t, tt.expectedStatusCode, result.StatusCode)
+			assert.Equal(t, tt.expectedResponseBody, w.Body.String())
 
 			result.Body.Close()
 		})
 	}
-
 }
