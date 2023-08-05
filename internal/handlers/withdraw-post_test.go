@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -40,9 +41,9 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 			expectedStatusCode: http.StatusOK,
 		},
 		{
-			name: "Test_withdrawals_for_non_existing_user",
+			name: "Test_withdrawals_not_enough_balance",
 			mockBehavior: func(r *mock.MockDBClientInt, wr models.WithdrawResponse) {
-				r.EXPECT().InsertWithdraw("user", wr).Return(nil).Times(1)
+				r.EXPECT().InsertWithdraw("user", wr).Return(fmt.Errorf("not anough bonuses to withdraw")).Times(1)
 				r.EXPECT().UpdateWithdraw("user", wr.Sum).Return(nil).Times(1)
 			},
 			inputBody: `{"order":"2673220062063","sum":10.1}`,
@@ -50,8 +51,9 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 				OrderNum: "2673220062063",
 				Sum:      10.1,
 			},
-			user:               "nouser",
-			expectedStatusCode: http.StatusOK,
+			user:                 "user",
+			expectedStatusCode:   http.StatusBadRequest,
+			expectedResponseBody: "not anough bonuses to withdraw\n",
 		},
 	}
 	for _, tt := range tests {
