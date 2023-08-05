@@ -55,6 +55,21 @@ func TestHandler_HandlePostWithdraw(t *testing.T) {
 			expectedStatusCode:   http.StatusBadRequest,
 			expectedResponseBody: "not anough bonuses to withdraw\n",
 		},
+		{
+			name: "Test_withdrawals_bad_request",
+			mockBehavior: func(r *mock.MockDBClientInt, wr models.WithdrawResponse) {
+				r.EXPECT().InsertWithdraw("user", wr).Return(fmt.Errorf("bad request")).Times(1)
+				r.EXPECT().UpdateWithdraw("user", wr.Sum).Return(nil).Times(1)
+			},
+			inputBody: `{"order":"2673220062063","sum":10.1}`,
+			order: models.WithdrawResponse{
+				OrderNum: "2673220062063",
+				Sum:      10.1,
+			},
+			user:                 "user",
+			expectedStatusCode:   http.StatusBadRequest,
+			expectedResponseBody: "bad request\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
