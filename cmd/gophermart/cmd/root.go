@@ -11,6 +11,7 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"time"
 
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/db"
@@ -71,7 +72,7 @@ func Execute() {
 	}
 
 	// Set accruall address
-	clients.SetAccrualAddress(cfg.Accrual)
+	clients.ConfigureAccrual(cfg.Accrual, time.Second*10)
 
 	// Init accrual worker here
 	aWorker = *worker.New(dbclient)

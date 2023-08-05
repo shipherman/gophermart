@@ -15,11 +15,18 @@ import (
 	"github.com/shipherman/gophermart/internal/models"
 )
 
-var addr string
+type options struct {
+	Address string
+	Timeout time.Duration
+}
+
+// Accrual config
+var cfg = options{}
 var logEntry = middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
 
-func SetAccrualAddress(s string) {
-	addr = s
+func ConfigureAccrual(a string, t time.Duration) {
+	cfg.Address = a
+	cfg.Timeout = t
 }
 
 // Client requests order
@@ -41,7 +48,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt) {
 
 	// fmt.Println("running accrual")
 	// Build connection string for Accrual app
-	orderAddr := fmt.Sprintf("%s/api/orders/%s", addr, orderResp.OrderNum)
+	orderAddr := fmt.Sprintf("%s/api/orders/%s", cfg.Address, orderResp.OrderNum)
 
 	// Create lambda to use it in backoff.Retry()
 	f := func() error {
@@ -102,7 +109,7 @@ func ReqAccrual(orderResp *models.OrderResponse, dbc db.DBClientInt) {
 
 	// Use backoff package to implement retryer with increasing interval between attempts
 	b := backoff.NewExponentialBackOff()
-	b.MaxInterval = time.Second * 10
+	b.MaxInterval = cfg.Timeout
 	err := backoff.Retry(f, b)
 	if err != nil {
 		logEntry.Logger.Print(fmt.Errorf("ReqAccrual error: %w", err))
