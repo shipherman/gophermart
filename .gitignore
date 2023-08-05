@@ -24,4 +24,4 @@ vendor/
 .vscode
 
 # Mocks
-mocks/
+mock/
