@@ -10,6 +10,7 @@ import (
 	"github.com/shipherman/gophermart/internal/models"
 )
 
+// INSERT New withdraw
 func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawResponse) error {
 	user, err := dbc.SelectUser(u)
 	if err != nil {
@@ -32,6 +33,7 @@ func (dbc *DBClient) InsertWithdraw(u string, newWithdraw models.WithdrawRespons
 	return nil
 }
 
+// UPDATE withdraw
 func (dbc *DBClient) UpdateWithdraw(u string, a float64) error {
 	uent, err := dbc.Client.User.Query().
 		Where(user.Login(u)).First(context.Background())
@@ -53,6 +55,7 @@ func (dbc *DBClient) UpdateWithdraw(u string, a float64) error {
 	return nil
 }
 
+// SELECT withdrawals for provided user
 func (dbc *DBClient) SelectWithdrawals(u string) ([]models.WithdrawResponse, error) {
 	var wsResp []models.WithdrawResponse
 
