@@ -20,7 +20,6 @@ import (
 	"github.com/shipherman/gophermart/internal/transport/worker"
 
 	"github.com/caarlos0/env/v8"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -35,7 +34,12 @@ var cfg Options
 // Init new logger;
 // To do
 // Make it general to gophermart app
-var logEntry = middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
+// var logEntry = middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
+var aWorker worker.Worker
+var server http.Server
+var dbclient *db.DBClient
+var wg = sync.WaitGroup{}
+var idleConnectionsClosed = make(chan struct{})
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -60,7 +64,7 @@ func Execute() {
 		os.Exit(1)
 	}
 
-	dbclient := db.NewClient(cfg.DSN)
+	dbclient = db.NewClient(cfg.DSN)
 	err = dbclient.Start()
 	if err != nil {
 		os.Exit(1)
@@ -69,9 +73,8 @@ func Execute() {
 	// Set accruall address
 	clients.SetAccrualAddress(cfg.Accrual)
 
-	// put accrual worker here
-	aWorker := worker.New(dbclient)
-	wg := sync.WaitGroup{}
+	// Init accrual worker here
+	aWorker = *worker.New(dbclient)
 
 	// Worker pluc through oders in DB those are does not have final status
 	wg.Add(1)
@@ -82,35 +85,36 @@ func Execute() {
 	authenticator := gmiddw.NewAuthenticator(dbclient)
 	router := routes.NewRouter(handler, &authenticator)
 
-	server := http.Server{
+	server = http.Server{
 		Addr:    cfg.Address,
 		Handler: router,
 	}
 
 	// место для Graceful shutdown
-	idleConnectionsClosed := make(chan struct{})
-	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-		<-sigint
-		log.Println("Shutting down server")
 
-		aWorker.CloseCh <- true
-		close(aWorker.CloseCh)
-		dbclient.Stop()
-
-		wg.Wait()
-
-		if err := server.Shutdown(context.Background()); err != nil {
-			log.Printf("HTTP Server Shutdown Error: %v", err)
-		}
-		close(idleConnectionsClosed)
-	}()
-
+	go gracefullShutdown()
 	log.Fatal(server.ListenAndServe())
 
 	<-idleConnectionsClosed
 
+}
+
+func gracefullShutdown() {
+	sigint := make(chan os.Signal, 1)
+	signal.Notify(sigint, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	<-sigint
+	log.Println("Shutting down server")
+
+	aWorker.CloseCh <- true
+	close(aWorker.CloseCh)
+	dbclient.Stop()
+
+	wg.Wait()
+
+	if err := server.Shutdown(context.Background()); err != nil {
+		log.Printf("HTTP Server Shutdown Error: %v", err)
+	}
+	close(idleConnectionsClosed)
 }
 
 func init() {

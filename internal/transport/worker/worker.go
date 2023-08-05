@@ -25,7 +25,6 @@ func New(dbc db.DBClientInt) *Worker {
 }
 
 func (w *Worker) Run(wg *sync.WaitGroup) {
-	wg.Add(1)
 	for {
 		time.Sleep(time.Second * 10)
 		// fmt.Println("run worker")

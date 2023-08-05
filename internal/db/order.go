@@ -3,7 +3,6 @@ package db
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/shipherman/gophermart/generated/ent/order"
 	"github.com/shipherman/gophermart/generated/ent/user"
@@ -55,25 +54,28 @@ func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
 }
 
 // SELECT Order owner
-func (dbc *DBClient) SelectOrderOwner(on string) (string, error) {
-	order, err := dbc.Client.Order.
+func (dbc *DBClient) SelectOrderOwner(on string) (orderResp *models.OrderResponse, err error) {
+	entOrder, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
 		First(context.Background())
 	if err != nil {
 		// Check if it was uploaded already
-		if strings.Contains(err.Error(), "order not found") {
-			return "", nil
+		if err == ErrorOrderNotFound {
+			return orderResp, err
 		}
-		return "", fmt.Errorf("SelectOrderowner error: %w", err)
+		return orderResp, fmt.Errorf("SelectOrderowner error: %w", err)
 	}
 
-	u, err := order.QueryUser().First(context.Background())
+	// Get user entity
+	u, err := entOrder.QueryUser().First(context.Background())
 	if err != nil {
-		return "", fmt.Errorf("SelectOrderowner error: %w", err)
+		return orderResp, fmt.Errorf("SelectOrderowner error: %w", err)
 	}
+	// Save username
+	orderResp.User = u.Login
 
-	return u.Login, nil
+	return orderResp, nil
 }
 
 // SELECT Orders

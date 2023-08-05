@@ -2,13 +2,10 @@ package handlers
 
 import (
 	"bytes"
-	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/shipherman/gophermart/internal/clients"
 	"github.com/shipherman/gophermart/internal/models"
 
@@ -26,20 +23,19 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Save user login from context
 	newOrder.User = r.Context().Value(models.UserCtxKey{}).(string)
 	newOrder.OrderNum = buf.String()
 
+	// Check if order is already registred by someone
 	u, err := h.Client.SelectOrderOwner(newOrder.OrderNum)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Check if order is already registred by someone
-	switch u {
-
-	// New Order
-	case "":
+	// NULL user means there is no such order in DB registred
+	if u == nil {
 		orderInt, err := strconv.Atoi(newOrder.OrderNum)
 		if !luhn.Valid(orderInt) || err != nil {
 			http.Error(w, "wrong format of order number", http.StatusUnprocessableEntity)
@@ -56,55 +52,19 @@ func (h *Handler) HandlePostOrder(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		// Inform client the order has been accepted by server
+		// And then get accrual amount
 		w.WriteHeader(http.StatusAccepted)
-		go func() {
-			logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
+		go clients.ReqAccrual(&newOrder, h.Client)
 
-			errCh := make(chan error)
-			clients.ReqAccrual(&newOrder, h.Client)
-			for err := range errCh {
-				if err != nil {
-					logEntry.Logger.Print(err)
-				}
-			}
-		}()
 		return
+	}
 
 	// Order uploaded by current user
-	case newOrder.User:
+	// Returning Status 200
+	if u.User == newOrder.User {
 		w.WriteHeader(http.StatusOK)
-		return
-
-	// Order uploaded by differen user
-	default:
+	} else {
 		w.WriteHeader(http.StatusConflict)
-		return
 	}
 }
-
-/*	Move Order processing logic to worker
-func (h *Handler) processOrder(newOrder *models.OrderResponse, r *http.Request) {
-	// errCh := make(chan error)
-
-	// Logger for outgoing requests
-	logEntry := middleware.DefaultLogFormatter{Logger: log.New(os.Stdout, "", log.LstdFlags)}
-
-	// Register order as a new one
-	newOrder.Status = models.New
-	newOrder.TimeStamp = time.Now()
-
-	err := h.Client.InsertOrder(*newOrder)
-	if err != nil {
-		logEntry.Logger.Print(err)
-	}
-
-	// move to separate pkg/service
-	//go clients.ReqAccrual(newOrder, h.Client, errCh)
-
-	// for err := range errCh {
-	// 	if err != nil {
-	// 		logEntry.Logger.Print(err)
-	// 	}
-	// }
-}
-*/

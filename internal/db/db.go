@@ -19,7 +19,7 @@ type DBClientInt interface {
 	Stop() error
 	InsertOrder(models.OrderResponse) error
 	UpdateOrder(models.OrderResponse) error
-	SelectOrderOwner(string) (string, error)
+	SelectOrderOwner(string) (*models.OrderResponse, error)
 	SelectOrders(string) ([]models.OrderResponse, error)
 	InsertUser(ent.User) error
 	SelectUserExistence(string, string) (bool, error)
