@@ -55,14 +55,16 @@ func (dbc *DBClient) UpdateOrder(orderResp models.OrderResponse) error {
 
 // SELECT Order owner
 func (dbc *DBClient) SelectOrderOwner(on string) (orderResp *models.OrderResponse, err error) {
+	orderResp = &models.OrderResponse{}
+
 	entOrder, err := dbc.Client.Order.
 		Query().
 		Where(order.OrdernumEQ(on)).
 		First(context.Background())
 	if err != nil {
 		// Check if it was uploaded already
-		if err == ErrorOrderNotFound {
-			return orderResp, err
+		if err.Error() == "ent: order not found" {
+			return orderResp, nil
 		}
 		return orderResp, fmt.Errorf("SelectOrderowner error: %w", err)
 	}
